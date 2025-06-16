@@ -1,5 +1,124 @@
-*.class
-*.log
+# macOS
+*.DS_Store
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# Compilati e temporanei
+*.class
+*.tasty
+*.log
+*.swp
+*~
+tags
+.history
+
+# Java / JVM crash logs
 hs_err_pid*
+replay_pid*
+
+# Package / archive files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+!gradle-wrapper.jar
+
+# BlueJ
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# SBT / Scala
+target/
+project/target/
+dist/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+project/local-plugins.sbt
+.sbt-scripted/
+local.sbt
+.scala-build
+sbt-launch.jar
+
+# Coursier
+.coursier/
+cs
+
+# Build output
+build/
+out/
+!out/.keep
+testlogs/
+
+# Metals / Bloop / BSP
+.bloop/
+.metals/
+.bsp
+metals.sbt
+
+# IDEs: IntelliJ / VS Code
+.idea/
+.idea_modules/
+*.iml
+*.iws
+/.worksheet/
+.vscode/
+.run/
+.intellijPlatform
+idea-sandbox/
+
+# Scala CLI & Dotty
+dotty.jar
+dotty-lib.jar
+tests/partest-generated/
+tests/locks/
+/test-classes/
+bench/tests-generated
+before-pickling.txt
+after-pickling.txt
+bench/compile.txt
+
+# Vulpix output
+*.check.out
+!/dist/bin/
+
+# SemanticDB
+*.expect.scala.out
+*.expect.out
+
+# Community build
+community-build/scala3-bootstrapped.version
+community-build/sbt-injected-plugins
+community-build/sbt-dotty-sbt
+community-build/sbt-scalajs-sbt
+community-build/dotty-community-build-deps
+
+# Compiler test product
+compiler/test-coursier/run/*.jar
+
+# Docs
+docs/_spec/_site/
+docs/_spec/.jekyll-metadata
+contributors.js
+content-contributors.css
+
+# JS / Web
+node_modules
+src/main/resources/dist/*
+
+# Langserver artifacts
+/src/main/kotlin/com/sourcegraph/cody/agent/protocol_generated/*
+
+# Python (opzionale)
+__pycache__/
+*.pyc
+
+# Varie
+.packages
+/.cache-main
+/.cache-tests
+local/
