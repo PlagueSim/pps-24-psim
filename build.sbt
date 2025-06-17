@@ -6,3 +6,5 @@ lazy val root = (project in file("."))
   .settings(
     name := "pps-24-psim"
   )
+
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % Test
