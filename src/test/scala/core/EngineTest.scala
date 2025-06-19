@@ -18,17 +18,17 @@ class EngineTest extends AnyFlatSpec with Matchers {
   }
 
   "The engine" should "be able to execute a simulation step and returning the updated currentDay value" in {
-    val simState = SimulationState(0)
-    val nextState = for
-        nextState <- SimulationEngine.advanceDay()
-    yield nextState
+    val simState  = SimulationState(0)
+    val nextState =
+      for nextState <- SimulationEngine.advanceDay()
+      yield nextState
     nextState.run(simState).value._2 shouldEqual 1
   }
 
-    it should "be able to execute multiple simulation steps" in {
-        val simState = SimulationState(0)
-        val advance2steps = SimulationEngine.advanceFor()
-        nextState.run(simState).value._2 shouldEqual 4
-    }
+  it should "be able to execute multiple simulation steps" in {
+    val simState            = SimulationState(0)
+    val advanceMultipleDays = SimulationEngine.advanceFor(4)
+    advanceMultipleDays.run(simState).value._2 shouldEqual 4
+  }
 
 }
