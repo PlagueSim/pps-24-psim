@@ -1,6 +1,6 @@
 package core
 
-import model.core.SimulationState
+import model.core.{SimulationEngine, SimulationState}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -19,8 +19,10 @@ class EngineTest extends AnyFlatSpec with Matchers {
 
   "The engine" should "be able to execute a simulation step and returning the updated currentDay value" in {
     val simState = SimulationState(0)
-    val nextState = SimulationEngine.advanceDay().run(simState)
-    nextState.currentDay shouldEqual 1
+    val nextState = for
+        nextState <- SimulationEngine.advanceDay()
+    yield nextState
+    nextState.run(simState).value._2 shouldEqual 1
   }
 
 }
