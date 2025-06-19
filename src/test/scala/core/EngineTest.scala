@@ -25,4 +25,10 @@ class EngineTest extends AnyFlatSpec with Matchers {
     nextState.run(simState).value._2 shouldEqual 1
   }
 
+    it should "be able to execute multiple simulation steps" in {
+        val simState = SimulationState(0)
+        val advance2steps = SimulationEngine.advanceFor()
+        nextState.run(simState).value._2 shouldEqual 4
+    }
+
 }
