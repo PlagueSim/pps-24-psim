@@ -31,4 +31,11 @@ class EngineTest extends AnyFlatSpec with Matchers {
     advanceMultipleDays.run(simState).value._2 shouldEqual 4
   }
 
+  "An event " should "have the execute method" in {
+    val simState = SimulationState(0)
+    val advanceDayEvent: Event = AdvanceDayEvent(simState)
+    val nextState = SimulationEngine.executeEvent(advanceDayEvent)
+    nextState.run(simState).value._2.currentDay shouldEqual 1
+  }
+
 }
