@@ -1,5 +1,5 @@
 
-package gui
+package view
 
 import scalafx.application.JFXApp3
 import scalafx.geometry.Insets
