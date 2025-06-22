@@ -1,27 +1,45 @@
 package view
 
-import controller.ViewController
+import controller.MainViewController
+import scalafx.geometry.Insets
 import scalafx.scene.Scene
+import scalafx.scene.control.ProgressBar
 import scalafx.scene.layout.BorderPane
 
-class MainView extends Scene {
-  private val controller = ViewController(this)
+object MainScene:
+  def apply(): Scene = new Scene:
+    root = new MainView
+
+class MainView extends BorderPane:
+  private val controller = new MainViewController(this)
   private val mapPane = new MapView
   private val plgPane = new PlagueView
-  private val controlsPane = new ControlsPane(controller)
+  private val controlPane = ControlPane(controller)
 
-  root = new BorderPane {
-    center = mapPane
-    bottom = controlsPane
-  }
+  def show(s: String): Unit = this.center = s match
+      case "PlagueInfo" => plgPane
+      case "WorldInfo" => mapPane
+      case _ => mapPane
 
-  def plgInfo(): Unit = this.root = new BorderPane {
-    center = plgPane
-    bottom = controlsPane
-  }
+  center = mapPane
+  bottom = controlPane
+end MainView
 
-  def wrldInfo(): Unit = this.root = new BorderPane {
-    center = mapPane
-    bottom = controlsPane
-  }
-}
+object ControlPane:
+  def apply(controller: MainViewController): BorderPane = new BorderPane:
+    private val plagueButton = StdBtn("Plague"):
+      controller.show("PlagueInfo")
+
+    private val worldButton = StdBtn("World"):
+      controller.show("WorldInfo")
+
+    private val progressBar = new ProgressBar:
+      progress = 0.35
+      prefWidth = 200
+      prefHeight = 25
+
+    left = plagueButton
+    center = progressBar
+    right = worldButton
+    padding = Insets(10)
+end ControlPane
