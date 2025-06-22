@@ -5,8 +5,8 @@ import scalafx.geometry.Pos.Center
 import scalafx.scene.layout.{HBox, Priority, Region}
 import scalafx.scene.text.Text
 
-class MapView extends HBox {
-  val mapRegion = new Text("MAPPA!!!")
+class MapView extends HBox:
+  val mapRegion = new Text("THE WORLD")
     
 //    new Region {
 //    style = "-fx-background-color: #2a2a2a; -fx-border-color: white;"
@@ -16,4 +16,3 @@ class MapView extends HBox {
   alignment = Center
   padding = Insets(10)
   children = mapRegion
-}
