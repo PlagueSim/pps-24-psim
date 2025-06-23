@@ -17,6 +17,17 @@ class MovementStrategyTest extends AnyFlatSpec with Matchers {
     an [IllegalArgumentException] should be thrownBy MovementStrategy.random(1.1)
   }
 
+  "MovementStrategy.targeted" should "create a TargetedMove with valid intensity" in {
+    val strategy = MovementStrategy.targeted("nodeA", 0.8)
+    strategy shouldBe a [TargetedMove]
+    strategy.targetNode shouldBe "nodeA"
+    strategy.intensity shouldBe 0.8
+  }
+
+  it should "throw an exception for invalid intensity" in {
+    an [IllegalArgumentException] should be thrownBy MovementStrategy.targeted("nodeB", -0.5)
+    an [IllegalArgumentException] should be thrownBy MovementStrategy.targeted("nodeB", 1.5)
+  }
 
   "MovementStrategy.isMobile" should "correctly identify Static as not mobile" in {
     MovementStrategy.isMobile(Static) shouldBe false

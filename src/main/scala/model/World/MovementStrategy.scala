@@ -29,4 +29,7 @@ object MovementStrategy:
     require(probability >= 0.0 && probability <= 1.0, "Probability must be between 0.0 and 1.0")
     RandomMove(probability)
 
-
+  /** Safely creates a TargetedMove, enforcing 0.0 <= intensity <= 1.0 */
+  def targeted(node: String, intensity: Double): TargetedMove =
+    require(intensity >= 0.0 && intensity <= 1.0, "Intensity must be between 0.0 and 1.0")
+    TargetedMove(node, intensity)
