@@ -21,6 +21,17 @@ case class Edge private (
   def connects(nodeId: String): Boolean =
     nodeId == nodeA || nodeId == nodeB
 
+  /**
+   * Returns the other node ID if this edge connects to the given node ID.
+   * If the edge does not connect to the given node ID, returns None.
+   *
+   * @param nodeId
+   * @return
+   */
+  def other(nodeId: String): Option[String] =
+    if nodeId == nodeA then Some(nodeB)
+    else if nodeId == nodeB then Some(nodeA)
+    else None
 
 
 object Edge:

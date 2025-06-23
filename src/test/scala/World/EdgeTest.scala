@@ -32,5 +32,16 @@ class EdgeTest extends AnyFlatSpec with Matchers:
     edge.connects("C") shouldBe false
   }
 
+  "other" should "return the opposite node if input is nodeA or nodeB" in {
+    val edge = Edge("A", "B")
+    edge.other("A") shouldEqual Some("B")
+    edge.other("B") shouldEqual Some("A")
+  }
+
+  it should "return None if the node is not part of the edge" in {
+    val edge = Edge("A", "B")
+    edge.other("C") shouldBe None
+  }
+
 
 
