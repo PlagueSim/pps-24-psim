@@ -20,3 +20,8 @@ object MovementStrategy:
 
   val DefaultTarget: TargetedMove = TargetedMove("capital", 1.0)
 
+  def isMobile(strategy: MovementStrategy): Boolean = strategy match
+    case Static => false
+    case _ => true
+
+
