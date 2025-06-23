@@ -20,3 +20,17 @@ class EdgeTest extends AnyFlatSpec with Matchers:
     e1.weight shouldEqual 2.5
   }
 
+
+  "connects" should "return true if the node is part of the edge" in {
+    val edge = Edge("A", "B")
+    edge.connects("A") shouldBe true
+    edge.connects("B") shouldBe true
+  }
+
+  it should "return false if the node is not part of the edge" in {
+    val edge = Edge("A", "B")
+    edge.connects("C") shouldBe false
+  }
+
+
+

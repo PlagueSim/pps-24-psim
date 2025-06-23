@@ -11,7 +11,16 @@ case class Edge private (
                           nodeA: String,
                           nodeB: String,
                           weight: Double = 1.0
-                        )
+                        ):
+  /**
+   * Checks if this edge connects to the given node ID.
+   *
+   * @param nodeId ID of the node to check
+   * @return true if this edge connects to the given node ID, false otherwise
+   */
+  def connects(nodeId: String): Boolean =
+    nodeId == nodeA || nodeId == nodeB
+
 
 
 object Edge:
