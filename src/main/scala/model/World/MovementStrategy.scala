@@ -24,4 +24,9 @@ object MovementStrategy:
     case Static => false
     case _ => true
 
+  /** Safely creates a RandomMove, enforcing 0.0 <= prob <= 1.0 */
+  def random(probability: Double): RandomMove =
+    require(probability >= 0.0 && probability <= 1.0, "Probability must be between 0.0 and 1.0")
+    RandomMove(probability)
+
 

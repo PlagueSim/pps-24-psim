@@ -6,6 +6,17 @@ import org.scalatest.matchers.should.Matchers
 
 class MovementStrategyTest extends AnyFlatSpec with Matchers {
 
+  "MovementStrategy.random" should "create a RandomMove with valid probability" in {
+    val strategy = MovementStrategy.random(0.3)
+    strategy shouldBe a [RandomMove]
+    strategy.probability shouldBe 0.3
+  }
+
+  it should "throw an exception for invalid probability" in {
+    an [IllegalArgumentException] should be thrownBy MovementStrategy.random(-0.1)
+    an [IllegalArgumentException] should be thrownBy MovementStrategy.random(1.1)
+  }
+
 
   "MovementStrategy.isMobile" should "correctly identify Static as not mobile" in {
     MovementStrategy.isMobile(Static) shouldBe false
