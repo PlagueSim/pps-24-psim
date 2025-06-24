@@ -47,13 +47,14 @@ object SimulationEngine:
       List(AdvanceDayEvent(), AdvanceDayEvent(), AdvanceDayEvent())
 
     val initialState = SimulationState(0)
-
-    val cycle: Simulation[Int] = for
-      _   <- executeEvent(AdvanceDayEvent())
-      _   <- executeEvent(AdvanceDayEvent())
-      _   <- executeListOfEvents(listOfEvents)
-      end <- executeEvent(AdvanceDayEvent())
-    yield end
-
-    val endSim = cycle.runA(initialState).value
+    val endSim       = simulationLoop().runS(initialState).value.currentDay
     println(s"Simulation ended on day: $endSim")
+
+  private def simulationLoop(): Simulation[Unit] = for
+    day <- executeEvent(AdvanceDayEvent())
+    _   <- if day < 6 then simulationLoop() else State.pure(())
+  yield ()
+
+//oggetto intenzione che è un mapper da intenzione dell'entita ad un evento.
+//evento chiama la generazione delle intenzioni
+//dopo l'interrogazione ho una lista di cose che devo fare, queste le converto in eventi e li eseguo.
