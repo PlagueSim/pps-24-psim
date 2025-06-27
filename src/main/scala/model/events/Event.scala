@@ -16,11 +16,6 @@ trait Event[A]:
     */
   def execute(): Simulation[A]
 
-/** Event that advances the simulation by one day.
-  *
-  * Increments the current day in the simulation state and returns the updated
-  * day as an [[Int]].
-  */
 //case class AdvanceDayEvent() extends Event[Int]:
 //  override def execute(): Simulation[Int] =
 //    State { s =>
@@ -28,20 +23,24 @@ trait Event[A]:
 //      updatedState -> updatedState.currentDay
 //    }
 
-trait FieldModifyingEvent[T] extends Event[T]:
+trait ModifyFieldEvent[T] extends Event[T]:
   val fieldLens: Lens[SimulationState, T]
 
-  protected def modifyFunction(currentValue: T): T
+  def modifyFunction(currentValue: T): T
 
   final override def execute(): Simulation[T] =
-    for {
+    for
       s <- State.get[SimulationState]
       currentFieldValue = fieldLens.get(s)
       newFieldValue     = modifyFunction(currentFieldValue)
       _ <- State.set(fieldLens.replace(newFieldValue)(s))
-    } yield newFieldValue
+    yield newFieldValue
 
-case class AdvanceDayEvent() extends FieldModifyingEvent[Int]:
-  override val fieldLens: Lens[SimulationState, Int] =
-    SimulationState.currentDayLens
-  override protected def modifyFunction(currentDay: Int): Int = currentDay + 1
+/** Event that advances the simulation by one day.
+  *
+  * Increments the current day in the simulation state and returns the updated
+  * day as an [[Int]].
+  */
+case class AdvanceDayEvent() extends ModifyFieldEvent[Int]:
+  override val fieldLens: Lens[SimulationState, Int] = SimulationState.currentDayLens
+  override def modifyFunction(currentDay: Int): Int = currentDay + 1
