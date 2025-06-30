@@ -25,10 +25,17 @@ object World:
              edges: Set[Edge],
              movements: Map[MovementStrategy, Double]
            ): World =
+    validateEdges(nodes, edges)
+    validateMovements(movements)
+    new World(nodes, edges, movements)
+
+  private def validateEdges(nodes: Map[String, Node], edges: Set[Edge]): Unit =
     require(
       edges.forall(e => nodes.contains(e.nodeA) && nodes.contains(e.nodeB)),
       "Edges must connect existing nodes"
     )
+
+  private def validateMovements(movements: Map[MovementStrategy, Double]): Unit =
     require(
       movements.nonEmpty,
       "At least one movement strategy must be defined"
@@ -42,4 +49,3 @@ object World:
       total >= 0.999 && total <= 1.001,
       s"Movement percentages must sum to 1.0 (got $total)"
     )
-    new World(nodes, edges, movements)
