@@ -4,7 +4,12 @@ case class World private(
                           nodes: Map[String, Node],
                           edges: Set[Edge],
                           movements: Map[String, MovementStrategy]
-                        )
+                        ):
+  def neighbors(nodeId: String): Set[String] =
+    edges.collect {
+      case e if e.nodeA == nodeId => e.nodeB
+      case e if e.nodeB == nodeId => e.nodeA
+    }
 
 object World:
 
@@ -25,3 +30,5 @@ object World:
       "Movements must refer to existing nodes"
     )
     new World(nodes, edges, movements)
+
+

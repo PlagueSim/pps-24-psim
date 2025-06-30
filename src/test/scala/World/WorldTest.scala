@@ -15,7 +15,7 @@ class WorldTest extends AnyFlatSpec with Matchers:
     world.movements shouldBe empty
   }
 
-  "World.apply" should "validate that edges connect existing nodes" in {
+  "World" should "validate that edges connect existing nodes" in {
     val node = Node.withPopulation(10).build()
     val nodes = Map("A" -> node)
     val edges = Set(Edge("A", "B"))
@@ -59,4 +59,55 @@ class WorldTest extends AnyFlatSpec with Matchers:
     world.nodes shouldBe nodes
     world.edges shouldBe edges
     world.movements shouldBe movements
+  }
+
+  it should "allow neighbors to be retrieved correctly" in {
+    val nodeA = Node.withPopulation(10).build()
+    val nodeB = Node.withPopulation(5).build()
+    val nodeC = Node.withPopulation(3).build()
+
+    val nodes = Map(
+      "A" -> nodeA,
+      "B" -> nodeB,
+      "C" -> nodeC
+    )
+    val edges = Set(
+      Edge("A", "B"),
+      Edge("B", "C")
+    )
+    val movements = Map(
+      "A" -> Static,
+      "B" -> Static,
+      "C" -> Static
+    )
+
+    val world = World(nodes, edges, movements)
+
+    world.neighbors("A") should contain theSameElementsAs Set("B")
+    world.neighbors("B") should contain theSameElementsAs Set("A", "C")
+    world.neighbors("C") should contain theSameElementsAs Set("B")
+  }
+
+  it should "return the neighbors of a given node" in {
+    val nodeA = Node.withPopulation(1).build()
+    val nodeB = Node.withPopulation(2).build()
+    val nodeC = Node.withPopulation(3).build()
+
+    val nodes = Map(
+      "A" -> nodeA,
+      "B" -> nodeB,
+      "C" -> nodeC
+    )
+    val edges = Set(
+      Edge("A", "B"),
+      Edge("A", "C"),
+      Edge("B", "C")
+    )
+    val movements = Map.empty[String, MovementStrategy]
+
+    val world = World(nodes, edges, movements)
+
+    world.neighbors("A") should contain theSameElementsAs Set("B", "C")
+    world.neighbors("B") should contain theSameElementsAs Set("A", "C")
+    world.neighbors("C") should contain theSameElementsAs Set("A", "B")
   }
