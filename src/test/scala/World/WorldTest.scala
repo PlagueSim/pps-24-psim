@@ -7,37 +7,48 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 class WorldTest extends AnyFlatSpec with Matchers:
-
-  "World.empty" should "start with no nodes, edges, or movement strategies" in {
-    val world = World.empty
-    world.nodes shouldBe empty
-    world.edges shouldBe empty
-    world.movements shouldBe empty
-  }
-
+  
   "World" should "validate that edges connect existing nodes" in {
     val node = Node.withPopulation(10).build()
     val nodes = Map("A" -> node)
     val edges = Set(Edge("A", "B"))
-    val movements = Map("A" -> Static)
+    val movements: Map[MovementStrategy, Double] = Map(
+      Static -> 1.0
+    )
 
     an[IllegalArgumentException] shouldBe thrownBy {
       World(nodes, edges, movements)
     }
   }
 
-  it should "validate that movements target existing nodes" in {
+  it should "validate that movement percentages are non-empty and sum to 1.0" in {
     val node = Node.withPopulation(10).build()
     val nodes = Map("A" -> node)
     val edges = Set.empty[Edge]
-    val movements = Map("B" -> Static)
 
+    val emptyMovements = Map.empty[MovementStrategy, Double]
     an[IllegalArgumentException] shouldBe thrownBy {
-      World(nodes, edges, movements)
+      World(nodes, edges, emptyMovements)
+    }
+
+    val invalidMovements: Map[MovementStrategy, Double] = Map(
+      Static -> 0.6,
+      RandomNeighbor -> 0.3 // sums to 0.9
+    )
+    an[IllegalArgumentException] shouldBe thrownBy {
+      World(nodes, edges, invalidMovements)
+    }
+
+    val negativeMovements: Map[MovementStrategy, Double] = Map(
+      Static -> 0.5,
+      RandomNeighbor -> -0.5
+    )
+    an[IllegalArgumentException] shouldBe thrownBy {
+      World(nodes, edges, negativeMovements)
     }
   }
 
-  it should "create a valid World when all nodes, edges, and movements are consistent" in {
+  it should "create a valid World when all nodes, edges, and global movement percentages are correct" in {
     val nodeA = Node.withPopulation(10).build()
     val nodeB = Node.withPopulation(5).build()
 
@@ -49,9 +60,9 @@ class WorldTest extends AnyFlatSpec with Matchers:
       Edge("A", "B"),
       Edge("B", "A")
     )
-    val movements = Map(
-      "A" -> Static,
-      "B" -> Static
+    val movements: Map[MovementStrategy, Double] =Map(
+      Static -> 0.7,
+      RandomNeighbor -> 0.3
     )
 
     val world = World(nodes, edges, movements)
@@ -75,10 +86,8 @@ class WorldTest extends AnyFlatSpec with Matchers:
       Edge("A", "B"),
       Edge("B", "C")
     )
-    val movements = Map(
-      "A" -> Static,
-      "B" -> Static,
-      "C" -> Static
+    val movements: Map[MovementStrategy, Double] = Map(
+      Static -> 1.0
     )
 
     val world = World(nodes, edges, movements)
@@ -103,7 +112,9 @@ class WorldTest extends AnyFlatSpec with Matchers:
       Edge("A", "C"),
       Edge("B", "C")
     )
-    val movements = Map.empty[String, MovementStrategy]
+    val movements: Map[MovementStrategy, Double] = Map(
+      Static -> 1.0
+    )
 
     val world = World(nodes, edges, movements)
 
@@ -126,7 +137,9 @@ class WorldTest extends AnyFlatSpec with Matchers:
       Edge("A", "B"),
       Edge("B", "C")
     )
-    val movements = Map.empty[String, MovementStrategy]
+    val movements: Map[MovementStrategy, Double] =Map(
+      Static -> 1.0
+    )
 
     val world = World(nodes, edges, movements)
 

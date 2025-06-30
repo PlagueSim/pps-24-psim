@@ -10,6 +10,8 @@ sealed trait MovementStrategy
 
 case object Static extends MovementStrategy
 
+case object RandomNeighbor extends MovementStrategy
+
 final case class RandomMove(probability: Double) extends MovementStrategy
 
 final case class TargetedMove(targetNode: String, intensity: Double) extends MovementStrategy
