@@ -11,6 +11,12 @@ case class World private(
       case e if e.nodeB == nodeId => e.nodeA
     }
 
+  def areConnected(nodeA: String, nodeB: String): Boolean =
+    edges.exists(e =>
+      (e.nodeA == nodeA && e.nodeB == nodeB) ||
+      (e.nodeA == nodeB && e.nodeB == nodeA)
+    )
+
 object World:
 
   def empty: World =

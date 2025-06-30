@@ -111,3 +111,26 @@ class WorldTest extends AnyFlatSpec with Matchers:
     world.neighbors("B") should contain theSameElementsAs Set("A", "C")
     world.neighbors("C") should contain theSameElementsAs Set("A", "B")
   }
+
+  it should "check if two nodes are connected" in {
+    val nodeA = Node.withPopulation(1).build()
+    val nodeB = Node.withPopulation(2).build()
+    val nodeC = Node.withPopulation(3).build()
+
+    val nodes = Map(
+      "A" -> nodeA,
+      "B" -> nodeB,
+      "C" -> nodeC
+    )
+    val edges = Set(
+      Edge("A", "B"),
+      Edge("B", "C")
+    )
+    val movements = Map.empty[String, MovementStrategy]
+
+    val world = World(nodes, edges, movements)
+
+    world.areConnected("A", "B") shouldBe true
+    world.areConnected("B", "C") shouldBe true
+    world.areConnected("A", "C") shouldBe false
+  }
