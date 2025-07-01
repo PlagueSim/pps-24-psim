@@ -24,3 +24,5 @@ class CureTest extends AnyFlatSpec with Matchers {
     cure.baseSpeed shouldEqual 0.2
   }
 }
+
+
