@@ -23,6 +23,9 @@ class CureTest extends AnyFlatSpec with Matchers {
     val cure = Cure(baseSpeed = 0.2)
     cure.baseSpeed shouldEqual 0.2
   }
+
+  it should "have empty modifiers by default" in {
+    val cure = Cure()
+    cure.modifiers shouldEqual CureModifiers.empty
+  }
 }
-
-
