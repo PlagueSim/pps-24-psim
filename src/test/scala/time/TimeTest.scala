@@ -25,3 +25,7 @@ class TimeTest extends AnyFlatSpec with Matchers:
     Day(100).toSeason shouldEqual Seasons.Spring
     Day(200).toSeason shouldEqual Seasons.Summer
     Day(300).toSeason shouldEqual Seasons.Autumn
+
+  "A BasicYear" should "be created with a day and a year" in:
+    val x = BasicYear(Day(0), Year(1))
+    (x.day.value, x.year.value) shouldEqual (0, 1)
