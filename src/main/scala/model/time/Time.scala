@@ -2,8 +2,8 @@ package model.time
 
 trait Time:
   import TimeTypes.*
-  def day: Day
-  def year: Year
+  val day: Day
+  val year: Year
 
   def season: Seasons = day.toSeason
 
