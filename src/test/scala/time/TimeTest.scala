@@ -2,7 +2,8 @@ package time
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-
+import model.time.*
+import model.time.TimeTypes.*
 
 class TimeTest extends AnyFlatSpec with Matchers:
 
@@ -18,7 +19,7 @@ class TimeTest extends AnyFlatSpec with Matchers:
 
   it should "fail and throw an exception when created with a negative value" in:
     an[IllegalArgumentException] should be thrownBy Year(-1)
-    
+
   "Having a day it" should "be able to determine the season of the year" in:
     Day(0).toSeason shouldEqual Seasons.Winter
     Day(100).toSeason shouldEqual Seasons.Spring
