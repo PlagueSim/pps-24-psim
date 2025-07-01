@@ -18,3 +18,9 @@ class TimeTest extends AnyFlatSpec with Matchers:
 
   it should "fail and throw an exception when created with a negative value" in:
     an[IllegalArgumentException] should be thrownBy Year(-1)
+    
+  "Having a day it" should "be able to determine the season of the year" in:
+    Day(0).toSeason shouldEqual Seasons.Winter
+    Day(100).toSeason shouldEqual Seasons.Spring
+    Day(200).toSeason shouldEqual Seasons.Summer
+    Day(300).toSeason shouldEqual Seasons.Autumn
