@@ -5,20 +5,32 @@ enum Seasons:
 
 object TimeTypes:
 
+  private val SpringStart    = 80
+  private val SummerStart    = 173
+  private val AutumnStart    = 267
+  private val SpringEnd      = SummerStart - 1
+  private val SummerEnd      = AutumnStart - 1
+  private val AutumnEnd      = 356
+  private val StartYearValue = 0
+  private val EndYearValue   = 365
+
   opaque type Day  = Int
   opaque type Year = Int
 
   object Day:
     def apply(value: Int): Day =
-      require(value >= 0 && value < 365, "Day must be between 0 and 364")
+      require(
+        value >= StartYearValue && value < EndYearValue,
+        "Day must be between 0 and 364"
+      )
       value
     extension (d: Day)
       def value: Int        = d
       def toSeason: Seasons = d match
-        case d if d >= 80 && d <= 172  => Seasons.Spring
-        case d if d >= 173 && d <= 266 => Seasons.Summer
-        case d if d >= 267 && d <= 356 => Seasons.Autumn
-        case _                         => Seasons.Winter
+        case d if d >= SpringStart && d <= SpringEnd => Seasons.Spring
+        case d if d >= SummerStart && d <= SummerEnd => Seasons.Summer
+        case d if d >= AutumnStart && d <= AutumnEnd => Seasons.Autumn
+        case _                                       => Seasons.Winter
 
   object Year:
     def apply(value: Int): Year =
