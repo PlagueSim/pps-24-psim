@@ -28,4 +28,24 @@ class CureTest extends AnyFlatSpec with Matchers {
     val cure = Cure()
     cure.modifiers shouldEqual CureModifiers.empty
   }
+
+  it should "allow adding a modifier" in {
+    val modifier = new CureModifier {}
+    val cure     = Cure().copy(modifiers = CureModifiers.empty.add(modifier))
+    cure.modifiers.factors should contain(modifier)
+  }
+
+  it should "allow adding multiple modifiers" in {
+    case class TestModifier(name: String)  extends CureModifier
+    case class AnotherModifier(value: Int) extends CureModifier
+    val modifier1 = TestModifier("Test")
+    val modifier2 = AnotherModifier(42)
+    val modifier3 = TestModifier("AnotherTest")
+    val cure      = Cure().copy(modifiers =
+      CureModifiers.empty.add(modifier1).add(modifier2).add(modifier3)
+    )
+    cure.modifiers
+      .remove(_ == modifier1)
+      .factors should contain theSameElementsAs List(modifier3, modifier2)
+  }
 }

@@ -6,10 +6,16 @@ final case class Cure(
     modifiers: CureModifiers = CureModifiers.empty
 )
 
-final case class CureModifiers(modifiers: List[CureModifier])
+final case class CureModifiers(factors: List[CureModifier]) {
+  def add(modifier: CureModifier): CureModifiers =
+    CureModifiers(modifier :: factors)
+
+  def remove(filter: CureModifier => Boolean): CureModifiers =
+    CureModifiers(factors.filterNot(filter))
+}
 
 object CureModifiers {
   val empty: CureModifiers = CureModifiers(Nil)
 }
 
-final case class CureModifier()
+trait CureModifier
