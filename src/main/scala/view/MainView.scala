@@ -16,11 +16,6 @@ class MainView extends BorderPane:
   private val plgPane = PlagueView()
   private val controlPane = ControlPane(controller)
 
-  def show(s: String): Unit = this.center = s match
-      case "PlagueInfo" => plgPane
-      case "WorldInfo" => mapPane
-      case _ => mapPane
-
   center = mapPane
   bottom = controlPane
 end MainView
