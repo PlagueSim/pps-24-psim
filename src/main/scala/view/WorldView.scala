@@ -9,24 +9,38 @@ import scalafx.scene.text.Text
 import scalafx.scene.input.MouseEvent
 import model.World.*
 import scala.collection.mutable
+import scala.math.*
 
 class WorldView(world: World) extends Pane:
 
-  private val nodePositions: mutable.Map[String, (Double, Double)] = mutable.Map(
-    "A" -> (100.0, 100.0),
-    "B" -> (300.0, 150.0),
-    "C" -> (200.0, 300.0)
-  )
+  // Layout parameters (renamed to avoid conflicts)
+  private val layoutRadius = 200.0
+  private val layoutCenterX = 400.0
+  private val layoutCenterY = 250.0
+  private val nodeIds = world.nodes.keys.toSeq.sorted
+  private val angleStep = 2 * Pi / nodeIds.size
 
+  // Compute initial positions in a circle
+  private val nodePositions: mutable.Map[String, (Double, Double)] =
+    mutable.Map.from(
+      nodeIds.zipWithIndex.map { case (id, i) =>
+        val angle = i * angleStep
+        val x = layoutCenterX + layoutRadius * cos(angle)
+        val y = layoutCenterY + layoutRadius * sin(angle)
+        id -> (x, y)
+      }
+    )
+
+  // Store edge lines to redraw them when nodes move
   private val edgeLines = mutable.Buffer.empty[Line]
 
-  // Draw edges initially
+  // Draw initial edges
   for edge <- world.edges do
     val line = createEdgeLine(edge)
     edgeLines += line
     children += line
 
-  // Draw nodes
+  // Draw nodes and labels
   for (nodeId, (x, y)) <- nodePositions do
     val nodeData = world.nodes(nodeId)
 
@@ -43,6 +57,7 @@ class WorldView(world: World) extends Pane:
 
     updateLabelPositions(x, y, labelId, labelPop, labelInf)
 
+    // Drag behavior
     var dragOffsetX = 0.0
     var dragOffsetY = 0.0
 
@@ -55,17 +70,23 @@ class WorldView(world: World) extends Pane:
       val newX = e.sceneX - dragOffsetX
       val newY = e.sceneY - dragOffsetY
 
-      circle.centerX = newX
-      circle.centerY = newY
-      nodePositions(nodeId) = (newX, newY)
+      // Clamp to keep inside pane
+      val clampedX = newX.max(20).min(780)
+      val clampedY = newY.max(20).min(580)
 
-      updateLabelPositions(newX, newY, labelId, labelPop, labelInf)
+      circle.centerX = clampedX
+      circle.centerY = clampedY
+      nodePositions(nodeId) = (clampedX, clampedY)
+
+      updateLabelPositions(clampedX, clampedY, labelId, labelPop, labelInf)
 
       redrawEdges()
     }
 
+
     children ++= Seq(circle, labelId, labelPop, labelInf)
 
+  /** Create a Line for an edge */
   private def createEdgeLine(edge: Edge): Line =
     val (x1, y1) = nodePositions(edge.nodeA)
     val (x2, y2) = nodePositions(edge.nodeB)
@@ -84,6 +105,7 @@ class WorldView(world: World) extends Pane:
         case EdgeType.Air  => Color.Red
       strokeWidth = 2
 
+  /** Redraw edges when nodes move */
   private def redrawEdges(): Unit =
     children --= edgeLines.map(_.delegate)
     edgeLines.clear()
@@ -94,6 +116,7 @@ class WorldView(world: World) extends Pane:
 
     children.prependAll(edgeLines.map(_.delegate))
 
+  /** Update label positions */
   private def updateLabelPositions(
                                     x: Double,
                                     y: Double,
