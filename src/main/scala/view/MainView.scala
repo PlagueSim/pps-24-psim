@@ -1,6 +1,7 @@
 package view
 
 import controller.ViewController
+import model.World.WorldFactory
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
 import scalafx.scene.control.ProgressBar
@@ -12,7 +13,7 @@ object MainScene:
 
 class MainView extends BorderPane:
   private val controller = ViewController(this)
-  private val mapPane = MapView()
+  private val mapPane = new WorldView(WorldFactory.mockWorld())
   private val plgPane = PlagueView()
   private val controlPane = ControlPane(controller)
 
@@ -26,7 +27,7 @@ object ControlPane:
       controller.show(PlagueView())
 
     private val worldButton = StdButton("World"):
-      controller.show(MapView())
+      controller.show(new WorldView(WorldFactory.mockWorld()))
 
     private val progressBar = new ProgressBar:
       progress = 0.35
