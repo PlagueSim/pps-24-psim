@@ -9,9 +9,9 @@ package model.plague
  * @param dnaPoints
  */
 case class Disease private(
-                    name: String = "pax-12",
-                    traits: Set[Trait] = Set.empty,
-                    dnaPoints: Int = 0
+                    name: String,
+                    traits: Set[Trait],
+                    dnaPoints: Int
                   ):
   
   def infectivity: Double = traits.map(_.infectivity).sum
@@ -22,7 +22,8 @@ case class Disease private(
     
   private def hasTrait(name: String): Boolean = traits.exists(_.name == name)
 
-  private def canEvolve(t: Trait): Boolean = t.prerequisites.exists(hasTrait)
+  private def canEvolve(t: Trait): Boolean =
+    t.prerequisites.exists(hasTrait) || t.prerequisites.isEmpty
 
   def evolve(traitToAdd: Trait): Either[String, Disease] =
     if hasTrait(traitToAdd.name) then Left(s"${traitToAdd.name} already evolved.")
@@ -45,5 +46,5 @@ object Disease:
   def apply(
              name: String = "pax-12",
              traits: Set[Trait] = Set.empty,
-             dnaPoints: Int      
+             dnaPoints: Int
            ): Disease = new Disease(name, traits, dnaPoints)
