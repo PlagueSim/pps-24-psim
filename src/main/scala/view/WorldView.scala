@@ -115,6 +115,14 @@ class WorldView(world: World) extends Pane:
     var dragOffsetX = 0.0
     var dragOffsetY = 0.0
 
+    circle.onMouseEntered = (_: MouseEvent) => {
+      circle.cursor = scalafx.scene.Cursor.Hand
+    }
+
+    circle.onMouseExited = (_: MouseEvent) => {
+      circle.cursor = scalafx.scene.Cursor.Default
+    }
+
     circle.onMousePressed = (e: MouseEvent) => {
       dragOffsetX = e.sceneX - circle.centerX.value
       dragOffsetY = e.sceneY - circle.centerY.value
@@ -134,3 +142,4 @@ class WorldView(world: World) extends Pane:
       updateLabelPositions(clampedX, clampedY, labels._1, labels._2, labels._3)
       redrawEdges()
     }
+
