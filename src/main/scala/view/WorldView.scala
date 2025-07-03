@@ -34,10 +34,11 @@ class WorldView(world: World) extends Pane:
     private def clamp(min: Double, max: Double): Double =
       d.max(min).min(max)
 
-  private def edgeStyle(edgeType: EdgeType): ((Int, Int), Color) = edgeType match
-    case EdgeType.Land => ((-8, -8), Color.Green)
-    case EdgeType.Sea  => ((0, 0), Color.Blue)
-    case EdgeType.Air  => ((8, 8), Color.Red)
+  private val edgeStyle: Map[EdgeType, ((Int, Int), Color)] = Map(
+    EdgeType.Land -> ((-8, -8), Color.Green),
+    EdgeType.Sea -> ((0, 0), Color.Blue),
+    EdgeType.Air -> ((8, 8), Color.Red)
+  )
 
   private case class NodeView(
                                id: NodeId,
@@ -108,11 +109,13 @@ class WorldView(world: World) extends Pane:
   private def createEdgeLine(edge: Edge): Line =
     val ((dx, dy), color) = edgeStyle(edge.typology)
 
-    val nodeA = nodeViews.find(_.id.value == edge.nodeA)
-      .getOrElse(sys.error(s"Node '${edge.nodeA}' not found"))
+    val nodeA = nodeViews.find(_.id.value == edge.nodeA) match
+      case Some(node) => node
+      case None => sys.error(s"Node '${edge.nodeA}' not found")
 
-    val nodeB = nodeViews.find(_.id.value == edge.nodeB)
-      .getOrElse(sys.error(s"Node '${edge.nodeB}' not found"))
+    val nodeB = nodeViews.find(_.id.value == edge.nodeB) match
+      case Some(node) => node
+      case None => sys.error(s"Node '${edge.nodeB}' not found")
 
     val (x1, y1) = nodeA.position
     val (x2, y2) = nodeB.position
