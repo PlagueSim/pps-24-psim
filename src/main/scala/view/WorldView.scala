@@ -38,52 +38,55 @@ class WorldView(world: World) extends Pane:
     def position: (Double, Double) =
       (circle.centerX.value, circle.centerY.value)
 
-  private val nodeViews: Seq[NodeView] =
+  private def initialLayout: Seq[(String, (Double, Double))] =
     nodeIds.zipWithIndex.map { (id, i) =>
       val angle = i * angleStep
       val x = layoutCenterX + layoutRadius * cos(angle)
       val y = layoutCenterY + layoutRadius * sin(angle)
-      createNodeView(id, x, y)
+      id -> (x, y)
     }
 
-  children ++= nodeViews.flatMap { nv =>
-    Seq(
-      nv.circle.delegate,
-      nv.labels._1.delegate,
-      nv.labels._2.delegate,
-      nv.labels._3.delegate
-    )
-  }
+  private val nodeViews: Seq[NodeView] =
+    initialLayout.map { case (id, (x, y)) => createNodeView(id, x, y) }
 
-  Platform.runLater {
-    redrawEdges()
-  }
+  private def addNodeViews(): Unit =
+    val nodesAndLabels = nodeViews.flatMap { nv =>
+      Seq(nv.circle.delegate) ++ nv.labels.productIterator.map(_.asInstanceOf[Text].delegate)
+    }
+    children ++= nodesAndLabels
+
+  private def addEdges(): Unit =
+    Platform.runLater { redrawEdges() }
+
+  addNodeViews()
+  addEdges()
 
   private def createNodeView(id: String, x: Double, y: Double): NodeView =
     val nodeData = world.nodes(id)
+    val circle = buildCircle(x, y)
+    val labels = buildLabels(id, nodeData, x, y)
+    makeDraggable(circle, labels)
+    NodeView(id, circle, labels)
 
-    val circle = new Circle:
+  private def buildCircle(x: Double, y: Double): Circle =
+    new Circle:
       centerX = x
       centerY = y
       radius = 15
       fill = Color.LightGray
       stroke = Color.Black
 
-    val labelId  = new Text(s"Node: $id")
-    val labelPop = new Text(s"Pop: ${nodeData.population}")
-    val labelInf = new Text(s"Infected: ${nodeData.infected}")
-
+  private def buildLabels(id: String, node: Node, x: Double, y: Double): (Text, Text, Text) =
+    val labelId = new Text(s"Node: $id")
+    val labelPop = new Text(s"Pop: ${node.population}")
+    val labelInf = new Text(s"Infected: ${node.infected}")
     updateLabelPositions(x, y, labelId, labelPop, labelInf)
-
-    makeDraggable(circle, (labelId, labelPop, labelInf))
-
-    NodeView(id, circle, (labelId, labelPop, labelInf))
+    (labelId, labelPop, labelInf)
 
   private def createEdgeLine(edge: Edge): Line =
     val ((dx, dy), color) = edgeStyle(edge.typology)
     val (x1, y1) = nodeViews.find(_.id == edge.nodeA).get.position
     val (x2, y2) = nodeViews.find(_.id == edge.nodeB).get.position
-
     new Line:
       startX = x1 + dx
       startY = y1 + dy
@@ -100,7 +103,6 @@ class WorldView(world: World) extends Pane:
       case n if n.isInstanceOf[javafx.scene.shape.Line] => n
     }
     children --= oldEdges
-
     children.prependAll(currentEdges.map(_.delegate))
 
   private def updateLabelPositions(
