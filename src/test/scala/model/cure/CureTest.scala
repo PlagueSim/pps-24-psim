@@ -2,7 +2,6 @@ package model.cure
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.prop.TableDrivenPropertyChecks._
 
 class CureTest extends AnyFlatSpec with Matchers:
   def defaultCure(progress: Double = 0.0, baseSpeed: Double = 0.1, modifiers: CureModifiers = CureModifiers.empty): Cure =
