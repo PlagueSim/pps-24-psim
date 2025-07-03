@@ -2,50 +2,45 @@ package model.cure
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.prop.TableDrivenPropertyChecks._
 
-class CureTest extends AnyFlatSpec with Matchers {
-  "A Cure" should "have a default progress of 0.0" in {
-    val cure = Cure()
-    cure.progress shouldEqual 0.0
-  }
+class CureTest extends AnyFlatSpec with Matchers:
+  def defaultCure(progress: Double = 0.0, baseSpeed: Double = 0.1, modifiers: CureModifiers = CureModifiers.empty) =
+    Cure(progress = progress, baseSpeed = baseSpeed, modifiers = modifiers)
 
-  it should "have a default baseSpeed of 0.1" in {
-    val cure = Cure()
-    cure.baseSpeed shouldEqual 0.1
-  }
-
-  it should "allow setting a custom progress" in {
-    val cure = Cure(progress = 0.5)
-    cure.progress shouldEqual 0.5
-  }
-
-  it should "allow setting a custom baseSpeed" in {
-    val cure = Cure(baseSpeed = 0.2)
-    cure.baseSpeed shouldEqual 0.2
-  }
-
-  it should "have empty modifiers by default" in {
-    val cure = Cure()
-    cure.modifiers shouldEqual CureModifiers.empty
-  }
-
-  it should "allow adding a modifier" in {
-    val modifier = new CureModifier {}
-    val cure     = Cure().copy(modifiers = CureModifiers.empty.add(modifier))
-    cure.modifiers.factors should contain(modifier)
-  }
-
-  it should "allow adding multiple modifiers" in {
-    case class TestModifier(name: String)  extends CureModifier
-    case class AnotherModifier(value: Int) extends CureModifier
-    val modifier1 = TestModifier("Test")
-    val modifier2 = AnotherModifier(42)
-    val modifier3 = TestModifier("AnotherTest")
-    val cure      = Cure().copy(modifiers =
-      CureModifiers.empty.add(modifier1).add(modifier2).add(modifier3)
+  "A Cure" should "have correct default and custom values" in {
+    val cases = Table(
+      ("cure", "expectedProgress", "expectedBaseSpeed", "expectedModifiers"),
+      (defaultCure(), 0.0, 0.1, CureModifiers.empty),
+      (defaultCure(progress = 0.5), 0.5, 0.1, CureModifiers.empty),
+      (defaultCure(baseSpeed = 0.2), 0.0, 0.2, CureModifiers.empty),
+      (defaultCure(modifiers = CureModifiers.empty.add(CureModifier.Additive(0.1))), 0.0, 0.1, CureModifiers.empty.add(CureModifier.Additive(0.1)))
     )
-    cure.modifiers
-      .remove(_ == modifier1)
-      .factors should contain theSameElementsAs List(modifier3, modifier2)
+    forAll(cases) { (cure, expectedProgress, expectedBaseSpeed, expectedModifiers) =>
+      cure.progress shouldEqual expectedProgress
+      cure.baseSpeed shouldEqual expectedBaseSpeed
+      cure.modifiers shouldEqual expectedModifiers
+    }
   }
-}
+
+  it should "allow adding and removing modifiers" in {
+    val modifier1 = CureModifier.Multiplier(2.0)
+    val modifier2 = CureModifier.Additive(0.5)
+    val modifier3 = CureModifier.MinThreshold(0.3)
+    val mods = CureModifiers.empty.add(modifier1).add(modifier2).add(modifier3)
+    val cure = defaultCure(modifiers = mods)
+    cure.modifiers.factors should contain allElementsOf List(modifier1, modifier2, modifier3)
+    cure.modifiers.remove(_ == modifier1).factors should contain theSameElementsAs List(modifier3, modifier2)
+  }
+
+  it should "calculate effective speed with modifiers" in {
+    val cases = Table(
+      ("modifiers", "expectedSpeed"),
+      (CureModifiers.empty.add(CureModifier.Multiplier(2.0)), 0.2),
+      (CureModifiers.empty.add(CureModifier.Multiplier(2.0)).add(CureModifier.Additive(0.1)), 0.3)
+    )
+    forAll(cases) { (modifiers, expectedSpeed) =>
+      val cure = defaultCure(baseSpeed = 0.1, modifiers = modifiers)
+      cure.effectiveSpeed shouldBe (expectedSpeed +- 1e-9)
+    }
+  }
