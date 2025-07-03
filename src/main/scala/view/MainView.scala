@@ -27,7 +27,7 @@ object ControlPane:
       controller.show(PlagueView())
 
     private val worldButton = StdButton("World"):
-      controller.show(MapView())
+      controller.show(new WorldView(WorldFactory.mockWorld()))
 
     private val progressBar = new ProgressBar:
       progress = 0.35
