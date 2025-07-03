@@ -12,13 +12,22 @@ import scalafx.scene.input.MouseEvent
 import model.World.*
 import scala.math.*
 
+object NodeId:
+  opaque type NodeId = String
+  def apply(s: String): NodeId = s
+  extension (id: NodeId)
+    def value: String = id
+
+import NodeId.*
+
 class WorldView(world: World) extends Pane:
 
   private val layoutRadius = 200.0
   private val layoutCenterX = 400.0
   private val layoutCenterY = 250.0
 
-  private val nodeIds = world.nodes.keys.toSeq.sorted
+  private val nodeIds: Seq[NodeId] = world.nodes.keys.toSeq.sorted.map(NodeId(_))
+
   private val angleStep = 2 * Pi / nodeIds.size
 
   extension (d: Double)
@@ -31,42 +40,50 @@ class WorldView(world: World) extends Pane:
     case EdgeType.Air  => ((8, 8), Color.Red)
 
   private case class NodeView(
-                               id: String,
+                               id: NodeId,
                                circle: Circle,
-                               labels: (Text, Text, Text)
+                               labelId: Text,
+                               labelPop: Text,
+                               labelInf: Text
                              ):
     def position: (Double, Double) =
       (circle.centerX.value, circle.centerY.value)
 
-  private def initialLayout: Seq[(String, (Double, Double))] =
-    nodeIds.zipWithIndex.map { (id, i) =>
-      val angle = i * angleStep
-      val x = layoutCenterX + layoutRadius * cos(angle)
-      val y = layoutCenterY + layoutRadius * sin(angle)
-      id -> (x, y)
+    def visuals: Seq[javafx.scene.Node] =
+      Seq(
+        circle.delegate,
+        labelId.delegate,
+        labelPop.delegate,
+        labelInf.delegate
+      )
+
+  private def initialLayout: Seq[(NodeId, (Double, Double))] =
+    nodeIds.zipWithIndex.map {
+      case (id, i) =>
+        val angle = i * angleStep
+        val x = layoutCenterX + layoutRadius * cos(angle)
+        val y = layoutCenterY + layoutRadius * sin(angle)
+        id -> (x, y)
     }
 
   private val nodeViews: Seq[NodeView] =
     initialLayout.map { case (id, (x, y)) => createNodeView(id, x, y) }
 
   private def addNodeViews(): Unit =
-    val nodesAndLabels = nodeViews.flatMap { nv =>
-      Seq(nv.circle.delegate) ++ nv.labels.productIterator.map(_.asInstanceOf[Text].delegate)
-    }
-    children ++= nodesAndLabels
+    children ++= nodeViews.flatMap(_.visuals)
 
   private def addEdges(): Unit =
-    Platform.runLater { redrawEdges() }
+    Platform.runLater(redrawEdges())
 
   addNodeViews()
   addEdges()
 
-  private def createNodeView(id: String, x: Double, y: Double): NodeView =
-    val nodeData = world.nodes(id)
+  private def createNodeView(id: NodeId, x: Double, y: Double): NodeView =
+    val nodeData = world.nodes(id.value)
     val circle = buildCircle(x, y)
-    val labels = buildLabels(id, nodeData, x, y)
-    makeDraggable(circle, labels)
-    NodeView(id, circle, labels)
+    val (labelId, labelPop, labelInf) = buildLabels(id, nodeData, x, y)
+    makeDraggable(circle, id, (labelId, labelPop, labelInf))
+    NodeView(id, circle, labelId, labelPop, labelInf)
 
   private def buildCircle(x: Double, y: Double): Circle =
     new Circle:
@@ -76,8 +93,13 @@ class WorldView(world: World) extends Pane:
       fill = Color.LightGray
       stroke = Color.Black
 
-  private def buildLabels(id: String, node: Node, x: Double, y: Double): (Text, Text, Text) =
-    val labelId = new Text(s"Node: $id")
+  private def buildLabels(
+                           id: NodeId,
+                           node: Node,
+                           x: Double,
+                           y: Double
+                         ): (Text, Text, Text) =
+    val labelId = new Text(s"Node: ${id.value}")
     val labelPop = new Text(s"Pop: ${node.population}")
     val labelInf = new Text(s"Infected: ${node.infected}")
     updateLabelPositions(x, y, labelId, labelPop, labelInf)
@@ -85,8 +107,16 @@ class WorldView(world: World) extends Pane:
 
   private def createEdgeLine(edge: Edge): Line =
     val ((dx, dy), color) = edgeStyle(edge.typology)
-    val (x1, y1) = nodeViews.find(_.id == edge.nodeA).get.position
-    val (x2, y2) = nodeViews.find(_.id == edge.nodeB).get.position
+
+    val nodeA = nodeViews.find(_.id.value == edge.nodeA)
+      .getOrElse(sys.error(s"Node '${edge.nodeA}' not found"))
+
+    val nodeB = nodeViews.find(_.id.value == edge.nodeB)
+      .getOrElse(sys.error(s"Node '${edge.nodeB}' not found"))
+
+    val (x1, y1) = nodeA.position
+    val (x2, y2) = nodeB.position
+
     new Line:
       startX = x1 + dx
       startY = y1 + dy
@@ -99,10 +129,9 @@ class WorldView(world: World) extends Pane:
     world.edges.toSeq.map(createEdgeLine)
 
   private def redrawEdges(): Unit =
-    val oldEdges = children.collect {
+    children --= children.collect {
       case n if n.isInstanceOf[javafx.scene.shape.Line] => n
     }
-    children --= oldEdges
     children.prependAll(currentEdges.map(_.delegate))
 
   private def updateLabelPositions(
@@ -121,10 +150,17 @@ class WorldView(world: World) extends Pane:
 
   private def makeDraggable(
                              circle: Circle,
+                             id: NodeId,
                              labels: (Text, Text, Text)
                            ): Unit =
-    var dragOffsetX = 0.0
-    var dragOffsetY = 0.0
+    def onDrag(startX: Double, startY: Double): MouseEvent => Unit =
+      e =>
+        val clampedX = (e.sceneX - startX).clamp(20, 780)
+        val clampedY = (e.sceneY - startY).clamp(20, 580)
+        circle.centerX = clampedX
+        circle.centerY = clampedY
+        updateLabelPositions(clampedX, clampedY, labels._1, labels._2, labels._3)
+        redrawEdges()
 
     circle.onMouseEntered = (_: MouseEvent) =>
       circle.cursor = Cursor.Hand
@@ -133,15 +169,6 @@ class WorldView(world: World) extends Pane:
       circle.cursor = Cursor.Default
 
     circle.onMousePressed = (e: MouseEvent) =>
-      dragOffsetX = e.sceneX - circle.centerX.value
-      dragOffsetY = e.sceneY - circle.centerY.value
-
-    circle.onMouseDragged = (e: MouseEvent) =>
-      val clampedX = (e.sceneX - dragOffsetX).clamp(20, 780)
-      val clampedY = (e.sceneY - dragOffsetY).clamp(20, 580)
-
-      circle.centerX = clampedX
-      circle.centerY = clampedY
-
-      updateLabelPositions(clampedX, clampedY, labels._1, labels._2, labels._3)
-      redrawEdges()
+      val startX = e.sceneX - circle.centerX.value
+      val startY = e.sceneY - circle.centerY.value
+      circle.onMouseDragged = onDrag(startX, startY)
