@@ -51,19 +51,8 @@ object World:
    * - No two nodes are connected by multiple edges of the same typology.
    */
   private def validateEdges(nodes: Map[String, Node], edges: Set[Edge]): Unit =
-    require(
-      edges.forall(e => nodes.contains(e.nodeA) && nodes.contains(e.nodeB)),
-      "Edges must connect existing nodes"
-    )
-
-    // Group by node pairs, ignoring ordering (nodes are already normalized in Edge)
-    val grouped = edges.groupBy(e => (e.nodeA, e.nodeB))
-    require(
-      grouped.forall { case (_, es) =>
-        es.map(_.typology).size == es.size
-      },
-      "Two nodes cannot be connected by multiple edges of the same typology"
-    )
+    edgesMustConnectExistingNodes(nodes, edges)
+    twoNodesCannotBeConnectedByMultipleEdgesOfSameTypology(edges)
 
   /**
    * Validates that:
@@ -72,14 +61,49 @@ object World:
    * - Percentages sum to 1.0 (with tolerance).
    */
   private def validateMovements(movements: Map[MovementStrategy, Double]): Unit =
+    AtLeastOneMovementStrategyExists(movements)
+    movementPercentagesMustBeNonNegative(movements)
+    movementPercentagesMustSumToOne(movements)
+
+  private def twoNodesCannotBeConnectedByMultipleEdgesOfSameTypology(
+    edges: Set[Edge]
+  ): Unit = {
+    // Group edges by node pairs and typology
+    val grouped = edges.groupBy(e => (e.nodeA, e.nodeB, e.typology))
+    require(
+      grouped.forall { case (_, es) => es.size == 1 },
+      "Two nodes cannot be connected by multiple edges of the same typology"
+    )
+  }
+
+  private def edgesMustConnectExistingNodes(nodes: Map[String, Node], edges: Set[Edge]): Unit =
+    require(
+      edges.forall(e => nodes.contains(e.nodeA) && nodes.contains(e.nodeB)),
+      "Edges must connect existing nodes"
+    )
+
+
+
+
+  private def AtLeastOneMovementStrategyExists(
+    movements: Map[MovementStrategy, Double]
+  ): Unit =
     require(
       movements.nonEmpty,
       "At least one movement strategy must be defined"
     )
+
+  private def movementPercentagesMustBeNonNegative(
+    movements: Map[MovementStrategy, Double]
+  ): Unit =
     require(
       movements.values.forall(_ >= 0.0),
       "Movement percentages must be non-negative"
     )
+
+  private def movementPercentagesMustSumToOne(
+    movements: Map[MovementStrategy, Double]
+  ): Unit =
     val total = movements.values.sum
     require(
       total >= 0.999 && total <= 1.001,
