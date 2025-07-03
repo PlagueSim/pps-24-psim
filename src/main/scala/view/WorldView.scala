@@ -1,7 +1,6 @@
 package view
 
 import scalafx.Includes.*
-import scalafx.Includes.eventClosureWrapperWithParam
 import scalafx.scene.Cursor
 import scalafx.scene.layout.Pane
 import scalafx.scene.shape.{Circle, Line}
@@ -21,21 +20,35 @@ class WorldView(world: World) extends Pane:
   private val nodeIds = world.nodes.keys.toSeq.sorted
   private val angleStep = 2 * Pi / nodeIds.size
 
-  private val nodePositions: mutable.Map[String, (Double, Double)] =
-    mutable.Map.from(
-      nodeIds.zipWithIndex.map { (id, i) =>
-        val angle = i * angleStep
-        val x = layoutCenterX + layoutRadius * cos(angle)
-        val y = layoutCenterY + layoutRadius * sin(angle)
-        id -> (x, y)
-      }
-    )
+  private val nodePositions = computeCircularPositions(
+    nodeIds,
+    layoutRadius,
+    layoutCenterX,
+    layoutCenterY
+  )
 
   private val edgeLines = mutable.Buffer.empty[Line]
 
   extension (d: Double)
     private def clamp(min: Double, max: Double): Double =
       d.max(min).min(max)
+
+  private def computeCircularPositions(
+                                        ids: Seq[String],
+                                        radius: Double,
+                                        centerX: Double,
+                                        centerY: Double
+                                      ): mutable.Map[String, (Double, Double)] =
+    val angleStep = 2 * Pi / ids.size
+
+    mutable.Map.from(
+      ids.zipWithIndex.map { (id, i) =>
+        val angle = i * angleStep
+        val x = centerX + radius * cos(angle)
+        val y = centerY + radius * sin(angle)
+        id -> (x, y)
+      }
+    )
 
   private def edgeStyle(edgeType: EdgeType): ((Int, Int), Color) = edgeType match
     case EdgeType.Land => ((-8, -8), Color.Green)
