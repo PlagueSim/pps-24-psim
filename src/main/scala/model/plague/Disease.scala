@@ -43,11 +43,12 @@ case class Disease private(
   def lethality: Double = traits.toList.map(_.lethality).sum
 
   /**
+   * Checks whether the disease has already evolved a trait with the given name.
    *
-   * @param name
-   * @return
+   * @param t The trait to check for duplicate.
+   * @return `true` if the trait is present among the evolved traits, `false` otherwise.
    */
-  private def hasTrait(name: String): Boolean = traits.exists(_.name == name)
+  private def hasTrait(t: Trait): Boolean = traits.exists(_.name == t.name)
 
   /**
    * Determines whether the given trait can be evolved based on its prerequisites.
@@ -70,11 +71,12 @@ case class Disease private(
    * @return
    */
   def evolve(traitToAdd: Trait): Either[String, Disease] =
-    if hasTrait(traitToAdd.name) then Left(s"${traitToAdd.name} already evolved.")
-    else if !canEvolve(traitToAdd) then
-      val missing = traitToAdd.prerequisites.mkString(", ")
-      Left(s"${traitToAdd.name} is locked. Missing any of: $missing")
+    if hasTrait(traitToAdd) then Left(s"${traitToAdd.name} already evolved.")
+
+    else if !canEvolve(traitToAdd) then Left(s"${traitToAdd.name} is locked.")
+
     else if dnaPoints < traitToAdd.cost then Left(s"Not enough DNA points to evolve ${traitToAdd.name}")
+
     else Right(copy(
         traits = traits + traitToAdd,
         dnaPoints = dnaPoints - traitToAdd.cost
