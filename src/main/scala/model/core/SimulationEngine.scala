@@ -3,6 +3,8 @@ package model.core
 import cats.data.State
 import cats.syntax.all.*
 import model.events.{AdvanceDayEvent, Event}
+import model.time.BasicYear
+import model.time.TimeTypes.*
 
 /** Provides the core simulation logic based on the State monad.
   */
@@ -46,13 +48,13 @@ object SimulationEngine:
     val listOfEvents =
       List(AdvanceDayEvent(), AdvanceDayEvent(), AdvanceDayEvent())
 
-    val initialState = SimulationState(0)
-    val endSim       = simulationLoop().runS(initialState).value.currentDay
+    val initialState = SimulationState(BasicYear(Day(0), Year(2023)))
+    val endSim       = simulationLoop().runS(initialState).value.time.day.value
     println(s"Simulation ended on day: $endSim")
 
   private def simulationLoop(): Simulation[Unit] = for
-    day <- executeEvent(AdvanceDayEvent())
-    _   <- if day < 6 then simulationLoop() else State.pure(())
+    time <- executeEvent(AdvanceDayEvent())
+    _    <- if time.day.value < 6 then simulationLoop() else State.pure(())
   yield ()
 
 //oggetto intenzione che è un mapper da intenzione dell'entita ad un evento.
