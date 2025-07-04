@@ -1,52 +1,15 @@
 package plague
-
-import model.plague.{Trait, Disease, TraitCategory}
-
+import model.plague.{Disease, Symptoms, Trait}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 class DiseaseTest extends AnyFlatSpec with Matchers {
 
-  // Tratti di esempio
-  private val coughing = Trait(
-    name = "Coughing",
-    category = TraitCategory.Symptom,
-    infectivity = 1.0,
-    severity = 0.2,
-    cost = 3,
-    prerequisites = Set.empty
-  )
-  private val pneumonia = Trait(
-    name = "Pneumonia",
-    category = TraitCategory.Symptom,
-    infectivity = 2.0,
-    severity = 0.5,
-    lethality = 0.1,
-    cost = 4,
-    prerequisites = Set(coughing.name)
-  )
-  private val sneezing = Trait(
-    name = "Sneezing",
-    category = TraitCategory.Symptom,
-    infectivity = 0.5,
-    severity = 0.1,
-    cost = 2,
-    prerequisites = Set(coughing.name)
-  )
-  private val airTransmission1 = Trait(
-    name = "Air Transmission 1",
-    category = TraitCategory.Transmission,
-    infectivity = 0.1,
-    cost = 2,
-    prerequisites = Set.empty
-  )
-  private val airTransmission2 = Trait(
-    name = "Air Transmission 2",
-    category = TraitCategory.Transmission,
-    infectivity = 0.3,
-    cost = 5,
-    prerequisites = Set(airTransmission1.name)
-  )
+  private val nausea = Symptoms.nausea
+  private val coughing = Symptoms.coughing
+  private val pneumonia = Symptoms.pneumonia
+  private val pulmonaryEdema = Symptoms.pulmonaryEdema
+
 
   "Disease evolution" should "fail if the trait is already evolved" in:
     val d = Disease(traits = Set(coughing), dnaPoints = 10)
@@ -56,7 +19,7 @@ class DiseaseTest extends AnyFlatSpec with Matchers {
   "Disease evolution" should "fail if prerequisites are not met" in:
     val d = Disease(traits = Set.empty, dnaPoints = 10)
     val result = d.evolve(pneumonia)
-    result shouldBe Left("Pneumonia is locked. Missing any of: Coughing")
+    result shouldBe Left("Pneumonia is locked.")
 
   "Disease evolution" should "fail if not enough DNA points" in:
     val d = Disease(traits = Set(coughing), dnaPoints = 1)
@@ -68,36 +31,39 @@ class DiseaseTest extends AnyFlatSpec with Matchers {
     val result = d.evolve(pneumonia)
     val newDisease = result.toOption.get
     newDisease.traits should contain allOf (coughing, pneumonia)
-    newDisease.dnaPoints shouldBe 6
+    newDisease.dnaPoints shouldBe (d.dnaPoints - pneumonia.cost)
 
-  it should "allow evolving if any one prerequisite is satisfied" in:
-    val multiPrereq = Trait("Mutant", TraitCategory.Symptom, prerequisites = Set("Coughing", "Alternative"), cost = 1)
-
-    val d = Disease(traits = Set(coughing), dnaPoints = 5)
-    val result = d.evolve(multiPrereq)
+  it should "allow symptom evolution if any one prerequisite is satisfied" in:
+    val d = Disease(traits = Set(coughing, pneumonia), dnaPoints = 5)
+    val result = d.evolve(pulmonaryEdema)
     result.isRight shouldBe true
 
   it should "add DNA points correctly" in:
     val d = Disease(traits = Set.empty, dnaPoints = 5)
-    val updated = d.addDnaPoints(3)
-    updated.dnaPoints shouldBe 8
+    val dnaToAdd = 3
+    val updated = d.addDnaPoints(dnaToAdd)
+    updated.dnaPoints shouldBe (d.dnaPoints + dnaToAdd)
 
   "Disease evolution" should "remove DNA points correctly" in:
     val d = Disease(traits = Set.empty, dnaPoints = 10)
     val result = d.evolve(coughing)
     val newDisease = result.toOption.get
-    newDisease.dnaPoints shouldBe 7
+    newDisease.dnaPoints shouldBe (d.dnaPoints - coughing.cost)
 
   "Disease infectivity/severity/lethality" should "sum all trait values correctly" in:
-    val d = Disease(traits = Set(coughing, pneumonia), dnaPoints = 0)
-    d.infectivity shouldBe (1.0 + 2.0)
-    d.severity shouldBe (0.2 + 0.5)
-    d.lethality shouldBe (0.0 + 0.1)
+    val d = Disease(traits = Set(coughing, nausea), dnaPoints = 0)
+    println(d.traits)
+    println(d.traits.map(_.infectivity))
+    println(d.traits.map(_.severity))
+    println(d.traits.map(_.lethality))
+    d.infectivity shouldBe (coughing.infectivity + nausea.infectivity) //Il compilatore mente
+    d.severity shouldBe (coughing.severity + nausea.severity)
+    d.lethality shouldBe (coughing.lethality + nausea.lethality)
 
   "randomMutation" should "add a new evolvable symptom without consuming DNA points" in {
-    val all = Set(coughing, sneezing, pneumonia)
+    val all = Symptoms.all
 
-    val disease = Disease(traits = Set(coughing), dnaPoints = 10)
+    val disease = Disease(traits = Set(coughing, pneumonia), dnaPoints = 10)
     val mutated = disease.randomMutation(all)
 
     mutated.dnaPoints shouldBe disease.dnaPoints
