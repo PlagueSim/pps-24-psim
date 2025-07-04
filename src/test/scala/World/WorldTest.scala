@@ -7,11 +7,11 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 class WorldTest extends AnyFlatSpec with Matchers:
-  
+
   "World" should "validate that edges connect existing nodes" in {
     val node = Node.withPopulation(10).build()
     val nodes = Map("A" -> node)
-    val edges = Set(Edge("A", "B"))
+    val edges = Set(Edge("A", "B", EdgeType.Land))
     val movements: Map[MovementStrategy, Double] = Map(
       Static -> 1.0
     )
@@ -33,7 +33,7 @@ class WorldTest extends AnyFlatSpec with Matchers:
 
     val invalidMovements: Map[MovementStrategy, Double] = Map(
       Static -> 0.6,
-      RandomNeighbor -> 0.3 // sums to 0.9
+      RandomNeighbor -> 0.3
     )
     an[IllegalArgumentException] shouldBe thrownBy {
       World(nodes, edges, invalidMovements)
@@ -57,8 +57,7 @@ class WorldTest extends AnyFlatSpec with Matchers:
       "B" -> nodeB
     )
     val edges = Set(
-      Edge("A", "B"),
-      Edge("B", "A")
+      Edge("A", "B", EdgeType.Land)
     )
     val movements: Map[MovementStrategy, Double] =Map(
       Static -> 0.7,
@@ -72,6 +71,27 @@ class WorldTest extends AnyFlatSpec with Matchers:
     world.movements shouldBe movements
   }
 
+  it should "not allow multiple edges of the same typology between the same nodes" in {
+    val nodeA = Node.withPopulation(10).build()
+    val nodeB = Node.withPopulation(5).build()
+
+    val nodes = Map(
+      "A" -> nodeA,
+      "B" -> nodeB
+    )
+    val edges = Set(
+      Edge("A", "B", EdgeType.Air, weight = 1.0),
+      Edge("A", "B", EdgeType.Air, weight = 2.0)
+    )
+    val movements : Map[MovementStrategy, Double] = Map(
+      Static -> 1.0
+    )
+
+    an[IllegalArgumentException] shouldBe thrownBy {
+      World(nodes, edges, movements)
+    }
+  }
+
   it should "allow neighbors to be retrieved correctly" in {
     val nodeA = Node.withPopulation(10).build()
     val nodeB = Node.withPopulation(5).build()
@@ -83,8 +103,8 @@ class WorldTest extends AnyFlatSpec with Matchers:
       "C" -> nodeC
     )
     val edges = Set(
-      Edge("A", "B"),
-      Edge("B", "C")
+      Edge("A", "B", EdgeType.Land),
+      Edge("B", "C", EdgeType.Sea)
     )
     val movements: Map[MovementStrategy, Double] = Map(
       Static -> 1.0
@@ -95,32 +115,6 @@ class WorldTest extends AnyFlatSpec with Matchers:
     world.neighbors("A") should contain theSameElementsAs Set("B")
     world.neighbors("B") should contain theSameElementsAs Set("A", "C")
     world.neighbors("C") should contain theSameElementsAs Set("B")
-  }
-
-  it should "return the neighbors of a given node" in {
-    val nodeA = Node.withPopulation(1).build()
-    val nodeB = Node.withPopulation(2).build()
-    val nodeC = Node.withPopulation(3).build()
-
-    val nodes = Map(
-      "A" -> nodeA,
-      "B" -> nodeB,
-      "C" -> nodeC
-    )
-    val edges = Set(
-      Edge("A", "B"),
-      Edge("A", "C"),
-      Edge("B", "C")
-    )
-    val movements: Map[MovementStrategy, Double] = Map(
-      Static -> 1.0
-    )
-
-    val world = World(nodes, edges, movements)
-
-    world.neighbors("A") should contain theSameElementsAs Set("B", "C")
-    world.neighbors("B") should contain theSameElementsAs Set("A", "C")
-    world.neighbors("C") should contain theSameElementsAs Set("A", "B")
   }
 
   it should "check if two nodes are connected" in {
@@ -134,8 +128,8 @@ class WorldTest extends AnyFlatSpec with Matchers:
       "C" -> nodeC
     )
     val edges = Set(
-      Edge("A", "B"),
-      Edge("B", "C")
+      Edge("A", "B", EdgeType.Land),
+      Edge("B", "C", EdgeType.Air)
     )
     val movements: Map[MovementStrategy, Double] =Map(
       Static -> 1.0

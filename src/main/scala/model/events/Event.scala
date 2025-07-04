@@ -3,6 +3,7 @@ package model.events
 import cats.data.State
 import model.core.SimulationEngine.Simulation
 import model.core.SimulationState
+import model.time.Time
 import monocle.Lens
 
 /** Represents a stateful event in the simulation.
@@ -16,31 +17,32 @@ trait Event[A]:
     */
   def execute(): Simulation[A]
 
-//case class AdvanceDayEvent() extends Event[Int]:
-//  override def execute(): Simulation[Int] =
+//case class AdvanceDayEvent() extends Event[Time]:
+//  override def execute(): Simulation[Time] =
 //    State { s =>
-//      val updatedState = s.copy(currentDay = s.currentDay + 1)
-//      updatedState -> updatedState.currentDay
+//      val updatedState = s.copy(time = s.time + 1)
+//      updatedState -> updatedState.time
 //    }
 
 trait ModifyFieldEvent[T] extends Event[T]:
-  val fieldLens: Lens[SimulationState, T]
+  val valueToBeChanged: Lens[SimulationState, T]
 
   def modifyFunction(currentValue: T): T
 
   final override def execute(): Simulation[T] =
     for
       s <- State.get[SimulationState]
-      currentFieldValue = fieldLens.get(s)
+      currentFieldValue = valueToBeChanged.get(s)
       newFieldValue     = modifyFunction(currentFieldValue)
-      _ <- State.set(fieldLens.replace(newFieldValue)(s))
+      _ <- State.set(valueToBeChanged.replace(newFieldValue)(s))
     yield newFieldValue
 
 /** Event that advances the simulation by one day.
   *
   * Increments the current day in the simulation state and returns the updated
-  * day as an [[Int]].
+  * day as a [[Time]].
   */
-case class AdvanceDayEvent() extends ModifyFieldEvent[Int]:
-  override val fieldLens: Lens[SimulationState, Int] = SimulationState.currentDayLens
-  override def modifyFunction(currentDay: Int): Int = currentDay + 1
+case class AdvanceDayEvent() extends ModifyFieldEvent[Time]:
+  override val valueToBeChanged: Lens[SimulationState, Time] =
+    SimulationState.currentTimeLens
+  override def modifyFunction(currentDay: Time): Time = currentDay + 1
