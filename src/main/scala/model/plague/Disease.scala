@@ -1,5 +1,7 @@
 package model.plague
 
+import model.plague.TraitCategory.*
+
 import scala.util.Random
 /**
  * TODO
@@ -39,12 +41,19 @@ case class Disease private(
   private def hasTrait(name: String): Boolean = traits.exists(_.name == name)
 
   /**
+   * Determines whether the given trait can be evolved based on its prerequisites.
    *
-   * @param t
-   * @return
+   * Evolution rules differ by trait category:
+   * - For `Symptom` traits: evolution is allowed if the trait has no prerequisites,
+   * or if at least one of its prerequisites has already been evolved.
+   * - For all other categories (e.g., `Transmission`, `Ability`): all prerequisites must be met.
+   *
+   * @param t The trait to check for evolvability.
+   * @return `true` if the trait can be evolved under current conditions, `false` otherwise.
    */
-  private def canEvolve(t: Trait): Boolean =
-    t.prerequisites.exists(hasTrait) || t.prerequisites.isEmpty
+  private def canEvolve(t: Trait): Boolean = t.category match
+    case Symptom => t.prerequisites.exists(hasTrait) || t.prerequisites.isEmpty
+    case _ => t.prerequisites.forall(hasTrait)
 
   /**
    *
