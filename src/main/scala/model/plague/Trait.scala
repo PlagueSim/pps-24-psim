@@ -20,11 +20,11 @@ enum TraitCategory:
 case class Trait private(
                   name: String,
                   category: TraitCategory,
-                  infectivity: Double = 0.0,
-                  severity: Double = 0.0,
-                  lethality: Double = 0.0,
-                  cost: Int = 0,
-                  prerequisites: Set[String] = Set.empty
+                  infectivity: Double,
+                  severity: Double,
+                  lethality: Double,
+                  cost: Int,
+                  prerequisites: Set[Trait]
                 )
 
 /**
@@ -38,5 +38,5 @@ object Trait:
              severity: Double = 0.0,
              lethality: Double = 0.0,
              cost: Int = 0,
-             prerequisites: Set[String] = Set.empty
+             prerequisites: Set[Trait] = Set.empty
            ): Trait = new Trait(name, category, infectivity, severity, lethality, cost, prerequisites)
