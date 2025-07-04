@@ -16,22 +16,31 @@ case class Disease private(
                     dnaPoints: Int
                   ):
   /**
+   * Calculates the total infectivity of the disease.
    *
-   * @return
+   * Infectivity is the sum of the infectivity values of all currently evolved traits.
+   *
+   * @return A `Double` representing the disease's current infectivity.
    */
-  def infectivity: Double = traits.map(_.infectivity).sum
+  def infectivity: Double = traits.toList.map(_.infectivity).sum
 
   /**
+   * Calculates the total severity of the disease.
    *
-   * @return
+   * Severity is the sum of the severity values of all currently evolved traits.
+   *
+   * @return A `Double` representing the disease's current severity.
    */
-  def severity: Double = traits.map(_.severity).sum
+  def severity: Double = traits.toList.map(_.severity).sum
 
   /**
+   * Calculates the total lethality of the disease.
    *
-   * @return
+   * Lethality is the sum of the lethality values of all currently evolved traits.
+   *
+   * @return A `Double` representing the disease's current lethality.
    */
-  def lethality: Double = traits.map(_.lethality).sum
+  def lethality: Double = traits.toList.map(_.lethality).sum
 
   /**
    *
