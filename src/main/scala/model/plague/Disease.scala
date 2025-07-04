@@ -48,7 +48,7 @@ case class Disease private(
    * @param t The trait to check for duplicate.
    * @return `true` if the trait is present among the evolved traits, `false` otherwise.
    */
-  private def hasTrait(t: Trait): Boolean = traits.exists(_.name == t.name)
+  private def hasTrait(name: String): Boolean = traits.exists(_.name == name)
 
   /**
    * Determines whether the given trait can be evolved based on its prerequisites.
@@ -71,7 +71,7 @@ case class Disease private(
    * @return
    */
   def evolve(traitToAdd: Trait): Either[String, Disease] =
-    if hasTrait(traitToAdd) then Left(s"${traitToAdd.name} already evolved.")
+    if hasTrait(traitToAdd.name) then Left(s"${traitToAdd.name} already evolved.")
 
     else if !canEvolve(traitToAdd) then Left(s"${traitToAdd.name} is locked.")
 
