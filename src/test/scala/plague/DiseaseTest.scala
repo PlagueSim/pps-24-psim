@@ -3,7 +3,7 @@ import model.plague.{Disease, Symptoms, Trait}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class DiseaseTest extends AnyFlatSpec with Matchers {
+class DiseaseTest extends AnyFlatSpec with Matchers:
 
   private val nausea = Symptoms.nausea
   private val coughing = Symptoms.coughing
@@ -56,24 +56,16 @@ class DiseaseTest extends AnyFlatSpec with Matchers {
     d.severity shouldBe (coughing.severity + nausea.severity)
     d.lethality shouldBe (coughing.lethality + nausea.lethality)
 
-  "randomMutation" should "add a new evolvable symptom without consuming DNA points" in {
+  "randomMutation" should "add a new evolvable symptom without consuming DNA points" in:
     val all = Symptoms.allBasics
-
     val disease = Disease(traits = Set(coughing, pneumonia), dnaPoints = 10)
     val mutated = disease.randomMutation(all)
-
     mutated.dnaPoints shouldBe disease.dnaPoints
     mutated.traits should contain(coughing)
-  }
 
-  it should "not mutate if no symptoms are available or evolvable" in {
+  it should "not mutate if no symptoms are available or evolvable" in:
     val all = Set(pneumonia)
-
     val disease = Disease(traits = Set.empty, dnaPoints = 10)
     val mutated = disease.randomMutation(all)
-
     mutated shouldBe disease
-  }
 
-
-}

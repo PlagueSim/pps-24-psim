@@ -16,71 +16,101 @@ case class Disease private(
                     dnaPoints: Int
                   ):
   /**
-   * Calculates the total infectivity of the disease.
+   * Calculates the total infectivity of the [[Disease]].
    *
-   * Infectivity is the sum of the infectivity values of all currently evolved traits.
+   * Infectivity is the sum of the infectivity values of all currently evolved [[Trait]].
    *
-   * @return A `Double` representing the disease's current infectivity.
+   * @return A [[Double]] representing the [[Disease]] current infectivity.
    */
   def infectivity: Double = traits.toList.map(_.infectivity).sum
 
   /**
-   * Calculates the total severity of the disease.
+   * Calculates the total severity of the [[Disease]].
    *
-   * Severity is the sum of the severity values of all currently evolved traits.
+   * Severity is the sum of the severity values of all currently evolved [[Trait]].
    *
-   * @return A `Double` representing the disease's current severity.
+   * @return A [[Double]] representing the [[Disease]] current severity.
    */
   def severity: Double = traits.toList.map(_.severity).sum
 
   /**
-   * Calculates the total lethality of the disease.
+   * Calculates the total lethality of the [[Disease]].
    *
-   * Lethality is the sum of the lethality values of all currently evolved traits.
+   * Lethality is the sum of the lethality values of all currently evolved [[Trait]].
    *
-   * @return A `Double` representing the disease's current lethality.
+   * @return A [[Double]] representing the [[Disease]] current lethality.
    */
   def lethality: Double = traits.toList.map(_.lethality).sum
 
   /**
-   * Checks whether the disease has already evolved a trait with the given name.
+   * Checks whether the [[Disease]] has already evolved a [[Trait]] with the given name.
    *
-   * @param t The trait to check for duplicate.
-   * @return `true` if the trait is present among the evolved traits, `false` otherwise.
+   * @param name The name of the [[Trait]] to check for duplicate.
+   * @return [[true]] if the [[name]] is present among the evolved traits, [[false]] otherwise.
    */
   private def hasTrait(name: String): Boolean = traits.exists(_.name == name)
 
   /**
-   * Determines whether the given trait can be evolved based on its prerequisites.
+   * Determines whether the given [[Trait]] can be evolved based on its prerequisites.
    *
-   * Evolution rules differ by trait category:
-   * - For `Symptom` traits: evolution is allowed if the trait has no prerequisites,
-   * or if at least one of its prerequisites has already been evolved.
-   * - For all other categories (e.g., `Transmission`, `Ability`): all prerequisites must be met.
+   * Evolution rules differ by [[TraitCategory]]:
+   *  - For [[Symptom]] traits: evolution is allowed if at least one of its prerequisites has already been evolved.
+   *  - For [[Transmission]] and [[Ability]] all prerequisites must be met.
    *
-   * @param t The trait to check for evolvability.
-   * @return `true` if the trait can be evolved under current conditions, `false` otherwise.
+   * @param t The [[Trait]] to check if evolution is possible.
+   * @return [[true]] if the [[Trait]] can be evolved, [[false]] otherwise.
    */
   private def canEvolve(t: Trait): Boolean = t.category match
     case Symptom => t.prerequisites.exists(hasTrait) || t.prerequisites.isEmpty
     case _ => t.prerequisites.forall(hasTrait)
 
   /**
+   * Determines whether the given [[Trait]] can be involved.   *
    *
-   * @param traitToAdd
-   * @return
+   * @param t The [[Trait]] to check if involution is possible
+   * @return [[true]] if the [[Trait]] can be involved, [[false]] otherwise
    */
+  private def canInvolve(t: Trait): Boolean = ???
+
+  /**
+   * Attempts to evolve a new [[Trait]] for the [[Disease]].
+   *
+   * The evolution succeeds only if:
+   *  - the [[Trait]] has not already been evolved,
+   *  - the [[Trait]] is unlocked (its prerequisites are satisfied),
+   *  - there are enough DNA points to pay the evolution cost.
+   *
+   * @param traitToAdd the [[Trait]] to evolve
+   * @return [[Either]]:
+   *         - [[Right]]: a new evolved [[Disease]]   *
+   *         - [[Left]]: an error message
+   */
+
   def evolve(traitToAdd: Trait): Either[String, Disease] =
-    if hasTrait(traitToAdd.name) then Left(s"${traitToAdd.name} already evolved.")
+    Either.cond(!hasTrait(traitToAdd.name), (), s"${traitToAdd.name} already evolved.")
+      .flatMap(_ => Either.cond(canEvolve(traitToAdd), (), s"${traitToAdd.name} is locked."))
+      .flatMap(_ => Either.cond(dnaPoints >= traitToAdd.cost, (), s"Not enough DNA points to evolve ${traitToAdd.name}"))
+      .map(_ => copy(traits = traits + traitToAdd, dnaPoints = dnaPoints - traitToAdd.cost))
 
-    else if !canEvolve(traitToAdd) then Left(s"${traitToAdd.name} is locked.")
 
-    else if dnaPoints < traitToAdd.cost then Left(s"Not enough DNA points to evolve ${traitToAdd.name}")
-
-    else Right(copy(
-        traits = traits + traitToAdd,
-        dnaPoints = dnaPoints - traitToAdd.cost
-      ))
+  /**
+   * Attempts to remove a previously evolved [[Trait]] from the disease.
+   *
+   * A [[Trait]] can be removed only if:
+   *  - it exists in the [[Disease]]
+   *  - the removal should not leave any other [[Trait]] isolated
+   *
+   * Two DNA points are refunded when the [[Trait]] is removed.
+   *
+   * @param traitToRemove the [[Trait]] to remove
+   * @return [[Either]]:
+   *         - [[Right]]: a new [[Disease]] with the trait removed
+   *         - [[Left]]: an error message
+   */
+  def involve(traitToRemove: Trait): Either[String, Disease] =
+    Either.cond(hasTrait(traitToRemove.name), (), s"${traitToRemove.name} is not currently evolved.")
+      .flatMap(_ => Either.cond(canInvolve(traitToRemove), (), s"${traitToRemove.name} cannot be removed because other traits depend on it."))
+      .map(_ => copy(traits = traits.filterNot(_.name == traitToRemove.name), dnaPoints = dnaPoints + 2))
 
   /**
    *
