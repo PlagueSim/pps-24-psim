@@ -25,7 +25,14 @@ case class Trait private(
                   lethality: Double,
                   cost: Int,
                   prerequisites: Set[String]
-                )
+                ):
+
+  /**
+   * Tests whether the [[Trait]] is a root of a [[TraitTree]]
+   * 
+   * @return [[true]] if the [[Trait]] has no prerequisites, [[false]] otherwise
+   */
+  def isRoot(): Boolean = prerequisites.isEmpty
 
 /**
  * TODO
