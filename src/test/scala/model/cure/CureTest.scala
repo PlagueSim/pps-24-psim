@@ -27,3 +27,16 @@ class CureTest extends AnyFlatSpec with Matchers:
   it should "have correct custom baseSpeed value" in:
     val cure = defaultCure(baseSpeed = 0.2)
     cure.baseSpeed shouldEqual 0.2
+
+  it should "have empty modifiers by default" in:
+    val cure = defaultCure()
+    cure.modifiers shouldEqual CureModifiers.empty
+
+  it should "be able to add modifiers" in:
+    val cure = defaultCure().copy(modifiers = CureModifiers.empty.add(additiveMod))
+    cure.modifiers.factors should contain(additiveMod)
+
+  it should "be able to remove modifiers" in:
+    val cure = defaultCure().copy(modifiers = CureModifiers.empty.add(additiveMod).add(multiplierMod))
+    val updatedCure = cure.copy(modifiers = cure.modifiers.remove(_.isInstanceOf[CureModifier.Additive]))
+    updatedCure.modifiers.factors should contain theSameElementsAs List(multiplierMod)
