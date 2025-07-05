@@ -62,7 +62,6 @@ class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
         circle.centerY = newY
         updateLabelPositions(newX, newY, labelId, labelPop, labelInf)
 
-        // Call redrawEdges to update edges live
         onMoved()
 
     circle.onMouseEntered = (_: MouseEvent) =>

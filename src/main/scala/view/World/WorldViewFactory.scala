@@ -2,6 +2,7 @@ package view
 
 import scalafx.scene.paint.Color
 import model.World.*
+import controller.WorldController
 
 object WorldViewFactory:
 
@@ -12,10 +13,11 @@ object WorldViewFactory:
       centerY = 250
     )
 
-    // Create placeholder
-    var view: WorldView2 = null
+    val controller = new WorldController(world)
 
-    val nodeFactory = new DefaultNodeViewFactory(() => view.redrawEdges())
+    var viewRef: WorldView2 = null
+
+    val nodeFactory = new DefaultNodeViewFactory(() => viewRef.redrawEdges())
 
     val edgeFactory = new DefaultEdgeViewFactory(
       edgeStyle = Map(
@@ -25,11 +27,13 @@ object WorldViewFactory:
       )
     )
 
-    view = new WorldView2(
-      world = world,
+    val view = new WorldView2(
+      world = controller,
       layout = layout,
       nodeFactory = nodeFactory,
       edgeFactory = edgeFactory
     )
+
+    viewRef = view
 
     view
