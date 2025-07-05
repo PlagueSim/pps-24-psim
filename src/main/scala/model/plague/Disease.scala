@@ -131,18 +131,17 @@ case class Disease private(
       .map(_ => copy(traits = traits.filterNot(_.name == traitToRemove.name), dnaPoints = dnaPoints + 2))
 
   /**
+   * Attempts a random mutation by evolving a random [[Trait]] from the set of available traits.
+   * Only traits that are not yet evolved and can currently be evolved are considered.
    *
-   * @param allTraits
-   * @return
+   * @param allTraits the full set of possible traits in the game
+   * @return a new [[Disease]] with the randomly evolved [[Trait]] if possible, otherwise this instance
    */
   def randomMutation(allTraits: Set[Trait]): Disease =
-    val unevolved = allTraits.diff(traits)
-    val evolvable = unevolved.filter(t => canEvolve(t))
+    allTraits.diff(traits).filter(canEvolve).toList match
+      case Nil => this
+      case evolvable => copy(traits = traits + Random.shuffle(evolvable).head)
 
-    if evolvable.isEmpty then this
-    else
-      val chosen = Random.shuffle(evolvable.toList).head
-      copy(traits = traits + chosen)
 
   /**
    *
