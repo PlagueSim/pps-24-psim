@@ -3,12 +3,17 @@ package model.plague
 import model.plague.TraitCategory.*
 
 import scala.util.Random
+
 /**
- * TODO
- * @param name
- * @param diseaseType
- * @param traits
- * @param dnaPoints
+ * Represents a simulated disease.
+ *
+ * A [[Disease]] evolves by acquiring new [[Trait]]s that increase its infectivity,
+ * severity, and lethality. Traits can be [[Symptom]], [[Transmission]], or [[Ability]].
+ * DNA points are the currency used to evolve traits.
+ *
+ * @param name the name of the disease
+ * @param traits the set of currently evolved traits
+ * @param dnaPoints the amount of DNA points available for evolving traits
  */
 case class Disease private(
                     name: String,
@@ -142,19 +147,26 @@ case class Disease private(
       case Nil => this
       case evolvable => copy(traits = traits + Random.shuffle(evolvable).head)
 
-
   /**
+   * Returns a new [[Disease]] instance with the given number of DNA points added.
+   * DNA points are used to evolve traits.
    *
-   * @param points
-   * @return
+   * @param points the number of DNA points to add
+   * @return a new [[Disease]] with updated DNA points
    */
   def addDnaPoints(points: Int): Disease =
     copy(dnaPoints = dnaPoints + points)
 
-/**
- * TODO
- */
+
 object Disease:
+  /**
+   * Creates a new instance of [[Disease]] with optional default values.
+   *
+   * @param name      the name of the disease (default is "pax-12")
+   * @param traits    the set of initially evolved traits (default is empty)
+   * @param dnaPoints the number of starting DNA points (must be provided)
+   * @return a new [[Disease]] instance
+   */
   def apply(
              name: String = "pax-12",
              traits: Set[Trait] = Set.empty,
