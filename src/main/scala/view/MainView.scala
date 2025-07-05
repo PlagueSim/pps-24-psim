@@ -13,7 +13,7 @@ object MainScene:
 
 class MainView extends BorderPane:
   private val controller = ViewController(this)
-  private val mapPane = new WorldView(WorldFactory.mockWorld())
+  private val mapPane = WorldViewFactory.create(WorldFactory.mockWorld())
   private val plgPane = PlagueView()
   private val controlPane = ControlPane(controller)
 
@@ -27,7 +27,7 @@ object ControlPane:
       controller.show(PlagueView())
 
     private val worldButton = StdButton("World"):
-      controller.show(new WorldView(WorldFactory.mockWorld()))
+      controller.show(WorldViewFactory.create(WorldFactory.mockWorld()))
 
     private val progressBar = new ProgressBar:
       progress = 0.35

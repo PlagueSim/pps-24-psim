@@ -10,6 +10,7 @@ object WorldFactory:
       }.toMap
 
     val edges = Set(
+      Edge("A", "C", EdgeType.Land),
       Edge("A", "B", EdgeType.Land),
       Edge("B", "C", EdgeType.Sea),
       Edge("C", "D", EdgeType.Air),
