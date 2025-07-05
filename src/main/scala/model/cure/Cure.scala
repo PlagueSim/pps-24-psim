@@ -15,8 +15,8 @@ final case class Cure(
     modifiers: CureModifiers = CureModifiers.empty
 ):
   def effectiveSpeed: Double =
-    modifiers.factors.foldRight(baseSpeed) ((modifier, speed) => modifier(speed))
-    
+    modifiers.factors.foldRight(baseSpeed)((modifier, speed) => modifier(speed))
+
   def advance(): Cure =
     val newProgress = (progress + effectiveSpeed).min(1.0)
     this.copy(progress = newProgress)

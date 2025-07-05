@@ -19,5 +19,3 @@ class CureModifierTest extends AnyFlatSpec with Matchers:
   it should "allow base speed above the minimum" in:
     val modifier = CureModifier.MinThreshold(0.7)
     modifier(0.8) shouldEqual 0.8
-
-
