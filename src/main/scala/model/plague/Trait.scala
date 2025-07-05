@@ -32,7 +32,7 @@ case class Trait private(
    * 
    * @return [[true]] if the [[Trait]] has no prerequisites, [[false]] otherwise
    */
-  def isRoot(): Boolean = prerequisites.isEmpty
+  def isRoot: Boolean = prerequisites.isEmpty
 
 /**
  * TODO
