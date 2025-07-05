@@ -65,12 +65,30 @@ case class Disease private(
     case _ => t.prerequisites.forall(hasTrait)
 
   /**
-   * Determines whether the given [[Trait]] can be involved.   *
+   * Determines whether the given [[Trait]] can be involved
+   * without leaving any other trait isolated.
    *
    * @param t The [[Trait]] to check if involution is possible
    * @return [[true]] if the [[Trait]] can be involved, [[false]] otherwise
    */
-  private def canInvolve(t: Trait): Boolean = ???
+  private def canInvolve(t: Trait): Boolean =
+    val remaining = traits - t
+    val traitMap = remaining.iterator.map(tr => tr.name -> tr).toMap
+    val roots = remaining.filter(_.isRoot)
+
+    @annotation.tailrec
+    def loop(queue: List[String], visited: Set[String]): Set[String] = queue match
+      case Nil => visited
+      case name :: rest if visited(name) => loop(rest, visited)
+      case name :: rest =>
+        val children = traitMap.valuesIterator
+          .filter(_.prerequisites.contains(name))
+          .map(_.name)
+          .toList
+        loop(rest ++ children, visited + name)
+
+    loop(roots.map(_.name).toList, Set.empty).size == remaining.size
+
 
   /**
    * Attempts to evolve a new [[Trait]] for the [[Disease]].
