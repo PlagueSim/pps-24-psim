@@ -3,7 +3,7 @@ package view
 import controller.WorldController
 import scalafx.scene.layout.Pane
 
-class WorldView2(
+class WorldView(
                   world: WorldController,
                   layout: GraphLayout,
                   nodeFactory: NodeViewFactory,

@@ -6,7 +6,7 @@ import controller.WorldController
 
 object WorldViewFactory:
 
-  def create(world: World): WorldView2 =
+  def create(world: World): WorldView =
     val layout = new CircularLayout(
       radius = 200,
       centerX = 400,
@@ -15,7 +15,7 @@ object WorldViewFactory:
 
     val controller = new WorldController(world)
 
-    var viewRef: WorldView2 = null
+    var viewRef: WorldView = null
 
     val nodeFactory = new DefaultNodeViewFactory(() => viewRef.redrawEdges())
 
@@ -27,7 +27,7 @@ object WorldViewFactory:
       )
     )
 
-    val view = new WorldView2(
+    val view = new WorldView(
       world = controller,
       layout = layout,
       nodeFactory = nodeFactory,
