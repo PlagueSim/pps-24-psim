@@ -25,8 +25,8 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Override JAVA_HOME
-        run: echo "JAVA_HOME=${{ steps.setup-java.outputs.path }}" >> $GITHUB_ENV
+      - name: Set JAVA_HOME from JAVA_HOME_21_X64
+        run: echo "JAVA_HOME=$JAVA_HOME_21_X64" >> $GITHUB_ENV
 
       - name: Confirm Java version
         run: java -version
