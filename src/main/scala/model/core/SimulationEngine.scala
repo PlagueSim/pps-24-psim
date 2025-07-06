@@ -15,6 +15,10 @@ object SimulationEngine:
     */
   type Simulation[A] = State[SimulationState, A]
 
+  val initialState: SimulationState = SimulationState(
+    BasicYear(Day(0), Year(2023))
+  )
+
   /** Executes a single event and returns the resulting simulation computation.
     *
     * @param event
@@ -48,14 +52,19 @@ object SimulationEngine:
     val listOfEvents =
       List(AdvanceDayEvent(), AdvanceDayEvent(), AdvanceDayEvent())
 
-    val initialState = SimulationState(BasicYear(Day(0), Year(2023)))
-    val endSim       = simulationLoop().runS(initialState).value.time.day.value
+    val endSim = simulationLoop().runS(initialState).value.time.day.value
     println(s"Simulation ended on day: $endSim")
 
   private def simulationLoop(): Simulation[Unit] = for
     time <- executeEvent(AdvanceDayEvent())
     _    <- if time.day.value < 6 then simulationLoop() else State.pure(())
   yield ()
+
+  def runStandardSimulation1(state: SimulationState): SimulationState =
+    val tick =
+      for _ <- executeEvent(AdvanceDayEvent())
+      yield ()
+    tick.runS(state).value
 
 //oggetto intenzione che è un mapper da intenzione dell'entita ad un evento.
 //evento chiama la generazione delle intenzioni
