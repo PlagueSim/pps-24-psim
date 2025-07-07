@@ -1,8 +1,7 @@
 package controller
-
 import scalafx.scene.Node
-import view.PlagueView
+import scalafx.scene.layout.BorderPane
 
-class PlagueViewController(val view: PlagueView):
+class ViewController(val view: BorderPane):
   def show(showable: Node): Unit = view.center = showable
 

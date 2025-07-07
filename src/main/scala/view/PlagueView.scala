@@ -1,23 +1,23 @@
 package view
 
+import controller.ViewController
 import scalafx.geometry.Insets
 import scalafx.scene.layout.{BorderPane, HBox, Priority, VBox}
 import scalafx.scene.text.Text
-import controller.PlagueViewController
 
 class PlagueView extends BorderPane:
-  private val controller = new PlagueViewController(this)
+  private val controller = ViewController(this)
 
-  val plagueInfos = new Text("EH")
+  val plagueInfos = Text("EH")
   HBox.setHgrow(plagueInfos, Priority.Always)
 
 
 
-  private val trsBtn = StdBtn("Transmission"):
+  private val trsBtn = StdButton("Transmission"):
     controller.show(TransmissionView())
-  private val smptsBtn = StdBtn("Symptoms"):
+  private val smptsBtn = StdButton("Symptoms"):
     controller.show(SymptomsView())
-  private val ablBtn = StdBtn("Abilities"):
+  private val ablBtn = StdButton("Abilities"):
     controller.show(AbilityView())
   private val leftSide = new VBox:
     children = Seq(trsBtn, smptsBtn, ablBtn)
