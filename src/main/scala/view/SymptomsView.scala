@@ -1,18 +1,14 @@
 package view
 
+import scalafx.scene.layout.BorderPane
 import scalafx.geometry.Insets
-import scalafx.geometry.Pos.Center
-import scalafx.scene.layout.{HBox, Priority, Region}
-import scalafx.scene.text.Text
+import model.plague.Symptoms
+import view.plague.TraitList
 
-class SymptomsView extends HBox:
-  val symptoms = new Text("EH, SYMPTOMS")
+class SymptomsView extends BorderPane:
 
-  //    new Region {
-  //    style = "-fx-background-color: #2a2a2a; -fx-border-color: white;"
-  //  }
-  HBox.setHgrow(symptoms, Priority.Always)
+  private val symptomList = TraitList(Symptoms.allBasics, node => this.right = node)
 
-  alignment = Center
+  center = symptomList
   padding = Insets(10)
-  children = symptoms
+

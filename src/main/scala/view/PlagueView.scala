@@ -2,6 +2,7 @@ package view
 
 import controller.ViewController
 import scalafx.geometry.Insets
+import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, HBox, Priority, VBox}
 import scalafx.scene.text.Text
 
@@ -19,9 +20,10 @@ class PlagueView extends BorderPane:
     controller.show(SymptomsView())
   private val ablBtn = StdButton("Abilities"):
     controller.show(AbilityView())
-  private val leftSide = new VBox:
+  private val topBar = new HBox:
     children = Seq(trsBtn, smptsBtn, ablBtn)
+
 
   padding = Insets(10)
   center = plagueInfos
-  left = leftSide
+  top = topBar

@@ -298,7 +298,7 @@ object Symptoms:
   /**
    * @return A set with all symptoms
    */
-  def allBasics: Set[Trait] = Set(
+  def allBasics: List[Trait] = List(
     nausea, coughing, rash, insomnia, cysts, anaemia,
     vomiting, pneumonia, sneezing, sweating, paranoia, hyperSensitivity, abscesses, hemophilia,
     pulmonaryEdema, fever, inflammation, tumors,
