@@ -48,7 +48,7 @@ object SimulationEngine:
   /** Runs a standard simulation scenario for demonstration. It executes several
     * AdvanceDay events and prints the final simulation day.
     */
-  def runStandardSimulation(): Unit =
+  def runSim(): Unit =
     val listOfEvents =
       List(AdvanceDayEvent(), AdvanceDayEvent(), AdvanceDayEvent())
 
@@ -60,7 +60,7 @@ object SimulationEngine:
     _    <- if time.day.value < 6 then simulationLoop() else State.pure(())
   yield ()
 
-  def runStandardSimulation1(state: SimulationState): SimulationState =
+  def runStandardSimulation(state: SimulationState): SimulationState =
     val tick =
       for _ <- executeEvent(AdvanceDayEvent())
       yield ()
