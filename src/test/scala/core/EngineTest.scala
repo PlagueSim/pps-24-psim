@@ -49,11 +49,11 @@ class EngineTest extends AnyFlatSpec with Matchers:
     nextState.run(simState).value._2.day.value shouldEqual 2
 
   "The simulation engine" should "be able to run a standard simulation" in:
-    SimulationEngine.runStandardSimulation()
+    SimulationEngine.runSim()
 
   it should "print the correct end day" in:
     val stream = new java.io.ByteArrayOutputStream()
     Console.withOut(stream) {
-      SimulationEngine.runStandardSimulation()
+      SimulationEngine.runSim()
     }
     stream.toString should include("Simulation ended on day: 6")
