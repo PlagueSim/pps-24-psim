@@ -2,7 +2,9 @@ package model.core
 
 import cats.data.State
 import cats.syntax.all.*
+import model.cure.Cure
 import model.events.{AdvanceDayEvent, Event}
+import model.plague.Disease
 import model.time.BasicYear
 import model.time.TimeTypes.*
 
@@ -14,10 +16,6 @@ object SimulationEngine:
     * transforms a SimulationState and returns a value of type A.
     */
   type Simulation[A] = State[SimulationState, A]
-
-  val initialState: SimulationState = SimulationState(
-    BasicYear(Day(0), Year(2023))
-  )
 
   /** Executes a single event and returns the resulting simulation computation.
     *
@@ -51,7 +49,12 @@ object SimulationEngine:
   def runSim(): Unit =
     val listOfEvents =
       List(AdvanceDayEvent(), AdvanceDayEvent(), AdvanceDayEvent())
-
+    
+    val initialState = SimulationState(
+      BasicYear(Day(0), Year(2023)),
+      Disease("a", Set.empty, 0),
+      Cure()
+    )
     val endSim = simulationLoop().runS(initialState).value.time.day.value
     println(s"Simulation ended on day: $endSim")
 
