@@ -1,10 +1,14 @@
 import controller.SimulationBinderImpl
-import model.core.SimulationEngine
+import model.core.{SimulationEngine, SimulationState}
 import model.scheduler.*
 import scalafx.application.{JFXApp3, Platform}
 import scalafx.scene.Scene
 import scalafx.stage.Screen
 import cats.effect.unsafe.implicits.global
+import model.cure.Cure
+import model.plague.Disease
+import model.time.BasicYear
+import model.time.TimeTypes.{Day, Year}
 import view.MainView
 
 object App extends JFXApp3:
@@ -14,7 +18,11 @@ object App extends JFXApp3:
 
     val mainView = MainView()
 
-    val initialState = SimulationEngine.initialState
+    val initialState: SimulationState = SimulationState(
+    BasicYear(Day(0), Year(2023)),
+    Disease("a", Set.empty, 0),
+    Cure()
+  )
 
     given execContext: scala.concurrent.ExecutionContext =
       scala.concurrent.ExecutionContext.global

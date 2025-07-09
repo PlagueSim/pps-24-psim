@@ -1,6 +1,7 @@
-import cats.effect.unsafe.implicits.global
 import controller.SimulationBinderImpl
 import model.core.{SimulationEngine, SimulationState}
+import model.cure.Cure
+import model.plague.Disease
 import model.scheduler.CustomScheduler
 import model.time.BasicYear
 import model.time.TimeTypes.*
@@ -21,7 +22,9 @@ class ControllerTest extends AnyFlatSpec with Matchers:
 
   val terminalView                  = TerminalView()
   val initialState: SimulationState = SimulationState(
-    BasicYear(Day(1), Year(2025))
+    BasicYear(Day(0), Year(2023)),
+    Disease("a", Set.empty, 0),
+    Cure()
   )
 
   "A controller" should "bind the simulation engine to a generic view" in:
@@ -50,7 +53,4 @@ class ControllerTest extends AnyFlatSpec with Matchers:
       terminalView
     ) withInitialState initialState runUntil (s =>
       s.time.day.value < 20
-    ) scheduleWith CustomScheduler(100) run (runnable =>
-      runnable.run(), false
-    )
-
+    ) scheduleWith CustomScheduler(100) run (runnable => runnable.run(), false)
