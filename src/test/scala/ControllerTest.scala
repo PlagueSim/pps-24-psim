@@ -8,6 +8,7 @@ import model.time.TimeTypes.*
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import view.updatables.UpdatableView
+import model.World.World
 
 import scala.concurrent.ExecutionContext
 
@@ -24,7 +25,8 @@ class ControllerTest extends AnyFlatSpec with Matchers:
   val initialState: SimulationState = SimulationState(
     BasicYear(Day(0), Year(2023)),
     Disease("a", Set.empty, 0),
-    Cure()
+    Cure(),
+    World(Map.empty, Set.empty, Map.empty)
   )
 
   "A controller" should "bind the simulation engine to a generic view" in:
