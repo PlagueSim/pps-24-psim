@@ -8,7 +8,7 @@ import model.time.TimeTypes.*
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import view.updatables.UpdatableView
-import model.World.World
+import model.World.{MovementStrategy, Static, World}
 
 import scala.concurrent.ExecutionContext
 
@@ -21,12 +21,15 @@ class ControllerTest extends AnyFlatSpec with Matchers:
           s"of ${state.time.year.value}"
       )
 
-  val terminalView                  = TerminalView()
+  val terminalView                             = TerminalView()
+  val movements: Map[MovementStrategy, Double] = Map(
+    Static -> 1.0
+  )
   val initialState: SimulationState = SimulationState(
     BasicYear(Day(0), Year(2023)),
     Disease("a", Set.empty, 0),
     Cure(),
-    World(Map.empty, Set.empty, Map.empty)
+    World(Map.empty, Set.empty, movements)
   )
 
   "A controller" should "bind the simulation engine to a generic view" in:
