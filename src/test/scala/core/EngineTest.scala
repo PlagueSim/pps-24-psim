@@ -2,7 +2,7 @@ package core
 
 import model.core.{SimulationEngine, SimulationState}
 import model.cure.Cure
-import model.World.World
+import model.World.{MovementStrategy, Static, World}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import model.events.*
@@ -15,7 +15,10 @@ class EngineTest extends AnyFlatSpec with Matchers:
 
   val cure: Cure = Cure()
   val disease: Disease = Disease("TestDisease", Set.empty, 1)
-  val world: World = World(Map.empty, Set.empty, Map.empty)
+  val movements: Map[MovementStrategy, Double] = Map(
+    Static -> 1.0
+  )
+  val world: World = World(Map.empty, Set.empty, movements)
   
   "The simulationState" should "contains all the vital component of the simulation, such as the World, the Virus," +
     "the Days" in {
