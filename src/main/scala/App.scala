@@ -1,14 +1,14 @@
 import controller.SimulationBinderImpl
+import model.World.{MovementStrategy, Static, World}
 import model.core.{SimulationEngine, SimulationState}
+import model.cure.Cure
+import model.plague.Disease
 import model.scheduler.*
+import model.time.BasicYear
+import model.time.TimeTypes.{Day, Year}
 import scalafx.application.{JFXApp3, Platform}
 import scalafx.scene.Scene
 import scalafx.stage.Screen
-import cats.effect.unsafe.implicits.global
-import model.cure.Cure
-import model.plague.Disease
-import model.time.BasicYear
-import model.time.TimeTypes.{Day, Year}
 import view.MainView
 
 object App extends JFXApp3:
@@ -18,11 +18,16 @@ object App extends JFXApp3:
 
     val mainView = MainView()
 
+    val movements: Map[MovementStrategy, Double] = Map(
+      Static -> 1.0
+    )
+
     val initialState: SimulationState = SimulationState(
-    BasicYear(Day(0), Year(2023)),
-    Disease("a", Set.empty, 0),
-    Cure()
-  )
+      BasicYear(Day(0), Year(2023)),
+      Disease("a", Set.empty, 0),
+      Cure(),
+      World(Map.empty, Set.empty, movements)
+    )
 
     given execContext: scala.concurrent.ExecutionContext =
       scala.concurrent.ExecutionContext.global
@@ -33,7 +38,6 @@ object App extends JFXApp3:
     ) withInitialState initialState runUntil (s =>
       s.time.day.value < 20
     ) scheduleWith CustomScheduler(500) run (Platform.runLater, true)
-
 
     stage = new JFXApp3.PrimaryStage:
       title = "Plague Sim"
