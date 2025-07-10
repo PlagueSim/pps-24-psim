@@ -32,7 +32,7 @@ object App extends JFXApp3:
       mainView
     ) withInitialState initialState runUntil (s =>
       s.time.day.value < 20
-    ) scheduleWith CustomScheduler(500) run (Platform.runLater, false)
+    ) scheduleWith CustomScheduler(500) run (Platform.runLater, true)
 
 
     stage = new JFXApp3.PrimaryStage:
