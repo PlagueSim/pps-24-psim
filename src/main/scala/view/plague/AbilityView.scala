@@ -1,4 +1,4 @@
-package view
+package view.plague
 
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.Center

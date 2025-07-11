@@ -9,6 +9,7 @@ import scalafx.scene.control.Label
 import scalafx.scene.layout.BorderPane
 import view.cure.CureProgressBar
 import view.updatables.UpdatableView
+import view.plague.PlagueView
 
 object MainScene:
   def apply(): Scene = new Scene:
