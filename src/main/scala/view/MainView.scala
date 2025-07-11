@@ -5,9 +5,8 @@ import model.World.WorldFactory
 import model.core.SimulationState
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
-import scalafx.scene.control.{Label, ProgressBar}
+import scalafx.scene.control.Label
 import scalafx.scene.layout.BorderPane
-import scalafx.scene.layout.BorderPane.sfxBorderPane2jfx
 import view.cure.CureProgressBar
 import view.updatables.UpdatableView
 
