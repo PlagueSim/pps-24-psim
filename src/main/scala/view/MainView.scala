@@ -5,9 +5,9 @@ import model.World.WorldFactory
 import model.core.SimulationState
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
-import scalafx.scene.control.{Label, ProgressBar}
+import scalafx.scene.control.Label
 import scalafx.scene.layout.BorderPane
-import view.plague.PlagueView
+import view.cure.CureProgressBar
 import view.updatables.UpdatableView
 
 object MainScene:
@@ -20,12 +20,17 @@ class MainView extends BorderPane with UpdatableView:
   private val plgPane = PlagueView()
   private val controlPane = ControlPane(controller)
   private val datePane = DatePane()
+  private val progressBar = CureProgressBar()
+
+  controlPane.center = progressBar
 
   center = mapPane
   bottom = controlPane
   top = datePane
   
-  override def update(newState: SimulationState): Unit = datePane.update(newState)
+  override def update(newState: SimulationState): Unit =
+    datePane.update(newState)
+    progressBar.update(newState)
 end MainView
 
 class DatePane extends BorderPane with UpdatableView:
@@ -44,13 +49,7 @@ object ControlPane:
     private val worldButton = StdButton("World"):
       controller.show(WorldViewFactory.create(WorldFactory.mockWorld()))
 
-    private val progressBar = new ProgressBar:
-      progress = 0.35
-      prefWidth = 200
-      prefHeight = 25
-
     left = plagueButton
-    center = progressBar
     right = worldButton
     padding = Insets(10)
 end ControlPane
