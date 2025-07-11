@@ -1,10 +1,11 @@
-package view
+package view.plague
 
 import controller.ViewController
 import scalafx.geometry.Insets
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, HBox, Priority, VBox}
 import scalafx.scene.text.Text
+import view.StdButton
 
 class PlagueView extends BorderPane:
   private val controller = ViewController(this)

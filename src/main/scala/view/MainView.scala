@@ -7,6 +7,7 @@ import scalafx.geometry.Insets
 import scalafx.scene.Scene
 import scalafx.scene.control.{Label, ProgressBar}
 import scalafx.scene.layout.BorderPane
+import view.plague.PlagueView
 import view.updatables.UpdatableView
 
 object MainScene:
