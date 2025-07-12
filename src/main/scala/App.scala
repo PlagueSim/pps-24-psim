@@ -1,12 +1,12 @@
-import controller.SimulationBinderImpl
-import model.world.{MovementStrategy, Static, World, WorldFactory}
+import controller.{GuiFXMode, SimulationBinderImpl}
 import model.core.{SimulationEngine, SimulationState}
 import model.cure.Cure
 import model.plague.Disease
 import model.scheduler.*
 import model.time.BasicYear
 import model.time.TimeTypes.{Day, Year}
-import scalafx.application.{JFXApp3, Platform}
+import model.world.{MovementStrategy, Static, WorldFactory}
+import scalafx.application.JFXApp3
 import scalafx.scene.Scene
 import scalafx.stage.Screen
 import view.MainView
@@ -29,15 +29,12 @@ object App extends JFXApp3:
       WorldFactory.mockWorld()
     )
 
-    given execContext: scala.concurrent.ExecutionContext =
-      scala.concurrent.ExecutionContext.global
-
     SimulationBinderImpl bind (
       SimulationEngine,
       mainView
     ) withInitialState initialState runUntil (s =>
-      s.time.day.value < 200
-    ) scheduleWith CustomScheduler(500) run (Platform.runLater, true)
+      s.time.day.value < 20
+    ) scheduleWith CustomScheduler(500) run GuiFXMode
 
     stage = new JFXApp3.PrimaryStage:
       title = "Plague Sim"

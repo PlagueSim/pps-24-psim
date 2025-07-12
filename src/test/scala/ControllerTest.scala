@@ -1,4 +1,4 @@
-import controller.SimulationBinderImpl
+import controller.{SimulationBinderImpl, TerminalMode}
 import model.core.{SimulationEngine, SimulationState}
 import model.cure.Cure
 import model.plague.Disease
@@ -51,11 +51,21 @@ class ControllerTest extends AnyFlatSpec with Matchers:
     ) withInitialState initialState runUntil (s => s.time.day.value < 5)
 
   it should "schedule the simulation with a scheduler" in:
-    given ExecutionContext = ExecutionContext.global
-
     SimulationBinderImpl bind (
       SimulationEngine,
       terminalView
     ) withInitialState initialState runUntil (s =>
       s.time.day.value < 20
-    ) scheduleWith CustomScheduler(100) run (runnable => runnable.run(), false)
+    ) scheduleWith CustomScheduler(100) run TerminalMode
+
+  it should "print the correct day" in :
+    val stream = new java.io.ByteArrayOutputStream()
+    Console.withOut(stream) {
+      SimulationBinderImpl bind (
+        SimulationEngine,
+        terminalView
+      ) withInitialState initialState runUntil (s =>
+        s.time.day.value < 20
+        ) scheduleWith CustomScheduler(100) run TerminalMode
+    }
+    stream.toString should include("Current Time: 20 of 2023")
