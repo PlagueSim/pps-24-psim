@@ -1,4 +1,4 @@
-package model.World
+package model.world
 
 /**
  * Represents a node in the simulation.

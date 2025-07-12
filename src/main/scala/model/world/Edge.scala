@@ -1,4 +1,4 @@
-package model.World
+package model.world
 
 /**
  * Describes the type of connection between nodes.

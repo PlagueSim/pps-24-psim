@@ -1,14 +1,16 @@
-package view
+package view.world
 
 import controller.WorldController
+import model.core.SimulationState
 import scalafx.scene.layout.Pane
+import view.updatables.UpdatableView
 
 class WorldView(
                   world: WorldController,
                   layout: GraphLayout,
                   nodeFactory: NodeViewFactory,
                   edgeFactory: EdgeViewFactory
-               ) extends Pane:
+               ) extends Pane with UpdatableView:
 
   private val nodeViews: Seq[NodeView] =
     layout.computePositions(world.getNodes.keys.toSeq).toSeq.map { case (id, pos) =>
@@ -38,3 +40,14 @@ class WorldView(
       case node: javafx.scene.Node => node
       case other => throw new IllegalArgumentException(s"Unsupported visual type: $other")
     }
+
+  override def update(newState: SimulationState): Unit =
+    newState.world.nodes.foreach { case (id, node) =>
+    nodeViews.find(_.id == id).foreach { view =>
+      view.labelId.text = s"Node: $id"
+      view.labelPop.text = s"Pop: ${node.population}"
+      view.labelInf.text = s"Infected: ${node.infected}"
+    }
+  }
+
+

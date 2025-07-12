@@ -1,5 +1,5 @@
 import controller.SimulationBinderImpl
-import model.World.{MovementStrategy, Static, World}
+import model.world.{MovementStrategy, Static, World, WorldFactory}
 import model.core.{SimulationEngine, SimulationState}
 import model.cure.Cure
 import model.plague.Disease
@@ -26,7 +26,7 @@ object App extends JFXApp3:
       BasicYear(Day(0), Year(2023)),
       Disease("Pax-12", Set.empty, 1000),
       Cure(),
-      World(Map.empty, Set.empty, movements)
+      WorldFactory.mockWorld()
     )
 
     given execContext: scala.concurrent.ExecutionContext =

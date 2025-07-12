@@ -2,7 +2,7 @@ package core
 
 import model.core.{SimulationEngine, SimulationState}
 import model.cure.Cure
-import model.World.{MovementStrategy, Static, World}
+import model.world.{MovementStrategy, Static, World}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import model.events.*

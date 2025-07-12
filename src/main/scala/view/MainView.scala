@@ -1,7 +1,7 @@
 package view
 
 import controller.ViewController
-import model.World.WorldFactory
+import model.world.WorldFactory
 import model.core.SimulationState
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
@@ -10,6 +10,7 @@ import scalafx.scene.layout.BorderPane
 import view.cure.CureProgressBar
 import view.updatables.UpdatableView
 import view.plague.PlagueView
+import view.world.WorldViewFactory
 
 class MainView extends BorderPane with UpdatableView:
   private val controller = ViewController(this)
@@ -42,6 +43,7 @@ class MainView extends BorderPane with UpdatableView:
     plgPane.update(newState)
     datePane.update(newState)
     progressBar.update(newState)
+    mapPane.update(newState)
 end MainView
 
 class DatePane extends BorderPane with UpdatableView:

@@ -1,4 +1,4 @@
-package view
+package view.world
 
 import scalafx.scene.shape.Circle
 import scalafx.scene.text.Text
@@ -6,7 +6,7 @@ import scalafx.scene.Cursor
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.paint.Color
 import scalafx.Includes.*
-import model.World.*
+import model.world.*
 
 class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
 
@@ -30,7 +30,10 @@ class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
     NodeView(
       id = id,
       visuals = Seq(circle.delegate, labelId.delegate, labelPop.delegate, labelInf.delegate),
-      position = () => (circle.centerX.value, circle.centerY.value)
+      position = () => (circle.centerX.value, circle.centerY.value),
+      labelId = labelId,
+      labelPop = labelPop,
+      labelInf = labelInf
     )
 
   private def updateLabelPositions(

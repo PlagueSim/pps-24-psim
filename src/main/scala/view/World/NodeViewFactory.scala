@@ -1,6 +1,6 @@
-package view
+package view.world
 
-import model.World.*
+import model.world.*
 
 trait NodeViewFactory:
   def createNode(
