@@ -27,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 //    Left(Future(body))
 
 sealed trait ExecutionMode:
-  given ec: ExecutionContext = ExecutionContext.global
+  given ExecutionContext = ExecutionContext.global
   def runLater(r: Runnable): Unit
   def execute[T](body: => T): Future[T] =
     Future(body)
