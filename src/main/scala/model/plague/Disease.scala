@@ -7,7 +7,7 @@ import scala.util.Random
 /**
  * Represents a simulated disease.
  *
- * A [[Disease]] evolves by acquiring new [[Trait]]s that increase its infectivity,
+ * A [[Disease]] evolves by acquiring new [[Trait]] that increase its infectivity,
  * severity, and lethality. Traits can be [[Symptom]], [[Transmission]], or [[Ability]].
  * DNA points are the currency used to evolve traits.
  *
@@ -46,6 +46,15 @@ case class Disease private(
    * @return A [[Double]] representing the [[Disease]] current lethality.
    */
   def lethality: Double = traits.toList.map(_.lethality).sum
+
+  /**
+   * Calculates the mutation chance of the [[Disease]].
+   *
+   * Mutation chance is a value between 0 and 1 depending on evolved [[Trait]].
+   *
+   * @return A [[Double]] representing the [[Disease]] current mutation chance.
+   */
+  def mutationChance: Double = (1 + traits.size) * 0.01
 
   /**
    * Checks whether the [[Disease]] has already evolved a [[Trait]] with the given name.
@@ -139,11 +148,11 @@ case class Disease private(
    * Attempts a random mutation by evolving a random [[Trait]] from the set of available traits.
    * Only traits that are not yet evolved and can currently be evolved are considered.
    *
-   * @param allTraits the full set of possible traits in the game
    * @return a new [[Disease]] with the randomly evolved [[Trait]] if possible, otherwise this instance
    */
-  def randomMutation(allTraits: Set[Trait]): Disease =
-    allTraits.diff(traits).filter(canEvolve).toList match
+  def randomMutation(): Disease =
+    val allTraits = Symptoms.allBasics
+    allTraits.diff(traits.toList).filter(canEvolve) match
       case Nil => this
       case evolvable => copy(traits = traits + Random.shuffle(evolvable).head)
 

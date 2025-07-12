@@ -2,6 +2,8 @@ package model.events
 import model.core.SimulationState
 import model.plague.{Disease, Trait}
 
+import scala.util.Random
+
 object DiseaseEvents:
 
   case class Evolution(traitToEvolve: Trait) extends Event[Disease]:
@@ -20,6 +22,8 @@ object DiseaseEvents:
     override def modifyFunction(state: SimulationState): Disease =
       state.disease.addDnaPoints(pointsToAdd)
 
-  case class Mutation(allSymptoms: Set[Trait]) extends Event[Disease]:
+  case class Mutation() extends Event[Disease]:
     override def modifyFunction(state: SimulationState): Disease =
-      state.disease.randomMutation(allSymptoms)
+      if state.disease.mutationChance >= Random.nextDouble()
+      then state.disease.randomMutation()
+      else state.disease

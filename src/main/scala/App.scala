@@ -24,7 +24,7 @@ object App extends JFXApp3:
 
     val initialState: SimulationState = SimulationState(
       BasicYear(Day(0), Year(2023)),
-      Disease("a", Set.empty, 0),
+      Disease("Pax-12", Set.empty, 1000),
       Cure(),
       World(Map.empty, Set.empty, movements)
     )
@@ -36,7 +36,7 @@ object App extends JFXApp3:
       SimulationEngine,
       mainView
     ) withInitialState initialState runUntil (s =>
-      s.time.day.value < 20
+      s.time.day.value < 200
     ) scheduleWith CustomScheduler(500) run (Platform.runLater, true)
 
     stage = new JFXApp3.PrimaryStage:

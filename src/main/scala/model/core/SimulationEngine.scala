@@ -4,7 +4,8 @@ import cats.data.State
 import cats.syntax.all.*
 import model.World.{MovementStrategy, Static, World}
 import model.cure.Cure
-import model.events.{AdvanceDayEvent, Event}
+import model.events.DiseaseEvents.Mutation
+import model.events.{AdvanceDayEvent, BasicCureEvent, Event}
 import model.plague.Disease
 import model.time.BasicYear
 import model.time.TimeTypes.*
@@ -71,7 +72,9 @@ object SimulationEngine:
 
   def runStandardSimulation(state: SimulationState): SimulationState =
     val tick =
-      for _ <- executeEvent(AdvanceDayEvent())
+      for
+        _ <- executeEvent(AdvanceDayEvent())
+        _ <- executeEvent(Mutation())
       yield ()
     tick.runS(state).value
 
