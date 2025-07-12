@@ -1,8 +1,8 @@
 package events.movementevent
-import model.world.{Edge, EdgeType, MovementStrategy, Node, RandomNeighbor, Static, World}
+import model.world.*
 import model.core.{SimulationEngine, SimulationState}
 import model.events.movementEvent.MovementEvent
-import model.events.{Event, MovementChangeInWorldEvent}
+import model.events.MovementChangeInWorldEvent
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -17,9 +17,7 @@ class MovementEventTest extends AnyFlatSpec with Matchers:
       "B" -> nodeB
     )
 
-    val edges = Set(
-      Edge("A", "B", EdgeType.Land)
-    )
+    val edges = Set(Edge("A", "B", EdgeType.Land))
 
     val movements: Map[MovementStrategy, Double] = Map(
       Static -> 0.5,
