@@ -5,9 +5,9 @@ import org.scalatest.matchers.should.Matchers
 
 class NodeTest extends AnyFlatSpec with Matchers:
 
-  import model.World.Node
+  import model.world.Node
 
-  import model.World.Node.*
+  import model.world.Node.*
 
   "NodeBuilder" should "build a node with only population" in {
     val node = Node.withPopulation(100).build()

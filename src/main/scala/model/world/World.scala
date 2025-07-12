@@ -1,4 +1,4 @@
-package model.World
+package model.world
 
 /**
  * Represents the simulation world, containing nodes, edges, and movement strategies.

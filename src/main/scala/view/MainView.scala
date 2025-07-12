@@ -1,7 +1,7 @@
 package view
 
 import controller.ViewController
-import model.World.WorldFactory
+import model.world.WorldFactory
 import model.core.SimulationState
 import scalafx.geometry.Insets
 import scalafx.scene.Scene

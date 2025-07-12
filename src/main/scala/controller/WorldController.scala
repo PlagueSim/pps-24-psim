@@ -1,6 +1,6 @@
 package controller
 
-import model.World.{Edge, Node, World}
+import model.world.{Edge, Node, World}
 
 class WorldController(initialWorld: World):
   private val world = initialWorld

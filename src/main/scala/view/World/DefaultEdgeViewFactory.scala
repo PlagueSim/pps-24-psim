@@ -2,7 +2,7 @@ package view
 
 import scalafx.scene.shape.Line
 import scalafx.scene.paint.Color
-import model.World.*
+import model.world.*
 
 class DefaultEdgeViewFactory(
                               edgeStyle: Map[EdgeType, ((Int, Int), Color)]

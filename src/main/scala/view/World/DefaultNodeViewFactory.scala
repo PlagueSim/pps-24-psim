@@ -6,7 +6,7 @@ import scalafx.scene.Cursor
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.paint.Color
 import scalafx.Includes.*
-import model.World.*
+import model.world.*
 
 class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
 

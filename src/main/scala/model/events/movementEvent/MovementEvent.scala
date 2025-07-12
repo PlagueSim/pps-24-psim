@@ -1,6 +1,6 @@
 package model.events.movementEvent
 
-import model.World.{MovementStrategy, Node, Static}
+import model.world.{MovementStrategy, Node, Static}
 import model.core.SimulationState
 import model.events.Event
 
@@ -70,7 +70,6 @@ case class MovementEvent() extends Event[Map[String, Node]]:
 
     val unknownDestinations = arrivals.keySet.diff(nodes.keySet)
 
-    
     validateAllDestinationsExist(unknownDestinations)
 
     val updatedExistingNodes: Map[String, Node] = updateAllNodePopulations(

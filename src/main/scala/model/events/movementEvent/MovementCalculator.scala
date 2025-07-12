@@ -1,6 +1,6 @@
 package model.events.movementEvent
 
-import model.World.{MovementStrategy, Node}
+import model.world.{MovementStrategy, Node}
 
 object MovementCalculator:
   def movementsPerStrategy(node: Node, movements: Map[MovementStrategy, Double]): Map[MovementStrategy, Int] =

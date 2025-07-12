@@ -8,7 +8,7 @@ import model.time.TimeTypes.*
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import view.updatables.UpdatableView
-import model.World.{MovementStrategy, Static, World}
+import model.world.{MovementStrategy, Static, World}
 
 import scala.concurrent.ExecutionContext
 

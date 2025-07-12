@@ -1,4 +1,4 @@
-package model.World
+package model.world
 
 /**
  * Represents how a node moves within the world.

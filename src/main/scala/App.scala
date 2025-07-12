@@ -1,5 +1,5 @@
 import controller.SimulationBinderImpl
-import model.World.{MovementStrategy, Static, World}
+import model.world.{MovementStrategy, Static, World}
 import model.core.{SimulationEngine, SimulationState}
 import model.cure.Cure
 import model.plague.Disease

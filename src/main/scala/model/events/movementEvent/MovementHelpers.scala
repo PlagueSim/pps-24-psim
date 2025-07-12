@@ -1,11 +1,11 @@
 package model.events.movementEvent
 
-import model.World.{MovementStrategy, Node, RandomNeighbor, Static}
+import model.world.{MovementStrategy, Node, RandomNeighbor, Static}
 
 object MovementHelpers:
 
   private def computeDestination(
-                                  strategy: model.World.MovementStrategy,
+                                  strategy: model.world.MovementStrategy,
                                   nodeId: String,
                                   numPeople: Int,
                                   neighbors: String => Set[String],

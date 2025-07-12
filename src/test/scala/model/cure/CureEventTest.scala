@@ -6,9 +6,9 @@ import model.events.BasicCureEvent
 import model.core.SimulationState
 import model.cure.Cure
 import model.plague.Disease
-import model.World.{MovementStrategy, Static, World}
+import model.world.{MovementStrategy, Static, World}
 import model.time.TimeTypes.{Day, Year}
-import model.time.{BasicYear, TimeTypes, *}
+import model.time.*
 
 class CureEventTest extends AnyFlatSpec with Matchers:
   def basicSimulationState = SimulationState(
