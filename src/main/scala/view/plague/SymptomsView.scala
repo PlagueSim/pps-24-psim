@@ -17,4 +17,3 @@ class SymptomsView extends BorderPane:
 
   center = symptomList
   padding = Insets(10)
-
