@@ -1,11 +1,11 @@
 import controller.{GuiFXMode, SimulationBinderImpl}
-import model.world.{MovementStrategy, Static, World}
 import model.core.{SimulationEngine, SimulationState}
 import model.cure.Cure
 import model.plague.Disease
 import model.scheduler.*
 import model.time.BasicYear
 import model.time.TimeTypes.{Day, Year}
+import model.world.{MovementStrategy, Static, WorldFactory}
 import scalafx.application.JFXApp3
 import scalafx.scene.Scene
 import scalafx.stage.Screen
@@ -26,7 +26,7 @@ object App extends JFXApp3:
       BasicYear(Day(0), Year(2023)),
       Disease("Pax-12", Set.empty, 1000),
       Cure(),
-      World(Map.empty, Set.empty, movements)
+      WorldFactory.mockWorld()
     )
 
     SimulationBinderImpl bind (
