@@ -1,7 +1,7 @@
 package view
 
 import scalafx.scene.paint.Color
-import model.World.*
+import model.world.*
 import controller.WorldController
 
 object WorldViewFactory:

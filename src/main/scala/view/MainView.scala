@@ -1,7 +1,7 @@
 package view
 
 import controller.ViewController
-import model.World.WorldFactory
+import model.world.WorldFactory
 import model.core.SimulationState
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
@@ -47,7 +47,7 @@ object ControlPane:
     private val plagueButton = StdButton("Plague"):
       controller.show(PlagueView())
 
-    private val worldButton = StdButton("World"):
+    private val worldButton = StdButton("world"):
       controller.show(WorldViewFactory.create(WorldFactory.mockWorld()))
 
     left = plagueButton

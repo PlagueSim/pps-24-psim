@@ -1,6 +1,6 @@
 package model.core
 
-import model.World.World
+import model.world.World
 import model.cure.Cure
 import model.plague.Disease
 import model.time.Time

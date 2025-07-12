@@ -1,4 +1,4 @@
-package model.World
+package model.world
 
 object WorldFactory:
 

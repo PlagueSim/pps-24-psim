@@ -2,7 +2,7 @@ package model.core
 
 import cats.data.State
 import cats.syntax.all.*
-import model.World.{MovementStrategy, Static, World}
+import model.world.{MovementStrategy, Static, World}
 import model.cure.Cure
 import model.events.{AdvanceDayEvent, Event}
 import model.plague.Disease

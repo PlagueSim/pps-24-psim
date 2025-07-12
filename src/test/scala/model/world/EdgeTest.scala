@@ -1,6 +1,6 @@
-package World
+package model.world
 
-import model.World.{Edge, EdgeType}
+import model.world.{Edge, EdgeType}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 

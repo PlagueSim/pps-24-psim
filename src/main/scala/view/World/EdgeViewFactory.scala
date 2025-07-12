@@ -1,6 +1,6 @@
 package view
 
-import model.World.*
+import model.world.*
 
 trait EdgeViewFactory:
   def createEdge(
