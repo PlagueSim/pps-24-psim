@@ -10,6 +10,7 @@ import scalafx.scene.layout.BorderPane
 import view.cure.CureProgressBar
 import view.updatables.UpdatableView
 import view.plague.PlagueView
+import view.world.WorldViewFactory
 
 object MainScene:
   def apply(): Scene = new Scene:
@@ -32,6 +33,7 @@ class MainView extends BorderPane with UpdatableView:
   override def update(newState: SimulationState): Unit =
     datePane.update(newState)
     progressBar.update(newState)
+    mapPane.update(newState)
 end MainView
 
 class DatePane extends BorderPane with UpdatableView:

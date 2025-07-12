@@ -37,5 +37,5 @@ object WorldFactory:
     World(
       nodes,
       edges,
-      Map(Static -> 1.0)
+      Map(Static -> 0.6, RandomNeighbor -> 0.4)
     )

@@ -1,4 +1,4 @@
-package view
+package view.world
 
 import scalafx.scene.paint.Color
 import model.world.*
