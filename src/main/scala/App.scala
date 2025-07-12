@@ -24,7 +24,7 @@ object App extends JFXApp3:
 
     val initialState: SimulationState = SimulationState(
       BasicYear(Day(0), Year(2023)),
-      Disease("a", Set.empty, 0),
+      Disease("Pax-12", Set.empty, 1000),
       Cure(),
       World(Map.empty, Set.empty, movements)
     )

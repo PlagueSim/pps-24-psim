@@ -6,16 +6,6 @@ import org.scalatest.matchers.should.Matchers
 
 class DiseaseTest extends AnyFlatSpec with Matchers:
 
-//  private val nausea = Symptoms.nausea
-//  private val vomiting = Symptoms.vomiting
-//
-//  private val coughing = Symptoms.coughing
-//  private val pneumonia = Symptoms.pneumonia
-//  private val pulmonaryEdema = Symptoms.pulmonaryEdema
-//  private val pulmonaryFibrosis = Symptoms.pulmonaryFibrosis
-//  private val totalOrganFailure = Symptoms.totalOrganFailure
-
-
   "Disease evolution" should "fail if the trait is already evolved" in:
     val d = Disease(traits = Set(coughing), dnaPoints = 10)
     val result = d.evolve(coughing)
@@ -64,21 +54,14 @@ class DiseaseTest extends AnyFlatSpec with Matchers:
   "randomMutation" should "add a new evolvable symptom" in:
     val all = Symptoms.allBasics.toSet
     val disease = Disease(traits = Set(coughing, pneumonia), dnaPoints = 10)
-    val mutated = disease.randomMutation(all)
+    val mutated = disease.randomMutation()
     mutated.traits should contain(coughing)
 
   it should "not consume DNA points" in:
     val all = Symptoms.allBasics.toSet
     val disease = Disease(traits = Set(coughing, pneumonia), dnaPoints = 10)
-    val mutated = disease.randomMutation(all)
+    val mutated = disease.randomMutation()
     mutated.dnaPoints shouldBe disease.dnaPoints
-
-  it should "not mutate if no symptoms are available or evolvable" in:
-    val all = Set(pneumonia)
-    val disease = Disease(traits = Set.empty, dnaPoints = 10)
-    val mutated = disease.randomMutation(all)
-    mutated shouldBe disease
-
 
   "Disease involution" should "fail if the trait was not evolved" in:
     val disease = Disease(traits = Set(coughing, pneumonia), dnaPoints = 30)
