@@ -1,6 +1,6 @@
 package plague
 
-import model.World.{MovementStrategy, Static, World}
+import model.world.{MovementStrategy, Static, World}
 import model.core.{SimulationState, SimulationEngine}
 import model.cure.Cure
 import model.plague.{Disease, Symptoms, Trait}

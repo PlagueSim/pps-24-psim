@@ -54,21 +54,14 @@ class DiseaseTest extends AnyFlatSpec with Matchers:
   "randomMutation" should "add a new evolvable symptom" in:
     val all = Symptoms.allBasics.toSet
     val disease = Disease(traits = Set(coughing, pneumonia), dnaPoints = 10)
-    val mutated = disease.randomMutation(all)
+    val mutated = disease.randomMutation()
     mutated.traits should contain(coughing)
 
   it should "not consume DNA points" in:
     val all = Symptoms.allBasics.toSet
     val disease = Disease(traits = Set(coughing, pneumonia), dnaPoints = 10)
-    val mutated = disease.randomMutation(all)
+    val mutated = disease.randomMutation()
     mutated.dnaPoints shouldBe disease.dnaPoints
-
-  it should "not mutate if no symptoms are available or evolvable" in:
-    val all = Set(pneumonia)
-    val disease = Disease(traits = Set.empty, dnaPoints = 10)
-    val mutated = disease.randomMutation(all)
-    mutated shouldBe disease
-
 
   "Disease involution" should "fail if the trait was not evolved" in:
     val disease = Disease(traits = Set(coughing, pneumonia), dnaPoints = 30)
