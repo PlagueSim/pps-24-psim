@@ -1,4 +1,4 @@
-package view
+package view.world
 
 import controller.WorldController
 import model.core.SimulationState

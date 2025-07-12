@@ -1,4 +1,4 @@
-package view
+package view.world
 
 import scalafx.scene.text.Text
 
