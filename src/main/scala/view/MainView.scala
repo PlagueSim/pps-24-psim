@@ -12,10 +12,6 @@ import view.updatables.UpdatableView
 import view.plague.PlagueView
 import view.world.WorldViewFactory
 
-object MainScene:
-  def apply(): Scene = new Scene:
-    root = MainView()
-
 class MainView extends BorderPane with UpdatableView:
   private val controller = ViewController(this)
   private val mapPane = WorldViewFactory.create(WorldFactory.mockWorld())
@@ -24,13 +20,27 @@ class MainView extends BorderPane with UpdatableView:
   private val datePane = DatePane()
   private val progressBar = CureProgressBar()
 
+  private object ControlPane:
+    def apply(controller: ViewController): BorderPane = new BorderPane:
+      private val plagueButton = StdButton("Plague"):
+        controller.show(plgPane)
+
+      private val worldButton = StdButton("World"):
+        controller.show(mapPane)
+
+      left = plagueButton
+      right = worldButton
+      padding = Insets(10)
+  end ControlPane
+
   controlPane.center = progressBar
 
   center = mapPane
   bottom = controlPane
   top = datePane
-  
+
   override def update(newState: SimulationState): Unit =
+    plgPane.update(newState)
     datePane.update(newState)
     progressBar.update(newState)
     mapPane.update(newState)
@@ -43,16 +53,3 @@ class DatePane extends BorderPane with UpdatableView:
 
   override def update(newState: SimulationState): Unit =
     dateLabel.text = s"Day: ${newState.time.day.value}, Year: ${newState.time.year.value}"
-
-object ControlPane:
-  def apply(controller: ViewController): BorderPane = new BorderPane:
-    private val plagueButton = StdButton("Plague"):
-      controller.show(PlagueView())
-
-    private val worldButton = StdButton("world"):
-      controller.show(WorldViewFactory.create(WorldFactory.mockWorld()))
-
-    left = plagueButton
-    right = worldButton
-    padding = Insets(10)
-end ControlPane

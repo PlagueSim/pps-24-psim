@@ -4,6 +4,7 @@ import cats.data.State
 import cats.syntax.all.*
 import model.world.{MovementStrategy, Static, World}
 import model.cure.Cure
+import model.events.DiseaseEvents.Mutation
 import model.events.movementEvent.MovementEvent
 import model.events.{AdvanceDayEvent, BasicCureEvent, Event, MovementChangeInWorldEvent}
 import model.plague.Disease
@@ -77,6 +78,7 @@ object SimulationEngine:
         _ <- executeEvent(MovementChangeInWorldEvent(moves))
         _ <- executeEvent(BasicCureEvent())
         _ <- executeEvent(AdvanceDayEvent())
+        _ <- executeEvent(Mutation())
       yield ()
     tick.runS(state).value
 
