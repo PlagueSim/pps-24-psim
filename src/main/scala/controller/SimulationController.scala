@@ -5,7 +5,6 @@ import model.scheduler.Scheduler
 import view.updatables.UpdatableView
 
 import scala.annotation.tailrec
-import scala.concurrent.{ExecutionContext, Future}
 
 trait SimulationBinder:
   def bind(
@@ -23,9 +22,7 @@ trait SimulationTick:
   def scheduleWith(scheduler: Scheduler): SimulationRunner
 
 trait SimulationRunner:
-  def run(runLater: Runnable => Unit, isGuiThread: Boolean)(using
-      execContext: ExecutionContext
-  ): Unit
+  def run(mode: ExecutionMode): Unit
 
 object SimulationBinderImpl extends SimulationBinder:
   override def bind(
@@ -69,34 +66,28 @@ private case class SimulationRunnerImpl(
     condition: SimulationState => Boolean,
     scheduler: Scheduler
 ) extends SimulationRunner:
-
-  override def run(
-      runLater: Runnable => Unit,
-      isGuiThread: Boolean
-  )(using execContext: ExecutionContext): Unit =
-    if isGuiThread then
-      Future {
-        runLater(() => view.update(state))
-        loop(state, runLater)
-      }
-    else
-      runLater(() => view.update(state))
-      loop(state, runLater)
+  override def run(mode: ExecutionMode): Unit =
+    mode.execute {
+      mode.runLater(() => view.update(state))
+      loop(state, mode.runLater)
+    }
 
   @tailrec
-  private final def loop(
+  private def loop(
       simState: SimulationState,
       runLater: Runnable => Unit
   ): SimulationState =
     scheduler.waitForNextTick()
-    val nextState = computeNextStateAndUpdateView(simState, runLater)
-    if condition.apply(nextState) then loop(nextState, runLater)
+    val nextState = computeNextState(simState)
+    computeViewUpdates(nextState, runLater)
+    if condition(nextState) then loop(nextState, runLater)
     else nextState
 
-  private def computeNextStateAndUpdateView(
+  private def computeNextState(simState: SimulationState): SimulationState =
+    engine.runStandardSimulation(simState)
+
+  private def computeViewUpdates(
       simState: SimulationState,
       runLater: Runnable => Unit
-  ): SimulationState =
-    val nextState = engine.runStandardSimulation(simState)
-    runLater(() => view.update(nextState))
-    nextState
+  ): Unit =
+    runLater(() => view.update(simState))
