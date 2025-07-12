@@ -54,7 +54,7 @@ case class Disease private(
    *
    * @return A [[Double]] representing the [[Disease]] current mutation chance.
    */
-  def mutationChance: Double = (1 + traits.size) * 0.01
+  def mutationChance: Double = (1 + traits.size) * 0.05
 
   /**
    * Checks whether the [[Disease]] has already evolved a [[Trait]] with the given name.
