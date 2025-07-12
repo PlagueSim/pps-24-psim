@@ -1,9 +1,10 @@
-package view
+package model.world
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import scalafx.scene.paint.Color
 import model.World.*
+import view.DefaultEdgeViewFactory
 
 class DefaultEdgeViewFactoryTest extends AnyFlatSpec with Matchers:
 

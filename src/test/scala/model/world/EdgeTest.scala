@@ -1,4 +1,4 @@
-package World
+package model.world
 
 import model.World.{Edge, EdgeType}
 import org.scalatest.flatspec.AnyFlatSpec

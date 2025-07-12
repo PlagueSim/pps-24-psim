@@ -30,6 +30,8 @@ case class World private(
       (e.nodeA == nodeA && e.nodeB == nodeB) ||
         (e.nodeA == nodeB && e.nodeB == nodeA)
     )
+  
+  
 
 object World:
 
@@ -41,6 +43,7 @@ object World:
              edges: Set[Edge],
              movements: Map[MovementStrategy, Double]
            ): World =
+  
     validateEdges(nodes, edges)
     validateMovements(movements)
     new World(nodes, edges, movements)

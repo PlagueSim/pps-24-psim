@@ -47,7 +47,7 @@ object ControlPane:
     private val plagueButton = StdButton("Plague"):
       controller.show(PlagueView())
 
-    private val worldButton = StdButton("World"):
+    private val worldButton = StdButton("world"):
       controller.show(WorldViewFactory.create(WorldFactory.mockWorld()))
 
     left = plagueButton

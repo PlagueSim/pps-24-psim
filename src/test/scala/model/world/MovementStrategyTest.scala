@@ -1,4 +1,4 @@
-package World
+package model.world
 
 import model.World.*
 import org.scalatest.flatspec.AnyFlatSpec
