@@ -11,10 +11,6 @@ import view.cure.CureProgressBar
 import view.updatables.UpdatableView
 import view.plague.PlagueView
 
-object MainScene:
-  def apply(): Scene = new Scene:
-    root = MainView()
-
 class MainView extends BorderPane with UpdatableView:
   private val controller = ViewController(this)
   private val mapPane = WorldViewFactory.create(WorldFactory.mockWorld())
