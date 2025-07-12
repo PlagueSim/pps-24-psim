@@ -1,7 +1,12 @@
 package view
 
+import scalafx.scene.text.Text
+
 case class NodeView(
                      id: String,
                      visuals: Seq[Any],              
-                     position: () => (Double, Double) 
+                     position: () => (Double, Double),
+                     labelId: Text,
+                     labelPop: Text,
+                     labelInf: Text
                    )
