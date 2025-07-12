@@ -2,8 +2,7 @@ package model.world
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import model.world.*
-import view.DefaultNodeViewFactory
+import view.world.DefaultNodeViewFactory
 
 class DefaultNodeViewFactoryTest extends AnyFlatSpec with Matchers:
 
