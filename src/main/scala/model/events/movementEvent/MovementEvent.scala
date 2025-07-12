@@ -50,15 +50,7 @@ case class MovementEvent() extends Event[Map[String, Node]]:
         case (strategy, num) if strategy != Static => num
       }.sum
 
-      println(
-        s"""
-           |[DEBUG] Updating node '$nodeId':
-           |  Original population: ${node.population}
-           |  Movements per strategy: $peoplePerStrategy
-           |  Departed (non-static): $departed
-           |  Arrived: $arrived
-           |""".stripMargin
-      )
+
 
       val updatedNode =
         node
@@ -86,7 +78,5 @@ case class MovementEvent() extends Event[Map[String, Node]]:
       arrivals = arrivals,
       movements = movements
     )
-
-    println(s"[DEBUG] Final nodes populations: ${updatedExistingNodes.mapValues(_.population)}")
 
     updatedExistingNodes

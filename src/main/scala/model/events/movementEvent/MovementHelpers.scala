@@ -53,16 +53,7 @@ object MovementHelpers:
     val departed = peoplePerStrategy.collect {
       case (strategy, num) if strategy != Static => num
     }.sum
-
-    println(
-      s"""
-      [DEBUG] Updating node '$nodeId'
-      - Original population: ${node.population}
-      - Movements per strategy: $peoplePerStrategy
-      - Departed (total non-static): $departed
-      - Arrived: $arrived
-      """
-    )
+    
 
     node
       .decreasePopulation(departed)
