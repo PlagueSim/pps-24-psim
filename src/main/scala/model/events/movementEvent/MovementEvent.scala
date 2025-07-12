@@ -24,9 +24,6 @@ case class MovementEvent() extends Event[Map[String, Node]]:
         .mapValues(_.map(_._2).sum)
         .toMap
 
-    val totalDepartures = allArrivals.map(_._2).sum
-    val totalArrivals = grouped.values.sum
-
     grouped
 
 
@@ -72,10 +69,6 @@ case class MovementEvent() extends Event[Map[String, Node]]:
 
     validateAllDestinationsExist(unknownDestinations)
 
-    val updatedExistingNodes: Map[String, Node] = updateAllNodePopulations(
-      nodes = nodes,
-      arrivals = arrivals,
-      movements = movements
-    )
+    val updatedExistingNodes: Map[String, Node] = updateAllNodePopulations(nodes, arrivals, movements)
 
     updatedExistingNodes
