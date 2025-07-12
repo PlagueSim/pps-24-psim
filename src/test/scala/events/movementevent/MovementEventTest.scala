@@ -34,12 +34,7 @@ class MovementEventTest extends AnyFlatSpec with Matchers:
     val event = MovementEvent()
 
     val updatedNodes = event.modifyFunction(simulationState)
-
-    // Because 50% of each node's population moves randomly,
-    // and each node has one neighbor,
-    // A should lose 50 people and B should lose 25.
-    // Each should randomly gain population from the other's departing people.
-    // Since randomness is involved, check that totals match.
+    
     val totalPopulationBefore = nodes.values.map(_.population).sum
     val totalPopulationAfter = updatedNodes.values.map(_.population).sum
 
@@ -47,7 +42,6 @@ class MovementEventTest extends AnyFlatSpec with Matchers:
 
     updatedNodes.keySet should contain allOf ("A", "B")
 
-    // Check that populations are in the expected range.
     updatedNodes("A").population should be equals 75
     updatedNodes("B").population should be equals 75
     
