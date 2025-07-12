@@ -26,26 +26,21 @@ class MovementEventTest extends AnyFlatSpec with Matchers:
       RandomNeighbor -> 0.5
     )
 
-    val world = World(nodes, edges, movements)
+    val worldBefore = World(nodes, edges, movements)
 
-    val simulationState = SimulationState(null, null, null, world)
+    val simulationState = SimulationState(null, null, null, worldBefore)
 
     val newWorld = for 
       e <- SimulationEngine.executeEvent(MovementEvent())
       c <- SimulationEngine.executeEvent(MovementChangeInWorldEvent(e))
     yield c
 
-    val world2 = newWorld.runA(simulationState).value
+    val worldAfter = newWorld.runA(simulationState).value
     
-    /*val updatedNodes = newWorld.modifyFunction(simulationState)
-    
-    val totalPopulationBefore = nodes.values.map(_.population).sum
-    val totalPopulationAfter = updatedNodes.values.map(_.population).sum
+    val totalPopulationBefore = worldBefore.nodes.values.map(_.population).sum
+    val totalPopulationAfter = worldAfter.nodes.values.map(_.population).sum
 
     totalPopulationAfter shouldBe totalPopulationBefore
-
-    updatedNodes.keySet should contain allOf ("A", "B")
-*/
-    world2.nodes("A").population should be equals 75
-    world2.nodes("B").population should be equals 75
+    worldAfter.nodes("A").population should be equals 75
+    worldAfter.nodes("B").population should be equals 75
     
