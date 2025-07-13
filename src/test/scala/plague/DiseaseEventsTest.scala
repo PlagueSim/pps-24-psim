@@ -23,6 +23,6 @@ class DiseaseEventsTest extends AnyFlatSpec with Matchers:
   )
 
   "This random test" should "print what it is told to print lol" in:
-    val evolvedDisease = Disease("Pax-12", Set(coughing), 20 - coughing.cost)
+    val evolvedDisease = Disease("Pax-12", Set(coughing), 20 - coughing.stats.cost)
     val nextState = SimulationEngine.executeEvent(Evolution(coughing))
     nextState.run(simState).value._2 shouldBe evolvedDisease
