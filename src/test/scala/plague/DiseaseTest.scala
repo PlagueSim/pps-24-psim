@@ -26,7 +26,7 @@ class DiseaseTest extends AnyFlatSpec with Matchers:
     val result = d.evolve(pneumonia)
     val newDisease = result.toOption.get
     newDisease.traits should contain allOf (coughing, pneumonia)
-    newDisease.dnaPoints shouldBe (d.dnaPoints - pneumonia.cost)
+    newDisease.dnaPoints shouldBe (d.dnaPoints - pneumonia.stats.cost)
 
   it should "allow symptom evolution if any one prerequisite is satisfied" in:
     val d = Disease(traits = Set(coughing, pneumonia), dnaPoints = 15)
@@ -37,7 +37,7 @@ class DiseaseTest extends AnyFlatSpec with Matchers:
     val d = Disease(traits = Set.empty, dnaPoints = 10)
     val result = d.evolve(coughing)
     val newDisease = result.toOption.get
-    newDisease.dnaPoints shouldBe (d.dnaPoints - coughing.cost)
+    newDisease.dnaPoints shouldBe (d.dnaPoints - coughing.stats.cost)
 
   "addDnaPoints" should "add DNA points correctly" in:
     val d = Disease(traits = Set.empty, dnaPoints = 5)
@@ -47,9 +47,9 @@ class DiseaseTest extends AnyFlatSpec with Matchers:
 
   "Disease infectivity/severity/lethality" should "sum all trait values correctly" in:
     val d = Disease(traits = Set(coughing, nausea), dnaPoints = 0)
-    d.infectivity should be (coughing.infectivity + nausea.infectivity)
-    d.severity should be (coughing.severity + nausea.severity)
-    d.lethality should be (coughing.lethality + nausea.lethality)
+    d.infectivity should be (coughing.stats.infectivity + nausea.stats.infectivity)
+    d.severity should be (coughing.stats.severity + nausea.stats.severity)
+    d.lethality should be (coughing.stats.lethality + nausea.stats.lethality)
 
   "randomMutation" should "add a new evolvable symptom" in:
     val all = Symptoms.allBasics.toSet
