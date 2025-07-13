@@ -20,11 +20,3 @@ object CureModifier:
     */
   case class Additive(id: ModifierId, amount: Double) extends CureModifier:
     def apply(baseSpeed: Double): Double = baseSpeed + amount
-
-  /** Sets a minimum threshold for the base speed.
-    *
-    * @param min
-    *   The minimum speed that the cure can have.
-    */
-  case class MinThreshold(id: ModifierId, min: Double) extends CureModifier:
-    def apply(baseSpeed: Double): Double = math.max(baseSpeed, min)
