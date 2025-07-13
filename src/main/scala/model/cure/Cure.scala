@@ -26,7 +26,12 @@ final case class Cure(
   * @param factors
   *   The list of modifiers applied to the cure.
   */
-final case class CureModifiers(factors: List[CureModifier]):
+final case class CureModifiers(
+    modifiers: Map[ModifierId, CureModifier] = Map.empty
+):
+
+  def factors: List[CureModifier] = modifiers.values.toList
+
   /** Adds a new modifier to the collection.
     *
     * @param modifier
@@ -34,22 +39,33 @@ final case class CureModifiers(factors: List[CureModifier]):
     * @return
     *   A new CureModifiers instance with the modifier added.
     */
-  def add(modifier: CureModifier): CureModifiers =
-    CureModifiers(modifier :: factors)
+  def add(mod: CureModifier)(id: ModifierId): CureModifiers =
+    copy(modifiers = modifiers + (id -> mod))
+  
+  /** Removes the modifier with the specified ID from the collection.
+   * @param id The ID of the modifier to remove.
+   * @return A new CureModifiers instance without the specified modifier.
+   */
+  def removeById(id: ModifierId): CureModifiers =
+    copy(modifiers = modifiers - id)
 
-  /** Removes modifiers matching the given filter predicate.
-    *
-    * @param filter
-    *   Predicate to select which modifiers to remove.
-    * @return
-    *   A new CureModifiers instance with the selected modifiers removed.
-    */
-  def remove(filter: CureModifier => Boolean): CureModifiers =
-    CureModifiers(factors.filterNot(filter))
+  /** Removes all modifiers whose ID matches the given predicate.
+   * @param pred The predicate to test modifier IDs.
+   * @return A new CureModifiers instance without the matching modifiers.
+   */
+  def removeIfId(pred: ModifierId => Boolean): CureModifiers =
+    copy(modifiers = modifiers.filterNot { case (id, _) => pred(id) })
+
+  /** Removes all modifiers whose value matches the given predicate.
+   * @param pred The predicate to test modifier values.
+   * @return A new CureModifiers instance without the matching modifiers.
+   */
+  def removeIfMod(pred: CureModifier => Boolean): CureModifiers =
+    copy(modifiers = modifiers.filterNot { case (_, m) => pred(m) })
 
 /** Companion object for [[CureModifiers]].
   */
 object CureModifiers:
   /** An empty collection of cure modifiers.
     */
-  val empty: CureModifiers = CureModifiers(Nil)
+  val empty: CureModifiers = CureModifiers(Map.empty)
