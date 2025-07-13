@@ -15,41 +15,70 @@ final case class Cure(
     modifiers: CureModifiers = CureModifiers.empty
 ):
   def effectiveSpeed: Double =
-    modifiers.factors.foldRight(baseSpeed)((modifier, speed) => modifier(speed))
+    modifiers.factors.foldLeft(baseSpeed)((speed, factor) => factor(speed))
 
+  /** Advances the cure's progress by applying the effective speed.
+    *
+    * @return
+    *   A new Cure instance with the updated progress.
+    */
   def advance(): Cure =
-    val newProgress = (progress + effectiveSpeed).min(1.0)
-    this.copy(progress = newProgress)
+    val newProgress = progress + effectiveSpeed
+    copy(progress =
+      math.min(newProgress, 1.0)
+    ) // Ensure progress does not exceed 1.0
 
 /** Represents a collection of modifiers that affect the cure's progress.
   *
-  * @param factors
-  *   The list of modifiers applied to the cure.
+  * @param modifiers
+  *   A map of modifier IDs to their corresponding CureModifier instances.
   */
-final case class CureModifiers(factors: List[CureModifier]):
+final case class CureModifiers(
+    modifiers: Map[ModifierId, CureModifier] = Map.empty
+):
+
+  def factors: Iterable[Double => Double] =
+    modifiers.values.map(_.apply)
+
   /** Adds a new modifier to the collection.
-    *
-    * @param modifier
+    * @param mod
     *   The modifier to add.
     * @return
-    *   A new CureModifiers instance with the modifier added.
+    *   A new CureModifiers instance with the added modifier.
     */
-  def add(modifier: CureModifier): CureModifiers =
-    CureModifiers(modifier :: factors)
+  def add(mod: CureModifier): CureModifiers =
+    copy(modifiers = modifiers + (mod.id -> mod))
 
-  /** Removes modifiers matching the given filter predicate.
-    *
-    * @param filter
-    *   Predicate to select which modifiers to remove.
+  /** Removes the modifier with the specified ID from the collection.
+    * @param id
+    *   The ID of the modifier to remove.
     * @return
-    *   A new CureModifiers instance with the selected modifiers removed.
+    *   A new CureModifiers instance without the specified modifier.
     */
-  def remove(filter: CureModifier => Boolean): CureModifiers =
-    CureModifiers(factors.filterNot(filter))
+  def removeById(id: ModifierId): CureModifiers =
+    copy(modifiers = modifiers - id)
+
+  /** Removes all modifiers whose ID matches the given predicate.
+    * @param src
+    *   The source of the modifiers to remove.
+    * @return
+    *   A new CureModifiers instance without the matching modifiers.
+    */
+  def removeBySource(src: ModifierSource): CureModifiers =
+    copy(modifiers = modifiers.filterNot { case (mid, _) => mid.source == src })
+
+  /** Removes all modifiers whose value matches the given predicate.
+    * @param pred
+   *  The predicate to match against modifier IDs.
+    * @return
+    *   A new CureModifiers instance without the matching modifiers.
+    */
+  def removeIfId(pred: ModifierId => Boolean): CureModifiers =
+    copy(modifiers = modifiers.filterNot { case (id, _) => pred(id) })
 
 /** Companion object for [[CureModifiers]].
   */
 object CureModifiers:
   /** An empty collection of cure modifiers.
     */
-  val empty: CureModifiers = CureModifiers(Nil)
+  val empty: CureModifiers = CureModifiers(Map.empty)
