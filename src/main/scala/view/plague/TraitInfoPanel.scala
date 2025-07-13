@@ -18,10 +18,10 @@ class TraitInfoPanel(tr: Trait) extends BorderPane:
   private val infoPanel = new VBox():
     padding = Insets(10)
     children = Seq(
-      Label(s"Cost: ${tr.cost}"),
-      Label(f"Infectivity: ${tr.infectivity}%.2f"),
-      Label(f"Severity: ${tr.severity}%.2f"),
-      Label(f"Lethality: ${tr.lethality}%.2f"),
+      Label(s"Cost: ${tr.stats.cost}"),
+      Label(f"Infectivity: ${tr.stats.infectivity}%.2f"),
+      Label(f"Severity: ${tr.stats.severity}%.2f"),
+      Label(f"Lethality: ${tr.stats.lethality}%.2f"),
       evolveButton
     )
   top = nameLabel
