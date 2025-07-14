@@ -6,7 +6,12 @@ import model.world.{MovementStrategy, Static, World}
 import model.cure.Cure
 import model.events.DiseaseEvents.Mutation
 import model.events.movementEvent.MovementEvent
-import model.events.{AdvanceDayEvent, BasicCureEvent, Event, MovementChangeInWorldEvent}
+import model.events.{
+  AdvanceDayEvent,
+  BasicCureEvent,
+  Event,
+  MovementChangeInWorldEvent
+}
 import model.plague.Disease
 import model.time.BasicYear
 import model.time.TimeTypes.*
@@ -53,17 +58,8 @@ object SimulationEngine:
     val listOfEvents =
       List(AdvanceDayEvent(), AdvanceDayEvent(), AdvanceDayEvent())
 
-    val movements: Map[MovementStrategy, Double] = Map(
-      Static -> 1.0
-    )
-
-    val initialState = SimulationState(
-      BasicYear(Day(0), Year(2023)),
-      Disease("a", Set.empty, 0),
-      Cure(),
-      World(Map.empty, Set.empty, movements)
-    )
-    val endSim = simulationLoop().runS(initialState).value.time.day.value
+    val initialState = SimulationState.createStandardSimulationState()
+    val endSim       = simulationLoop().runS(initialState).value.time.day.value
     println(s"Simulation ended on day: $endSim")
 
   private def simulationLoop(): Simulation[Unit] = for
@@ -75,13 +71,9 @@ object SimulationEngine:
     val tick =
       for
         moves <- executeEvent(MovementEvent())
-        _ <- executeEvent(MovementChangeInWorldEvent(moves))
-        _ <- executeEvent(BasicCureEvent())
-        _ <- executeEvent(AdvanceDayEvent())
-        _ <- executeEvent(Mutation())
+        _     <- executeEvent(MovementChangeInWorldEvent(moves))
+        _     <- executeEvent(BasicCureEvent())
+        _     <- executeEvent(AdvanceDayEvent())
+        _     <- executeEvent(Mutation())
       yield ()
     tick.runS(state).value
-
-//oggetto intenzione che è un mapper da intenzione dell'entita ad un evento.
-//evento chiama la generazione delle intenzioni
-//dopo l'interrogazione ho una lista di cose che devo fare, queste le converto in eventi e li eseguo.
