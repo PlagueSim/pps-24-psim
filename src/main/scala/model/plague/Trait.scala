@@ -14,7 +14,9 @@ enum TraitCategory:
  * @param lethality      How much the [[Trait]] increases the [[Disease]] lethality.
  * @param cost           Evolution cost in DNA points.
  * @param mutationChance How much the [[Trait]] increases the [[Disease]] mutation chance.
- * @param cureSlowdown   Degree to which the trait slows down cure development.
+ * @param cureSlowdown   Degree to which the [[Trait]] slows down cure development.
+ * @param cureReset      Degree to which the [[Trait]] pushes back cure progress.
+ * @param effectiveness  How the [[Trait]] interacts with different [[Node]] types //TODO better definition
  */
 case class TraitStats (
                        infectivity: Double = 0.0,
@@ -22,7 +24,9 @@ case class TraitStats (
                        lethality: Double = 0.0,
                        cost: Int = 0,
                        mutationChance: Double = 0.0,
-                       cureSlowdown: Double = 0.01
+                       cureSlowdown: Double = 0.0,
+                       cureReset: Double = 0.0,
+                       effectiveness: Map[Any, Double] = Map.empty
                      )
 
 /**
@@ -106,7 +110,7 @@ object TraitDsl:
     def lethality(v: Double): TraitBuilder = tb.copy(stats = tb.stats.copy(lethality = v))
 
     /**
-     * Sets the DNA cost.
+     * Sets the Trait cost.
      */
     def cost(v: Int): TraitBuilder = tb.copy(stats = tb.stats.copy(cost = v))
 
@@ -119,6 +123,17 @@ object TraitDsl:
      * Sets the cure slowdown factor.
      */
     def cureSlowdown(v: Double): TraitBuilder = tb.copy(stats = tb.stats.copy(cureSlowdown = v))
+
+    /**
+     * Sets the value which determines how much the cure progress will be pushed back
+     */
+    def cureReset(v: Double): TraitBuilder = tb.copy(stats = tb.stats.copy(cureReset = v))
+
+    /**
+     * //todo To be better defined
+     */
+    def effectiveness(v: Map[Any, Double]): TraitBuilder =
+      tb.copy(stats = tb.stats.copy(effectiveness = tb.stats.effectiveness ++ v))
 
     /**
      * Adds prerequisite trait names.
