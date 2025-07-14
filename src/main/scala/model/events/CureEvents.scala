@@ -14,10 +14,15 @@ case class BasicCureEvent() extends Event[Cure]:
   override def modifyFunction(state: SimulationState): Cure =
     state.cure.advance()
 
+/** Event that advances the cure progress linearly based on infected nodes.
+  * Adds a small additive modifier for each node above the infection threshold.
+  * @param threshold The infection ratio above which a node contributes to cure progress.
+  */
 case class LinearInfectedThresholdEvent(threshold: Double = 0.5)
     extends Event[Cure]:
-  override def modifyFunction(state: SimulationState): Cure =
-    val nodeModifiers = state.world.nodes.collect:
+
+  private def nodeModifiers(state: SimulationState) =
+    state.world.nodes.collect:
       case (nodeId, node)
           if node.population > 0 && node.infected.toDouble / node.population > threshold =>
         val modId = model.cure.ModifierId(
@@ -25,10 +30,12 @@ case class LinearInfectedThresholdEvent(threshold: Double = 0.5)
           model.cure.ModifierKind.Additive
         )
         modId -> model.cure.CureModifier.Additive(modId, 0.01)
-        
-    val missingModifiers = nodeModifiers.filterNot:
+
+  private def missingModifiers(state: SimulationState) =
+    nodeModifiers(state).filterNot:
       case (modId, _) =>
         state.cure.modifiers.modifiers.contains(modId)
 
-    missingModifiers.values.foldLeft(state.cure): (cure, mod) =>
+  override def modifyFunction(state: SimulationState): Cure =
+    missingModifiers(state).values.foldLeft(state.cure): (cure, mod) =>
       cure.copy(modifiers = cure.modifiers.add(mod))
