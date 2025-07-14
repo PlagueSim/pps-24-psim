@@ -1,20 +1,77 @@
 package model.core
 
-import model.world.World
 import model.cure.Cure
+import model.infection.InfectionStrategy
+import model.infection.InfectionStrategy.Infection
 import model.plague.Disease
-import model.time.Time
+import model.plague.Symptoms.pulmonaryEdema
+import model.time.TimeTypes.{Day, Year}
+import model.time.{BasicYear, Time}
+import model.world.*
 
-//fix replace not type-safe
-case class SimulationState(
+sealed case class SimulationState private (
     time: Time,
     disease: Disease,
     cure: Cure,
-    world: World
-):
-  def replace[A](newValue: A): SimulationState = newValue match
-    case newTime: Time       => this.copy(time = newTime)
-    case newDisease: Disease => this.copy(disease = newDisease)
-    case newCure: Cure       => this.copy(cure = newCure)
-    case newWorld: World     => this.copy(world = newWorld)
-    case _                   => this
+    world: World,
+    infectionLogic: Infection
+)
+
+object SimulationState:
+  /** Creates a new SimulationState with the provided parameters.
+    *
+    * @param time
+    *   The initial time of the simulation.
+    * @param disease
+    *   The initial disease in the simulation.
+    * @param cure
+    *   The initial cure in the simulation.
+    * @param world
+    *   The initial world in the simulation.
+    * @return
+    *   A new SimulationState instance.
+    */
+  def apply(
+      time: Time,
+      disease: Disease,
+      cure: Cure,
+      world: World,
+      infectionLogic: Infection
+  ): SimulationState =
+    new SimulationState(time, disease, cure, world, infectionLogic)
+
+  def createStandardSimulationState(): SimulationState =
+    val STARTING_DAY: Int  = 0
+    val STARTING_YEAR: Int = 2025
+
+    val node = Node.withPopulation(100).withInfected(1).build()
+
+    val world = World(
+      nodes = Map("A" -> node, "B" -> node),
+      Set(Edge("A", "B", EdgeType.Land)),
+      Map(Static -> 1)
+    )
+
+    SimulationState(
+      BasicYear(Day(STARTING_DAY), Year(STARTING_YEAR)),
+      Disease("StandardDisease", Set(pulmonaryEdema), 1),
+      Cure(),
+      world,
+      InfectionStrategy.StandardInfection()
+    )
+
+  extension (state: SimulationState)
+    /** Replaces the current state with a new value based on its type.
+      *
+      * @param newValue
+      *   The new value to replace in the state.
+      * @return
+      *   A new SimulationState with the updated value.
+      */
+    def replace[A](newValue: A): SimulationState = newValue match
+      case newTime: Time           => state.copy(time = newTime)
+      case newDisease: Disease     => state.copy(disease = newDisease)
+      case newCure: Cure           => state.copy(cure = newCure)
+      case newWorld: World         => state.copy(world = newWorld)
+      case newInfection: Infection => state.copy(infectionLogic = newInfection)
+      case _                       => state
