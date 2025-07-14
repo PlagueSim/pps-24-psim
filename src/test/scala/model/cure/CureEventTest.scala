@@ -15,7 +15,8 @@ class CureEventTest extends AnyFlatSpec with Matchers:
     BasicYear(Day(0), Year(2023)),
     Disease("TestDisease", Set.empty, 1),
     Cure(),
-    World(Map.empty, Set.empty, Map(Static -> 1.0))
+    World(Map.empty, Set.empty, Map(Static -> 1.0)),
+    null
   )
 
   "BasicCureEvent" should "advance the cure progress when executed" in:
