@@ -1,4 +1,5 @@
-import controller.{GuiFXMode, SimulationBinderImpl}
+import controller.ExecutionMode.GuiFXMode
+import controller.SimulationBinderImpl
 import model.core.{SimulationEngine, SimulationState}
 import model.cure.Cure
 import model.plague.Disease
@@ -22,12 +23,7 @@ object App extends JFXApp3:
       Static -> 1.0
     )
 
-    val initialState: SimulationState = SimulationState(
-      BasicYear(Day(0), Year(2023)),
-      Disease("Pax-12", Set.empty, 1000),
-      Cure(),
-      WorldFactory.mockWorld()
-    )
+    val initialState: SimulationState = SimulationState.createStandardSimulationState()
 
     SimulationBinderImpl bind (
       SimulationEngine,
