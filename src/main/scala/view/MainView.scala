@@ -1,41 +1,55 @@
 package view
 
 import controller.ViewController
-import model.World.WorldFactory
+import model.world.WorldFactory
+import model.core.SimulationState
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
-import scalafx.scene.control.ProgressBar
+import scalafx.scene.control.Label
 import scalafx.scene.layout.BorderPane
+import view.cure.CureProgressBar
+import view.updatables.UpdatableView
+import view.plague.PlagueView
+import view.world.WorldViewFactory
 
-object MainScene:
-  def apply(): Scene = new Scene:
-    root = MainView()
-
-class MainView extends BorderPane:
+class MainView extends BorderPane with UpdatableView:
   private val controller = ViewController(this)
   private val mapPane = WorldViewFactory.create(WorldFactory.mockWorld())
   private val plgPane = PlagueView()
   private val controlPane = ControlPane(controller)
+  private val datePane = DatePane()
+  private val progressBar = CureProgressBar()
+
+  private object ControlPane:
+    def apply(controller: ViewController): BorderPane = new BorderPane:
+      private val plagueButton = StdButton("Plague"):
+        controller.show(plgPane)
+
+      private val worldButton = StdButton("World"):
+        controller.show(mapPane)
+
+      left = plagueButton
+      right = worldButton
+      padding = Insets(10)
+  end ControlPane
+
+  controlPane.center = progressBar
 
   center = mapPane
   bottom = controlPane
+  top = datePane
+
+  override def update(newState: SimulationState): Unit =
+    plgPane.update(newState)
+    datePane.update(newState)
+    progressBar.update(newState)
+    mapPane.update(newState)
 end MainView
 
-object ControlPane:
-  def apply(controller: ViewController): BorderPane = new BorderPane:
-    private val plagueButton = StdButton("Plague"):
-      controller.show(PlagueView())
+class DatePane extends BorderPane with UpdatableView:
+  private val dateLabel = Label("date")
+  left = dateLabel
+  padding = Insets(10)
 
-    private val worldButton = StdButton("World"):
-      controller.show(WorldViewFactory.create(WorldFactory.mockWorld()))
-
-    private val progressBar = new ProgressBar:
-      progress = 0.35
-      prefWidth = 200
-      prefHeight = 25
-
-    left = plagueButton
-    center = progressBar
-    right = worldButton
-    padding = Insets(10)
-end ControlPane
+  override def update(newState: SimulationState): Unit =
+    dateLabel.text = s"Day: ${newState.time.day.value}, Year: ${newState.time.year.value}"

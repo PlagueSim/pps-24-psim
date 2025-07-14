@@ -1,14 +1,14 @@
-package World
+package model.world
 
-import model.World.World.*
-import model.World.*
+import model.world.World.*
+import model.world.*
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 class WorldTest extends AnyFlatSpec with Matchers:
 
-  "World" should "validate that edges connect existing nodes" in {
+  "model/world" should "validate that edges connect existing nodes" in {
     val node = Node.withPopulation(10).build()
     val nodes = Map("A" -> node)
     val edges = Set(Edge("A", "B", EdgeType.Land))

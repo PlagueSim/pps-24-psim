@@ -7,12 +7,12 @@ import scala.util.Random
 /**
  * Represents a simulated disease.
  *
- * A [[Disease]] evolves by acquiring new [[Trait]]s that increase its infectivity,
+ * A [[Disease]] evolves by acquiring new [[Trait]] that increase its infectivity,
  * severity, and lethality. Traits can be [[Symptom]], [[Transmission]], or [[Ability]].
  * DNA points are the currency used to evolve traits.
  *
- * @param name the name of the disease
- * @param traits the set of currently evolved traits
+ * @param name      the name of the disease
+ * @param traits    the set of currently evolved traits
  * @param dnaPoints the amount of DNA points available for evolving traits
  */
 case class Disease private(
@@ -27,7 +27,7 @@ case class Disease private(
    *
    * @return A [[Double]] representing the [[Disease]] current infectivity.
    */
-  def infectivity: Double = traits.toList.map(_.infectivity).sum
+  def infectivity: Double = traits.toList.map(_.stats.infectivity).sum
 
   /**
    * Calculates the total severity of the [[Disease]].
@@ -36,7 +36,7 @@ case class Disease private(
    *
    * @return A [[Double]] representing the [[Disease]] current severity.
    */
-  def severity: Double = traits.toList.map(_.severity).sum
+  def severity: Double = traits.toList.map(_.stats.severity).sum
 
   /**
    * Calculates the total lethality of the [[Disease]].
@@ -45,7 +45,17 @@ case class Disease private(
    *
    * @return A [[Double]] representing the [[Disease]] current lethality.
    */
-  def lethality: Double = traits.toList.map(_.lethality).sum
+  def lethality: Double = traits.toList.map(_.stats.lethality).sum
+
+  /**
+   * Calculates the mutation chance of the [[Disease]].
+   *
+   * Mutation chance is a value between 0 and 1 depending on evolved [[Trait]].
+   *
+   * @return A [[Double]] representing the [[Disease]] current mutation chance.
+   */
+  def mutationChance: Double =
+    traits.toList.map(_.stats.mutationChance).sum + traits.count(_.category == Symptom) * 0.005
 
   /**
    * Checks whether the [[Disease]] has already evolved a [[Trait]] with the given name.
@@ -56,11 +66,11 @@ case class Disease private(
   private def hasTrait(name: String): Boolean = traits.exists(_.name == name)
 
   /**
-   * Determines whether the given [[Trait]] can be evolved based on its prerequisites.
+   * Determines whether the given [[Trait]] can be evolved based on its prerequisite.
    *
    * Evolution rules differ by [[TraitCategory]]:
-   *  - For [[Symptom]] traits: evolution is allowed if at least one of its prerequisites has already been evolved.
-   *  - For [[Transmission]] and [[Ability]] all prerequisites must be met.
+   *  - For [[Symptom]] traits: evolution is allowed if at least one of its prerequisite has already been evolved.
+   *  - For [[Transmission]] and [[Ability]] all prerequisite must be met.
    *
    * @param t The [[Trait]] to check if evolution is possible.
    * @return [[true]] if the [[Trait]] can be evolved, [[false]] otherwise.
@@ -100,7 +110,7 @@ case class Disease private(
    *
    * The evolution succeeds only if:
    *  - the [[Trait]] has not already been evolved,
-   *  - the [[Trait]] is unlocked (its prerequisites are satisfied),
+   *  - the [[Trait]] is unlocked (its prerequisite are satisfied),
    *  - there are enough DNA points to pay the evolution cost.
    *
    * @param traitToAdd the [[Trait]] to evolve
@@ -112,8 +122,8 @@ case class Disease private(
   def evolve(traitToAdd: Trait): Either[String, Disease] =
     Either.cond(!hasTrait(traitToAdd.name), (), s"${traitToAdd.name} already evolved.")
       .flatMap(_ => Either.cond(canEvolve(traitToAdd), (), s"${traitToAdd.name} is locked."))
-      .flatMap(_ => Either.cond(dnaPoints >= traitToAdd.cost, (), s"Not enough DNA points to evolve ${traitToAdd.name}"))
-      .map(_ => copy(traits = traits + traitToAdd, dnaPoints = dnaPoints - traitToAdd.cost))
+      .flatMap(_ => Either.cond(dnaPoints >= traitToAdd.stats.cost, (), s"Not enough DNA points to evolve ${traitToAdd.name}"))
+      .map(_ => copy(traits = traits + traitToAdd, dnaPoints = dnaPoints - traitToAdd.stats.cost))
 
 
   /**
@@ -139,11 +149,11 @@ case class Disease private(
    * Attempts a random mutation by evolving a random [[Trait]] from the set of available traits.
    * Only traits that are not yet evolved and can currently be evolved are considered.
    *
-   * @param allTraits the full set of possible traits in the game
    * @return a new [[Disease]] with the randomly evolved [[Trait]] if possible, otherwise this instance
    */
-  def randomMutation(allTraits: Set[Trait]): Disease =
-    allTraits.diff(traits).filter(canEvolve).toList match
+  def randomMutation(): Disease =
+    val allTraits = Symptoms.allBasics
+    allTraits.diff(traits.toList).filter(canEvolve) match
       case Nil => this
       case evolvable => copy(traits = traits + Random.shuffle(evolvable).head)
 

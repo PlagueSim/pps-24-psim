@@ -2,7 +2,12 @@ package model.core
 
 import cats.data.State
 import cats.syntax.all.*
-import model.events.{AdvanceDayEvent, Event}
+import model.world.{MovementStrategy, Static, World}
+import model.cure.Cure
+import model.events.DiseaseEvents.Mutation
+import model.events.movementEvent.MovementEvent
+import model.events.{AdvanceDayEvent, BasicCureEvent, Event, MovementChangeInWorldEvent}
+import model.plague.Disease
 import model.time.BasicYear
 import model.time.TimeTypes.*
 
@@ -44,18 +49,38 @@ object SimulationEngine:
   /** Runs a standard simulation scenario for demonstration. It executes several
     * AdvanceDay events and prints the final simulation day.
     */
-  def runStandardSimulation(): Unit =
+  def runSim(): Unit =
     val listOfEvents =
       List(AdvanceDayEvent(), AdvanceDayEvent(), AdvanceDayEvent())
 
-    val initialState = SimulationState(BasicYear(Day(0), Year(2023)))
-    val endSim       = simulationLoop().runS(initialState).value.time.day.value
+    val movements: Map[MovementStrategy, Double] = Map(
+      Static -> 1.0
+    )
+
+    val initialState = SimulationState(
+      BasicYear(Day(0), Year(2023)),
+      Disease("a", Set.empty, 0),
+      Cure(),
+      World(Map.empty, Set.empty, movements)
+    )
+    val endSim = simulationLoop().runS(initialState).value.time.day.value
     println(s"Simulation ended on day: $endSim")
 
   private def simulationLoop(): Simulation[Unit] = for
     time <- executeEvent(AdvanceDayEvent())
     _    <- if time.day.value < 6 then simulationLoop() else State.pure(())
   yield ()
+
+  def runStandardSimulation(state: SimulationState): SimulationState =
+    val tick =
+      for
+        moves <- executeEvent(MovementEvent())
+        _ <- executeEvent(MovementChangeInWorldEvent(moves))
+        _ <- executeEvent(BasicCureEvent())
+        _ <- executeEvent(AdvanceDayEvent())
+        _ <- executeEvent(Mutation())
+      yield ()
+    tick.runS(state).value
 
 //oggetto intenzione che è un mapper da intenzione dell'entita ad un evento.
 //evento chiama la generazione delle intenzioni
