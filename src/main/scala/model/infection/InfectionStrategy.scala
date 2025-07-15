@@ -10,7 +10,7 @@ object InfectionStrategy:
     def calculateInfection(node: Node, disease: Disease): Node
 
   private case class FunctionalInfectionStrategy(
-      adjustInfectivity: (Double, Node) => Double,
+      adjustInfectivity: Double => Double,
       spreadFunction: (Int, Double) => Int
   ) extends Infection:
 
@@ -19,38 +19,38 @@ object InfectionStrategy:
       if healthy <= 0 || node.infected == 0 then node
       else
         val pressure      = node.infected.toDouble / node.population
-        val infectivity   = adjustInfectivity(disease.infectivity, node)
+        val infectivity   = adjustInfectivity(disease.infectivity)
         val probability   = infectivity * pressure
         val newInfections = spreadFunction(healthy, probability)
         node.applyInfection(newInfections)
 
   val StandardInfection: Infection = FunctionalInfectionStrategy(
-    adjustInfectivity = (inf, _) => inf,
-    spreadFunction = (healthy, prob) => (healthy * prob).toInt
+    adjustInfectivity = infectivity => infectivity,
+    spreadFunction = (healthy, probability) => (healthy * probability).toInt
   )
 
   def TemperatureAwareInfection(temp: Double): Infection =
     FunctionalInfectionStrategy(
       adjustInfectivity =
-        (infectivity, _) => applyTemperaturePenalty(infectivity, temp),
-      spreadFunction = (healthy, prob) => (healthy * prob).toInt
+        infectivity => applyTemperatureVariation(infectivity, temp),
+      spreadFunction = (healthy, probability) => (healthy * probability).toInt
     )
 
   val ProbabilisticInfection: Infection = FunctionalInfectionStrategy(
-    adjustInfectivity = (inf, _) => inf,
+    adjustInfectivity = infectivity => infectivity,
     spreadFunction =
-      (healthy, prob) => (1 to healthy).count(_ => Random.nextDouble() < prob)
+      (healthy, probability) => (1 to healthy).count(_ => Random.nextDouble() < probability)
   )
 
   def ProbabilisticTemperatureInfection(temp: Double): Infection =
     FunctionalInfectionStrategy(
       adjustInfectivity =
-        (infectivity, _) => applyTemperaturePenalty(infectivity, temp),
+        infectivity => applyTemperatureVariation(infectivity, temp),
       spreadFunction =
-        (healthy, prob) => (1 to healthy).count(_ => Random.nextDouble() < prob)
+        (healthy, probability) => (1 to healthy).count(_ => Random.nextDouble() < probability)
     )
 
-  private def applyTemperaturePenalty(
+  private def applyTemperatureVariation(
       infectivity: Double,
       temperature: Double
   ): Double =
