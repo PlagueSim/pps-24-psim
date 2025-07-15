@@ -57,7 +57,7 @@ object SimulationState:
       Disease("StandardDisease", Set(pulmonaryEdema), 1),
       Cure(),
       world,
-      InfectionStrategy.StandardInfection()
+      InfectionStrategy.StandardInfection
     )
 
   extension (state: SimulationState)

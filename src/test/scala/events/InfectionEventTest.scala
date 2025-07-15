@@ -32,7 +32,7 @@ class InfectionEventTest extends AnyFlatSpec with Matchers:
       Disease("StandardDisease", Set(pulmonaryEdema), 1),
       Cure(),
       world,
-      InfectionStrategy.StandardInfection()
+      InfectionStrategy.StandardInfection
     )
     val infectionEvent = InfectionEvent()
 
