@@ -65,3 +65,61 @@ class InfectionEventTest extends AnyFlatSpec with Matchers:
     modifiedState.map((s, n) => n).foreach(x =>
       x.infected should be (10)
     )
+
+  "With a temperature really low the infection" should "not spread" in:
+    val degree: Double = -100.0
+
+    val state = SimulationState.createStandardSimulationState().replace(TemperatureAwareInfection(degree))
+
+    val infectionEvent = InfectionEvent()
+    val modifiedState = infectionEvent.modifyFunction(state)
+    modifiedState.map((s, n) => n).foreach(x =>
+      x.infected should be (1)
+    )
+
+  it should "also not spread with a temperature really high" in:
+    val degree: Double = 100.0
+
+    val state = SimulationState.createStandardSimulationState().replace(TemperatureAwareInfection(degree))
+
+    val infectionEvent = InfectionEvent()
+    val modifiedState = infectionEvent.modifyFunction(state)
+    modifiedState.map((s, n) => n).foreach(x =>
+      x.infected should be (1)
+    )
+
+  "Calling multiple times the infection event" should "increment the infected count correctly" in:
+    val state = SimulationState.createStandardSimulationState()
+
+    val infectionEvent = InfectionEvent()
+    val modifiedState = infectionEvent.modifyFunction(state) //5
+    val news = state.replace(World(modifiedState, state.world.edges, state.world.movements))
+    val y = infectionEvent.modifyFunction(news) //28
+
+    y.map((s, n) => n).foreach(x =>
+      x.infected should be(28)
+    )
+
+    val news2 = news.replace(World(y, state.world.edges, state.world.movements))
+
+    val z = infectionEvent.modifyFunction(news2)
+
+    z.map((s, n) => n).foreach(x =>
+      x.infected should be(100)
+    )
+
+  "The probabilistic infection" should "behave correctly" in:
+    val state = SimulationState.createStandardSimulationState()
+      .replace(InfectionStrategy.ProbabilisticInfection)
+
+    val infectionEvent = InfectionEvent()
+    val modifiedState = infectionEvent.modifyFunction(state)
+    modifiedState.map((s, n) => n).foreach(x =>
+      x.infected should (be >= 1 and be <= 15)
+    )
+
+    val news = state.replace(World(modifiedState, state.world.edges, state.world.movements))
+    val y = infectionEvent.modifyFunction(news)
+    y.map((s, n) => n).foreach(x =>
+      x.infected should (be >= 5 and be <= 50)
+    )
