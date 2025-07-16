@@ -13,3 +13,13 @@ trait ReactionCondition:
      * @return true if the condition is satisfied, false otherwise
      */
     def isSatisfied(state: SimulationState, nodeId: String): Boolean
+    
+/** Simple condition
+* when infected on a node are grater than a threshold
+* @param threshold the minimum number of infected individuals required to satisfy the condition
+*/
+case class InfectedCondition(threshold: Double) extends ReactionCondition:
+    def isSatisfied(state: SimulationState, nodeId: String): Boolean =
+      state.world.nodes.get(nodeId) match
+        case Some(node) => node.infected / node.population.toDouble >= threshold
+        case None => false
