@@ -1,8 +1,8 @@
 package model.core
 
 import model.cure.Cure
-import model.infection.InfectionStrategy
-import model.infection.InfectionStrategy.Infection
+import model.infection.InfectionAndDeathPopulation.PopulationStrategy
+import model.infection.InfectionAndDeathPopulation.Infection.StandardInfection
 import model.plague.Disease
 import model.plague.Symptoms.pulmonaryEdema
 import model.time.TimeTypes.{Day, Year}
@@ -14,7 +14,7 @@ sealed case class SimulationState private (
     disease: Disease,
     cure: Cure,
     world: World,
-    infectionLogic: Infection
+    infectionLogic: PopulationStrategy
 )
 
 object SimulationState:
@@ -36,7 +36,7 @@ object SimulationState:
       disease: Disease,
       cure: Cure,
       world: World,
-      infectionLogic: Infection
+      infectionLogic: PopulationStrategy
   ): SimulationState =
     new SimulationState(time, disease, cure, world, infectionLogic)
 
@@ -57,7 +57,7 @@ object SimulationState:
       Disease("StandardDisease", Set(pulmonaryEdema), 1),
       Cure(),
       world,
-      InfectionStrategy.StandardInfection
+      StandardInfection
     )
 
   extension (state: SimulationState)
@@ -73,5 +73,5 @@ object SimulationState:
       case newDisease: Disease     => state.copy(disease = newDisease)
       case newCure: Cure           => state.copy(cure = newCure)
       case newWorld: World         => state.copy(world = newWorld)
-      case newInfection: Infection => state.copy(infectionLogic = newInfection)
+      case newInfection: PopulationStrategy => state.copy(infectionLogic = newInfection)
       case _                       => state

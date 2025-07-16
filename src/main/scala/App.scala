@@ -1,12 +1,9 @@
 import controller.ExecutionMode.GuiFXMode
 import controller.SimulationBinderImpl
 import model.core.{SimulationEngine, SimulationState}
-import model.cure.Cure
-import model.plague.Disease
 import model.scheduler.*
-import model.time.BasicYear
-import model.time.TimeTypes.{Day, Year}
-import model.world.{MovementStrategy, Static, WorldFactory}
+import model.time.TimeTypes.Day
+import model.world.{MovementStrategy, Static}
 import scalafx.application.JFXApp3
 import scalafx.scene.Scene
 import scalafx.stage.Screen
