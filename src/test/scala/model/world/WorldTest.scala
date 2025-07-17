@@ -80,8 +80,8 @@ class WorldTest extends AnyFlatSpec with Matchers:
       "B" -> nodeB
     )
     val edges = Set(
-      Edge("A", "B", EdgeType.Air, weight = 1.0),
-      Edge("A", "B", EdgeType.Air, weight = 2.0)
+      Edge("A", "B", EdgeType.Air),
+      Edge("A", "B", EdgeType.Air)
     )
     val movements : Map[MovementStrategy, Double] = Map(
       Static -> 1.0
