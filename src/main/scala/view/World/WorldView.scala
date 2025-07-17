@@ -47,6 +47,7 @@ class WorldView(
       view.labelId.text = s"Node: $id"
       view.labelPop.text = s"Pop: ${node.population}"
       view.labelInf.text = s"Infected: ${node.infected}"
+      view.labelDied.text = s"Died: ${node.died}"
     }
   }
 
