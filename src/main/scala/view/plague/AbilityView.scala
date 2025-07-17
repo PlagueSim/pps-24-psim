@@ -1,18 +1,24 @@
 package view.plague
 
+import model.core.SimulationState
+import model.plague.Abilities
 import scalafx.geometry.Insets
-import scalafx.geometry.Pos.Center
-import scalafx.scene.layout.{HBox, Priority, Region}
-import scalafx.scene.text.Text
+import scalafx.scene.layout.BorderPane
+import scalafx.Includes.jfxReadOnlyObjectProperty2sfx
+import view.updatables.UpdatableView
 
-class AbilityView extends HBox:
-  val abilities = new Text("EH, ABILITIES")
+class AbilityView extends BorderPane with UpdatableView:
 
-  //    new Region {
-  //    style = "-fx-background-color: #2a2a2a; -fx-border-color: white;"
-  //  }
-  HBox.setHgrow(abilities, Priority.Always)
+  private val symptomList = TraitList(Abilities.allBasics)
 
-  alignment = Center
+  symptomList.selectionModel().selectedItemProperty().onChange((_, _, selectedTrait) =>
+    if selectedTrait != null then
+      val infoPanel = TraitInfoPanel(selectedTrait)
+      right = infoPanel
+  )
+
+  center = symptomList
   padding = Insets(10)
-  children = abilities
+
+  override def update(newState: SimulationState): Unit =
+    symptomList.update(newState)

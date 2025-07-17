@@ -1,18 +1,24 @@
 package view.plague
 
+import model.core.SimulationState
+import model.plague.Transmissions
 import scalafx.geometry.Insets
-import scalafx.geometry.Pos.Center
-import scalafx.scene.layout.{HBox, Priority, Region}
-import scalafx.scene.text.Text
+import scalafx.scene.layout.BorderPane
+import scalafx.Includes.jfxReadOnlyObjectProperty2sfx
+import view.updatables.UpdatableView
 
-class TransmissionView extends HBox:
-  val trs = new Text("EH, TRANSMISSIONS")
+class TransmissionView extends BorderPane with UpdatableView:
 
-  //    new Region {
-  //    style = "-fx-background-color: #2a2a2a; -fx-border-color: white;"
-  //  }
-  HBox.setHgrow(trs, Priority.Always)
+  private val symptomList = TraitList(Transmissions.allBasics)
 
-  alignment = Center
+  symptomList.selectionModel().selectedItemProperty().onChange((_, _, selectedTrait) =>
+    if selectedTrait != null then
+      val infoPanel = TraitInfoPanel(selectedTrait)
+      right = infoPanel
+  )
+
+  center = symptomList
   padding = Insets(10)
-  children = trs
+
+  override def update(newState: SimulationState): Unit =
+    symptomList.update(newState)

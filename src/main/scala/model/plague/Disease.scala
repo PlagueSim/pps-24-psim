@@ -58,6 +58,42 @@ case class Disease private(
     traits.toList.map(_.stats.mutationChance).sum + traits.count(_.category == Symptom) * 0.005
 
   /**
+   *
+   * @return
+   */
+  def allStats(): TraitStats = sum(traits.map(_.stats).toList)
+
+  /**
+   *
+   * @param stats
+   * @return
+   */
+  private def sum(stats: List[TraitStats]): TraitStats =
+    stats.foldLeft(TraitStats())((prev, current) =>
+      TraitStats(
+        infectivity = prev.infectivity + current.infectivity,
+        severity = prev.severity + current.severity,
+        lethality = prev.lethality + current.lethality,
+        cost = prev.cost + current.cost,
+        mutationChance = prev.mutationChance + current.mutationChance,
+        cureSlowdown = prev.cureSlowdown + current.cureSlowdown,
+        cureReset = prev.cureReset + current.cureReset,
+        effectiveness = mergeEffectiveness(prev.effectiveness, current.effectiveness)
+      )
+    )
+
+  /**
+   *
+   * @param a
+   * @param b
+   * @return
+   */
+  private def mergeEffectiveness(a: Map[Any, Double], b: Map[Any, Double]): Map[Any, Double] =
+    (a.keySet ++ b.keySet).map(key =>
+      key -> (a.getOrElse(key, 0.0) + b.getOrElse(key, 0.0))
+    ).toMap
+
+  /**
    * Checks whether the [[Disease]] has already evolved a [[Trait]] with the given name.
    *
    * @param name The name of the [[Trait]] to check for duplicate.
