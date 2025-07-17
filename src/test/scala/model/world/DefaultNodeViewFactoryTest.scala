@@ -13,7 +13,7 @@ class DefaultNodeViewFactoryTest extends AnyFlatSpec with Matchers:
   "DefaultNodeViewFactory" should "create a NodeView with 4 visuals" in:
     val node = Node.withPopulation(100).withInfected(10).build()
     val view = factory.createNode("testNode", node, (50.0, 60.0))
-    view.visuals should have size 4
+    view.visuals should have size 5
 
   it should "create a Circle at the specified position" in:
     val node = Node.withPopulation(100).withInfected(10).build()
@@ -36,7 +36,7 @@ class DefaultNodeViewFactoryTest extends AnyFlatSpec with Matchers:
       case t: javafx.scene.text.Text => t
     }
 
-    labels should have size 3
+    labels should have size 4
 
     labels.map(_.getText) should contain allOf (
       "Node: Node42",

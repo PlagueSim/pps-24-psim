@@ -6,7 +6,7 @@ object WorldFactory:
     val nodes =
       (1 to 15).map { i =>
         val id = ('A' + (i - 1)).toChar.toString
-        id -> Node.withPopulation(10 + i).build()
+        id -> Node.withPopulation(10 + i).withDied(2).build()
       }.toMap
 
     val edges = Set(
