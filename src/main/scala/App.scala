@@ -1,13 +1,13 @@
 import controller.ExecutionMode.GuiFXMode
-import controller.SimulationBinderImpl
-import model.core.{SimulationEngine, SimulationState}
-import model.scheduler.*
-import model.time.TimeTypes.Day
-import model.world.{MovementStrategy, Static}
+import dsl.DSL.*
+import dsl.builders.{SetupBuilder, SimulationStateBuilder}
+import model.core.SimulationState
+import model.world.{MovementStrategy, RandomNeighbor, Static}
 import scalafx.application.JFXApp3
 import scalafx.scene.Scene
 import scalafx.stage.Screen
 import view.MainView
+
 
 object App extends JFXApp3:
   override def start(): Unit =
@@ -16,18 +16,27 @@ object App extends JFXApp3:
 
     val mainView = MainView()
 
-    val movements: Map[MovementStrategy, Double] = Map(
-      Static -> 1.0
-    )
-
     val initialState: SimulationState = SimulationState.createStandardSimulationState()
-
-    SimulationBinderImpl bind (
-      SimulationEngine,
-      mainView
-    ) withInitialState initialState runUntil (s =>
-      s.time.day.value < 20
-    ) scheduleWith CustomScheduler(500) run GuiFXMode
+    
+      setup:
+        simulationState :
+          world:
+            initialState.world
+          disease:
+            initialState.disease
+          cure:
+            initialState.cure
+          time:
+            initialState.time
+          infectionLogic:
+            initialState.infectionLogic
+        conditions:
+          (s: SimulationState) => s.time.day.value < 50
+        bindings:
+          mainView
+        runMode:
+          GuiFXMode
+    
 
     stage = new JFXApp3.PrimaryStage:
       title = "Plague Sim"

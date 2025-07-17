@@ -33,6 +33,7 @@ object SimulationBinderImpl extends SimulationBinder:
     engine,
     view
   )
+  
 
 private case class SimulationStateBuilderImpl(
     engine: SimulationEngine.type,

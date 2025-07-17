@@ -49,7 +49,7 @@ object SimulationState:
     val world = World(
       nodes = Map("A" -> node, "B" -> node),
       Set(Edge("A", "B", EdgeType.Land)),
-      Map(Static -> 1)
+      Map(Static -> 0.5, RandomNeighbor -> 0.5)
     )
 
     SimulationState(
@@ -69,9 +69,10 @@ object SimulationState:
       *   A new SimulationState with the updated value.
       */
     def replace[A](newValue: A): SimulationState = newValue match
-      case newTime: Time           => state.copy(time = newTime)
-      case newDisease: Disease     => state.copy(disease = newDisease)
-      case newCure: Cure           => state.copy(cure = newCure)
-      case newWorld: World         => state.copy(world = newWorld)
-      case newInfection: PopulationStrategy => state.copy(infectionLogic = newInfection)
-      case _                       => state
+      case newTime: Time                    => state.copy(time = newTime)
+      case newDisease: Disease              => state.copy(disease = newDisease)
+      case newCure: Cure                    => state.copy(cure = newCure)
+      case newWorld: World                  => state.copy(world = newWorld)
+      case newInfection: PopulationStrategy =>
+        state.copy(infectionLogic = newInfection)
+      case _ => state
