@@ -71,7 +71,7 @@ class WorldTest extends AnyFlatSpec with Matchers:
     world.movements shouldBe movements
   }
 
-  it should "not allow multiple edges of the same typology between the same nodes" in {
+  it should "ignore the adding of an edge, if already exists" in {
     val nodeA = Node.withPopulation(10).build()
     val nodeB = Node.withPopulation(5).build()
 
@@ -83,13 +83,12 @@ class WorldTest extends AnyFlatSpec with Matchers:
       Edge("A", "B", EdgeType.Air),
       Edge("A", "B", EdgeType.Air)
     )
+
     val movements : Map[MovementStrategy, Double] = Map(
       Static -> 1.0
     )
 
-    an[IllegalArgumentException] shouldBe thrownBy {
-      World(nodes, edges, movements)
-    }
+    edges.size should be (1)
   }
 
   it should "allow neighbors to be retrieved correctly" in {
