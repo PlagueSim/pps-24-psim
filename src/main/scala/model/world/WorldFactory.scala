@@ -20,8 +20,8 @@ object WorldFactory:
       Edge("G", "H", EdgeType.Land),
       Edge("H", "I", EdgeType.Sea),
       Edge("I", "J", EdgeType.Air),
-      Edge("J", "K", EdgeType.Land),
-      Edge("K", "L", EdgeType.Sea),
+      Edge("J", "K", EdgeType.Land).close,
+      Edge("K", "L", EdgeType.Sea).close,
       Edge("L", "M", EdgeType.Air),
       Edge("M", "N", EdgeType.Land),
       Edge("N", "O", EdgeType.Sea),
@@ -29,7 +29,7 @@ object WorldFactory:
       // Some extra cross connections:
       Edge("A", "H", EdgeType.Sea),
       Edge("C", "I", EdgeType.Land),
-      Edge("D", "K", EdgeType.Air),
+      Edge("D", "K", EdgeType.Air).close,
       Edge("F", "M", EdgeType.Sea),
       Edge("G", "O", EdgeType.Land)
     )
