@@ -29,7 +29,7 @@ object WorldFactory:
       // Some extra cross connections:
       Edge("A", "H", EdgeType.Sea),
       Edge("C", "I", EdgeType.Land),
-      Edge("D", "K", EdgeType.Air),
+      Edge("D", "K", EdgeType.Air).close,
       Edge("F", "M", EdgeType.Sea),
       Edge("G", "O", EdgeType.Land)
     )

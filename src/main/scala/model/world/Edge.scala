@@ -18,7 +18,7 @@ case class Edge private (
                           nodeA: String,
                           nodeB: String,
                           typology: EdgeType,
-                          weight: Double = 1.0
+                          isClose: Boolean = false,
                         ):
 
   /**
@@ -41,6 +41,12 @@ case class Edge private (
     if nodeId == nodeA then Some(nodeB)
     else if nodeId == nodeB then Some(nodeA)
     else None
+    
+  def close: Edge =
+    copy(isClose = true)
+    
+  def open: Edge =
+    copy(isClose = false)
 
 
 object Edge:
@@ -53,6 +59,6 @@ object Edge:
    * @param weight optional weight (default = 1.0)
    * @return an Edge with nodeA <= nodeB
    */
-  def apply(a: String, b: String, typology: EdgeType, weight: Double = 1.0): Edge =
-    if a <= b then new Edge(a, b, typology, weight)
-    else new Edge(b, a, typology, weight)
+  def apply(a: String, b: String, typology: EdgeType): Edge =
+    if a <= b then new Edge(a, b, typology)
+    else new Edge(b, a, typology)

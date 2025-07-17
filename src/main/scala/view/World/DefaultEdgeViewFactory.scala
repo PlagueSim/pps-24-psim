@@ -10,6 +10,7 @@ class DefaultEdgeViewFactory(
 
   override def createEdge(edge: Edge, nodePositions: Map[String, (Double, Double)]): Any =
     val ((dx, dy), color) = edgeStyle(edge.typology)
+    val edgeColor = if edge.isClose then Color.LightGray else color
     val (x1, y1) = nodePositions(edge.nodeA)
     val (x2, y2) = nodePositions(edge.nodeB)
 
@@ -19,6 +20,6 @@ class DefaultEdgeViewFactory(
         startY = y1 + dy
         endX = x2 + dx
         endY = y2 + dy
-        stroke = color
+        stroke = edgeColor
         strokeWidth = 2
       ).delegate
