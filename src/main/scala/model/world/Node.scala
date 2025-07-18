@@ -9,6 +9,7 @@ package model.world
 case class Node private (
                           population: Int,
                           infected: Int,
+                          died: Int,
                           cureEffectiveness: Double
                         )
 
@@ -35,6 +36,7 @@ object Node:
   final case class Builder (
                                      population: Int,
                                      infected: Int = 0,
+                                     died: Int = 0,
                                      cureEffectiveness: Double = 0.0
                                    ):
 
@@ -48,6 +50,10 @@ object Node:
     def withInfected(value: Int): Builder =
       require(value >= 0, "Infected must be >= 0")
       copy(infected = value)
+
+    def withDied(value: Int): Builder =
+      require(value >= 0, "Died must be >= 0")
+      copy(died = value)
 
     /**
      * Sets the effectiveness of the cure.
@@ -67,8 +73,7 @@ object Node:
      */
     def build(): Node =
       require(infected <= population, "Infected cannot exceed population")
-      Node(population, infected, cureEffectiveness)
-
+      Node(population, infected, died, cureEffectiveness)
   /** Extension methods for immutable Node operations */
   extension (node: Node)
 

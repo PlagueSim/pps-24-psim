@@ -5,6 +5,9 @@ import model.plague.TraitDsl.*
 
 import placehoderTypes.*
 
+/**
+ * An object containing all basic Transmission values
+ */
 object Transmissions:
 
   final val bird1: Trait = define("Bird 1", Transmission)

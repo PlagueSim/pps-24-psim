@@ -2,6 +2,7 @@ package view.plague
 
 import controller.ViewController
 import model.core.SimulationState
+import model.plague.{Abilities, Symptoms, Transmissions}
 import scalafx.geometry.Insets
 import scalafx.scene.control.{Label, TextField}
 import scalafx.scene.layout.{BorderPane, HBox, Priority, VBox}
@@ -12,9 +13,9 @@ import view.updatables.UpdatableView
 class PlagueView extends BorderPane with UpdatableView:
   private val controller = ViewController(this)
 
-  private val transmissions = TransmissionView()
-  private val symptoms = SymptomsView()
-  private val abilities = AbilityView()
+  private val transmissions = TraitsView(Transmissions.allBasics)
+  private val symptoms = TraitsView(Symptoms.allBasics)
+  private val abilities = TraitsView(Abilities.allBasics)
 
   private val plgName: Label = new Label(""):
     font = Font(18)
@@ -23,7 +24,6 @@ class PlagueView extends BorderPane with UpdatableView:
   private val infectivityLabel = Label("")
   private val severityLabel = Label("")
   private val lethalityLabel = Label("")
-  private val traits = TextField()
 
 
   private val plagueInfos = new BorderPane():
@@ -34,9 +34,6 @@ class PlagueView extends BorderPane with UpdatableView:
         severityLabel,
         lethalityLabel
       )
-    bottom = traits
-
-
 
 
   private val trsBtn = StdButton("Transmission"):
@@ -53,10 +50,20 @@ class PlagueView extends BorderPane with UpdatableView:
   left = plagueInfos
   top = topBar
 
-  override def update(newState: SimulationState): Unit =
-    plgName.text = newState.disease.name
-    infectivityLabel.text = f"Infectivity: ${newState.disease.infectivity}%.2f"
-    severityLabel.text = f"Severity: ${newState.disease.severity}%.2f"
-    lethalityLabel.text = f"Lethality: ${newState.disease.lethality}%.2f"
-    traits.text = s"${newState.disease.traits.map(_.name).toString()}"
+  private def effectivenessLabels(effMap: Map[Any, Double]): Seq[Label] = effMap match
+    case map if map.nonEmpty => Label("Effectiveness:") +:
+      map.toSeq.map((k, v) => Label(s" - $k: ${"%.2f".format(v)}"))
+    case _ => Seq.empty
 
+  override def update(newState: SimulationState): Unit =
+    val diseaseStats = newState.disease.allStats()
+    plgName.text = newState.disease.name
+
+    infectivityLabel.text = f"Infectivity: ${diseaseStats.infectivity}%.2f"
+    severityLabel.text = f"Severity: ${diseaseStats.severity}%.2f"
+    lethalityLabel.text = f"Lethality: ${diseaseStats.lethality}%.2f"
+    // effectivenessLabels(diseaseStats.effectiveness)
+
+    symptoms.update(newState)
+    transmissions.update(newState)
+    abilities.update(newState)
