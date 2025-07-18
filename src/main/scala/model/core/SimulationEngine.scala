@@ -10,7 +10,7 @@ import model.events.{
   BasicCureEvent,
   Event,
   InfectionEvent,
-  MovementChangeInWorldEvent
+  ChangeNodesInWorldEvent
 }
 import model.time.TimeTypes.*
 import model.world.World
@@ -69,9 +69,9 @@ object SimulationEngine:
   def runStandardSimulation(state: SimulationState): SimulationState =
     val tick = for
       moves <- executeEvent(MovementEvent())
-      _     <- executeEvent(MovementChangeInWorldEvent(moves))
+      _     <- executeEvent(ChangeNodesInWorldEvent(moves))
       x     <- executeEvent(InfectionEvent())
-      _     <- executeEvent(MovementChangeInWorldEvent(x))
+      _     <- executeEvent(ChangeNodesInWorldEvent(x))
       _     <- executeEvent(BasicCureEvent())
       _     <- executeEvent(Mutation())
       _     <- executeEvent(AdvanceDayEvent())
