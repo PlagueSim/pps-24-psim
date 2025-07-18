@@ -11,7 +11,7 @@ import org.scalatest.matchers.should.Matchers
 
 class ReactionConditionTest extends AnyFlatSpec with Matchers:
   def testSimulationState: SimulationState =
-    val defaultNode  = model.world.Node.Builder(100, 0, 0.0).build()
+    val defaultNode  = model.world.Node.Builder(100, 0, 0, 0.0).build()
     val initialNodes =
       Map("A" -> defaultNode, "B" -> defaultNode, "C" -> defaultNode)
     val initialWorld =
@@ -20,7 +20,9 @@ class ReactionConditionTest extends AnyFlatSpec with Matchers:
       BasicYear(Day(0), Year(2023)),
       Disease("TestDisease", Set.empty, 1),
       Cure(),
-      initialWorld
+      initialWorld,
+      model.infection.InfectionAndDeathPopulation.Infection.StandardInfection,
+      model.infection.InfectionAndDeathPopulation.Infection.Death.StandardDeath
     )
 
   def simulationStateWithInfected(
@@ -30,14 +32,26 @@ class ReactionConditionTest extends AnyFlatSpec with Matchers:
     val baseState   = testSimulationState
     val node        = baseState.world.nodes(nodeId)
     val updatedNode = model.world.Node
-      .Builder(node.population, infectedCount, node.cureEffectiveness)
+      .Builder(
+        node.population,
+        infectedCount,
+        node.died,
+        node.cureEffectiveness
+      )
       .build()
     val updatedWorld = World(
       baseState.world.nodes.updated(nodeId, updatedNode),
       baseState.world.edges,
       baseState.world.movements
     )
-    baseState.copy(world = updatedWorld)
+    SimulationState(
+      baseState.time,
+      baseState.disease,
+      baseState.cure,
+      updatedWorld,
+      baseState.infectionLogic,
+      baseState.deathLogic
+    )
 
   "InfectedCondition" should "not be satisfied if infected is below threshold" in:
     val state = simulationStateWithInfected("A", 10)
