@@ -1,15 +1,14 @@
 package view
 
 import controller.ViewController
-import model.world.WorldFactory
 import model.core.SimulationState
+import model.world.WorldFactory
 import scalafx.geometry.Insets
-import scalafx.scene.Scene
 import scalafx.scene.control.Label
 import scalafx.scene.layout.BorderPane
 import view.cure.CureProgressBar
-import view.updatables.UpdatableView
 import view.plague.PlagueView
+import view.updatables.UpdatableView
 import view.world.WorldViewFactory
 
 class MainView extends BorderPane with UpdatableView:

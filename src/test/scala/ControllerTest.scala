@@ -1,16 +1,12 @@
-import controller.{SimulationBinderImpl, TerminalMode}
+import controller.ExecutionMode.TerminalMode
+import controller.SimulationBinderImpl
 import model.core.{SimulationEngine, SimulationState}
-import model.cure.Cure
-import model.plague.Disease
 import model.scheduler.CustomScheduler
-import model.time.BasicYear
 import model.time.TimeTypes.*
+import model.world.{MovementStrategy, Static}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import view.updatables.UpdatableView
-import model.world.{MovementStrategy, Static, World}
-
-import scala.concurrent.ExecutionContext
 
 class ControllerTest extends AnyFlatSpec with Matchers:
 
@@ -25,12 +21,7 @@ class ControllerTest extends AnyFlatSpec with Matchers:
   val movements: Map[MovementStrategy, Double] = Map(
     Static -> 1.0
   )
-  val initialState: SimulationState = SimulationState(
-    BasicYear(Day(0), Year(2023)),
-    Disease("a", Set.empty, 0),
-    Cure(),
-    World(Map.empty, Set.empty, movements)
-  )
+  val initialState: SimulationState = SimulationState.createStandardSimulationState()
 
   "A controller" should "bind the simulation engine to a generic view" in:
     SimulationBinderImpl bind (
@@ -68,4 +59,4 @@ class ControllerTest extends AnyFlatSpec with Matchers:
         s.time.day.value < 20
         ) scheduleWith CustomScheduler(100) run TerminalMode
     }
-    stream.toString should include("Current Time: 20 of 2023")
+    stream.toString should include("Current Time: 20 of 2025")

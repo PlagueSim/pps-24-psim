@@ -1,5 +1,6 @@
 package controller
 
+import controller.ExecutionMode.ExecutionMode
 import model.core.{SimulationEngine, SimulationState}
 import model.scheduler.Scheduler
 import view.updatables.UpdatableView
@@ -32,6 +33,7 @@ object SimulationBinderImpl extends SimulationBinder:
     engine,
     view
   )
+  
 
 private case class SimulationStateBuilderImpl(
     engine: SimulationEngine.type,

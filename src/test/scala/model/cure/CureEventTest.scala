@@ -15,7 +15,9 @@ class CureEventTest extends AnyFlatSpec with Matchers:
     BasicYear(Day(0), Year(2023)),
     Disease("TestDisease", Set.empty, 1),
     Cure(),
-    World(Map.empty, Set.empty, Map(Static -> 1.0))
+    World(Map.empty, Set.empty, Map(Static -> 1.0)),
+    null,
+    null
   )
 
   "BasicCureEvent" should "advance the cure progress when executed" in:
@@ -38,7 +40,7 @@ class CureEventTest extends AnyFlatSpec with Matchers:
     val nodeA = model.world.Node.Builder(population = 100, infected = 60, cureEffectiveness = 0.0).build()
     val nodeB = model.world.Node.Builder(population = 100, infected = 30, cureEffectiveness = 0.0).build()
     val nodes = Map("A" -> nodeA, "B" -> nodeB)
-    val state = basicSimulationState.copy(world = World(nodes, Set.empty, Map(Static -> 1.0)))
+    val state = basicSimulationState.replace(World(nodes, Set.empty, Map(Static -> 1.0)))
     val event = LinearInfectedThresholdEvent(threshold = 0.5)
 
     val (_, cure) = event.execute().run(state).value
