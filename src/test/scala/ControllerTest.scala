@@ -1,12 +1,9 @@
 import controller.ExecutionMode.TerminalMode
 import controller.SimulationBinderImpl
 import model.core.{SimulationEngine, SimulationState}
-import model.cure.Cure
-import model.plague.Disease
 import model.scheduler.CustomScheduler
-import model.time.BasicYear
 import model.time.TimeTypes.*
-import model.world.{MovementStrategy, Static, World}
+import model.world.{MovementStrategy, Static}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import view.updatables.UpdatableView
@@ -62,4 +59,4 @@ class ControllerTest extends AnyFlatSpec with Matchers:
         s.time.day.value < 20
         ) scheduleWith CustomScheduler(100) run TerminalMode
     }
-    stream.toString should include("Current Time: 20 of 2023")
+    stream.toString should include("Current Time: 20 of 2025")
