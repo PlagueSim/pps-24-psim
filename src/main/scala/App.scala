@@ -2,12 +2,10 @@ import controller.ExecutionMode.GuiFXMode
 import dsl.DSL.*
 import dsl.builders.{SetupBuilder, SimulationStateBuilder}
 import model.core.SimulationState
-import model.world.{MovementStrategy, RandomNeighbor, Static}
 import scalafx.application.JFXApp3
 import scalafx.scene.Scene
 import scalafx.stage.Screen
 import view.MainView
-
 
 object App extends JFXApp3:
   override def start(): Unit =
@@ -16,27 +14,27 @@ object App extends JFXApp3:
 
     val mainView = MainView()
 
-    val initialState: SimulationState = SimulationState.createStandardSimulationState()
-    
-      setup:
-        simulationState :
-          world:
-            initialState.world
-          disease:
-            initialState.disease
-          cure:
-            initialState.cure
-          time:
-            initialState.time
-          infectionLogic:
-            initialState.infectionLogic
-        conditions:
-          (s: SimulationState) => s.time.day.value < 50
-        bindings:
-          mainView
-        runMode:
-          GuiFXMode
-    
+    val initialState: SimulationState =
+      SimulationState.createStandardSimulationState()
+
+    setup:
+      simulationState:
+        world:
+          initialState.world
+        disease:
+          initialState.disease
+        cure:
+          initialState.cure
+        time:
+          initialState.time
+        infectionLogic:
+          initialState.infectionLogic
+      conditions: (s: SimulationState) =>
+        s.time.day.value < 50
+      bindings:
+        mainView
+      runMode:
+        GuiFXMode
 
     stage = new JFXApp3.PrimaryStage:
       title = "Plague Sim"
