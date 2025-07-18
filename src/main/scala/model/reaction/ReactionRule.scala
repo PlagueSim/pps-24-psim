@@ -2,7 +2,7 @@ package model.reaction
 
 import model.core.SimulationState
 
-final case class Reaction(
+final case class ReactionRule(
     condition: ReactionCondition,
     action: ReactionAction,
     duration: Option[Int] = None
