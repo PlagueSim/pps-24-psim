@@ -5,7 +5,9 @@ import model.plague.TraitCategory.Ability
 import model.plague.TraitDsl.*
 import model.plague.placehoderTypes.{Cold, Hot, Rich}
 
-
+/**
+ * An object containing all basic Ability values
+ */
 object Abilities:
 
   final val coldResistance1: Trait = define("Cold Resistance 1", Ability)
