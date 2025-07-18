@@ -25,3 +25,8 @@ object ReactionAction:
         updatedEdges,
         world.movements
       )
+
+  case class CompositeAction(actions: List[ReactionAction])
+      extends ReactionAction:
+    def apply: World => World =
+      actions.foldLeft(identity[World] _)((acc, action) => acc.andThen(action.apply))
