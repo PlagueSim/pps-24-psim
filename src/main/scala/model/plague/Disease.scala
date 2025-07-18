@@ -111,7 +111,7 @@ case class Disease private(
    * @param t The [[Trait]] to check if evolution is possible.
    * @return [[true]] if the [[Trait]] can be evolved, [[false]] otherwise.
    */
-  private def canEvolve(t: Trait): Boolean = t.category match
+  def canEvolve(t: Trait): Boolean = t.category match
     case Symptom => t.prerequisites.exists(hasTrait) || t.prerequisites.isEmpty
     case _ => t.prerequisites.forall(hasTrait)
 

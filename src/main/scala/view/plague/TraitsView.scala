@@ -1,24 +1,24 @@
 package view.plague
 
 import model.core.SimulationState
-import model.plague.Symptoms
+import model.plague.{Symptoms, Trait}
 import scalafx.geometry.Insets
 import scalafx.scene.layout.BorderPane
 import scalafx.Includes.jfxReadOnlyObjectProperty2sfx
 import view.updatables.UpdatableView
 
-class SymptomsView extends BorderPane with UpdatableView:
+class TraitsView(allTraits: Seq[Trait]) extends BorderPane with UpdatableView:
 
-  private val symptomList = TraitList(Symptoms.allBasics)
+  private val traitList: TraitList = TraitList(allTraits)
 
-  symptomList.selectionModel().selectedItemProperty().onChange((_, _, selectedTrait) =>
+  traitList.selectionModel().selectedItemProperty().onChange((_, _, selectedTrait) =>
     if selectedTrait != null then
       val infoPanel = TraitInfoPanel(selectedTrait)
       right = infoPanel
   )
 
-  center = symptomList
+  center = traitList
   padding = Insets(10)
 
   override def update(newState: SimulationState): Unit =
-    symptomList.update(newState)
+    traitList.update(newState)

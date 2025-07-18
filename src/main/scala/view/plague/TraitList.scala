@@ -8,12 +8,20 @@ import scalafx.scene.control.{ListCell, ListView}
 import view.updatables.UpdatableView
 
 class TraitList(traits: Seq[Trait]) extends ListView[Trait](ObservableBuffer.from(traits)) with UpdatableView:
-  cellFactory = (_: ListView[Trait]) =>
-    new ListCell[Trait]:
-      item.onChange((_, _, newItem) =>
-        text = Option(newItem).map(_.name).orNull
-      )
 
   margin = Insets(10)
 
-  override def update(newState: SimulationState): Unit = 0
+  override def update(newState: SimulationState): Unit =
+    cellFactory = (_: ListView[Trait]) =>
+      new ListCell[Trait]:
+        item.onChange((_, _, newItem) =>
+          text = Option(newItem).map(_.name).orNull
+
+          if !newState.disease.canEvolve(newItem) then
+            disable = true
+            style = "-fx-background-color: lightgray; -fx-text-fill: darkgray;"
+          else
+            disable = false
+            style = ""
+
+        )
