@@ -5,6 +5,10 @@ import model.cure.Cure
 import model.events.InfectionEvent
 import model.infection.InfectionAndDeathPopulation.*
 import model.infection.InfectionAndDeathPopulation.Infection.*
+import model.infection.InfectionAndDeathPopulation.Infection.Death.{
+  ProbabilisticDeath,
+  StandardDeath
+}
 import model.plague.Disease
 import model.plague.Symptoms.*
 import model.time.BasicYear
@@ -32,7 +36,8 @@ class InfectionEventTest extends AnyFlatSpec with Matchers:
       Disease("StandardDisease", Set(pulmonaryEdema), 1),
       Cure(),
       world,
-      StandardInfection
+      StandardInfection,
+      StandardDeath
     )
     val infectionEvent = InfectionEvent()
 
@@ -54,14 +59,14 @@ class InfectionEventTest extends AnyFlatSpec with Matchers:
     val modifiedState  = infectionEvent.modifyFunction(state)
     modifiedState.map((s, n) => n).foreach(x => x.infected should be(4))
 
-  it should "behave correctly with 10 infectivity" in:
+  it should "behave correctly with 20 infectivity" in:
     val state = SimulationState
       .createStandardSimulationState()
       .replace(Disease("test", Set(necrosis), 1))
 
     val infectionEvent = InfectionEvent()
     val modifiedState  = infectionEvent.modifyFunction(state)
-    modifiedState.map((s, n) => n).foreach(x => x.infected should be(10))
+    modifiedState.map((s, n) => n).foreach(x => x.infected should be(20))
 
   "With a temperature really low the infection" should "not spread" in:
     val degree: Double = -100.0
@@ -120,7 +125,7 @@ class InfectionEventTest extends AnyFlatSpec with Matchers:
     val y = infectionEvent.modifyFunction(news)
     y.map((s, n) => n).foreach(x => x.infected should (be >= 5 and be <= 50))
 
-  "b" should "b" in:
+  "The standard infection" should "infect 5 starting with 1 infected" in:
     val node = Node.withPopulation(100).withInfected(1).build()
     val ev   = StandardInfection.applyToPopulation(
       node,
@@ -129,16 +134,70 @@ class InfectionEventTest extends AnyFlatSpec with Matchers:
 
     ev.infected should be(5)
 
-  "c" should "c" in:
+  "The standardTemperatureAwareInfection" should "infect less than 5 because it is weakend by the temperature" in:
     val node = Node.withPopulation(100).withInfected(1).build()
     val ev2  = StandardTemperatureAwareInfection(0.0)
       .applyToPopulation(node, Disease("test", Set(pulmonaryEdema), 1))
 
     ev2.infected should be(4)
 
-  "d" should "d" in:
+  it should "not infect if the temperature is too high or too low" in:
     val node = Node.withPopulation(100).withInfected(1).build()
     val ev3  = StandardTemperatureAwareInfection(100.0)
       .applyToPopulation(node, Disease("test", Set(pulmonaryEdema), 1))
 
     ev3.infected should be(1)
+
+  "in a node with 0 population there" should "not be any death" in:
+    val node = Node.withPopulation(0).build()
+    val ev   = StandardDeath.applyToPopulation(
+      node,
+      Disease("test", Set(pulmonaryEdema), 1)
+    )
+
+    ev.died should be(0)
+
+  "in a node with 100 infected there" should "be 2 deaths" in:
+    val node = Node.withPopulation(100).withInfected(100).build()
+    val ev   = StandardDeath.applyToPopulation(
+      node,
+      Disease("test", Set(pulmonaryEdema), 1)
+    )
+
+    ev.population should be(98)
+
+  it should "have 96 population after another death event" in:
+    val node = Node.withPopulation(100).withInfected(100).build()
+    val ev   = StandardDeath.applyToPopulation(
+      node,
+      Disease("test", Set(pulmonaryEdema), 1)
+    )
+
+    val ev1 = StandardDeath.applyToPopulation(
+      ev,
+      Disease("test", Set(pulmonaryEdema), 1)
+    )
+
+    ev1.population should be(96)
+
+  "A probabilistic death " should "behave correctly" in:
+    val node = Node.withPopulation(100).withInfected(100).build()
+    val ev   = ProbabilisticDeath.applyToPopulation(
+      node,
+      Disease("test", Set(pulmonaryEdema), 1)
+    )
+
+    ev.population should (be >= 80 and be <= 100)
+
+  it should "have a population between 90 and 98 after another probabilistic death event" in:
+    val node = Node.withPopulation(100).withInfected(100).build()
+    val ev   = ProbabilisticDeath.applyToPopulation(
+      node,
+      Disease("test", Set(pulmonaryEdema), 1)
+    )
+    val ev1 = ProbabilisticDeath.applyToPopulation(
+      ev,
+      Disease("test", Set(pulmonaryEdema), 1)
+    )
+
+    ev1.population should (be >= 90 and be <= 98)
