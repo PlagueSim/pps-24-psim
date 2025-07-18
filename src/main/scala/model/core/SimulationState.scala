@@ -5,7 +5,7 @@ import model.infection.InfectionAndDeathPopulation.Infection.Death.StandardDeath
 import model.infection.InfectionAndDeathPopulation.PopulationStrategy
 import model.infection.InfectionAndDeathPopulation.Infection.StandardInfection
 import model.plague.Disease
-import model.plague.Symptoms.pulmonaryEdema
+import model.plague.Symptoms.coughing
 import model.time.TimeTypes.{Day, Year}
 import model.time.{BasicYear, Time}
 import model.world.*
@@ -57,7 +57,7 @@ object SimulationState:
 
     SimulationState(
       BasicYear(Day(STARTING_DAY), Year(STARTING_YEAR)),
-      Disease("StandardDisease", Set(pulmonaryEdema), 1),
+      Disease("StandardDisease", Set(coughing), 1),
       Cure(),
       world,
       StandardInfection,
