@@ -1,6 +1,7 @@
 package model.core
 
 import model.cure.Cure
+import model.infection.InfectionAndDeathPopulation.Infection.Death.StandardDeath
 import model.infection.InfectionAndDeathPopulation.PopulationStrategy
 import model.infection.InfectionAndDeathPopulation.Infection.StandardInfection
 import model.plague.Disease
@@ -14,7 +15,8 @@ sealed case class SimulationState private (
     disease: Disease,
     cure: Cure,
     world: World,
-    infectionLogic: PopulationStrategy
+    infectionLogic: PopulationStrategy,
+    deathLogic: PopulationStrategy
 )
 
 object SimulationState:
@@ -36,9 +38,10 @@ object SimulationState:
       disease: Disease,
       cure: Cure,
       world: World,
-      infectionLogic: PopulationStrategy
+      infectionLogic: PopulationStrategy,
+      deathLogic: PopulationStrategy
   ): SimulationState =
-    new SimulationState(time, disease, cure, world, infectionLogic)
+    new SimulationState(time, disease, cure, world, infectionLogic, deathLogic)
 
   def createStandardSimulationState(): SimulationState =
     val STARTING_DAY: Int  = 0
@@ -57,7 +60,8 @@ object SimulationState:
       Disease("StandardDisease", Set(pulmonaryEdema), 1),
       Cure(),
       world,
-      StandardInfection
+      StandardInfection,
+      StandardDeath
     )
 
   extension (state: SimulationState)
@@ -73,6 +77,6 @@ object SimulationState:
       case newDisease: Disease              => state.copy(disease = newDisease)
       case newCure: Cure                    => state.copy(cure = newCure)
       case newWorld: World                  => state.copy(world = newWorld)
-      case newInfection: PopulationStrategy =>
+      case newInfection: PopulationStrategy=>
         state.copy(infectionLogic = newInfection)
       case _ => state

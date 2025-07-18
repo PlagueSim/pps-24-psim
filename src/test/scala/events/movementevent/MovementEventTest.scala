@@ -26,7 +26,7 @@ class MovementEventTest extends AnyFlatSpec with Matchers:
 
     val worldBefore = World(nodes, edges, movements)
 
-    val simulationState = SimulationState(null, null, null, worldBefore, null)
+    val simulationState = SimulationState(null, null, null, worldBefore, null, null)
 
     val newWorld = for 
       e <- SimulationEngine.executeEvent(MovementEvent())

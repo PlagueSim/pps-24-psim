@@ -16,6 +16,7 @@ class CureEventTest extends AnyFlatSpec with Matchers:
     Disease("TestDisease", Set.empty, 1),
     Cure(),
     World(Map.empty, Set.empty, Map(Static -> 1.0)),
+    null,
     null
   )
 

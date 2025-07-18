@@ -20,6 +20,7 @@ class DiseaseEventsTest extends AnyFlatSpec with Matchers:
     Disease("Pax-12", Set.empty, 20),
     Cure(),
     World(Map.empty, Set.empty, movements),
+    null,
     null
   )
 

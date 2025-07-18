@@ -98,13 +98,23 @@ object InfectionAndDeathPopulation:
           (infectivity * (1.0 - penalty)).max(0)
         case _ => infectivity
 
+    object Death:
+      val StandardDeath: PopulationStrategy = FunctionalPopulationStrategy(
+        canApply = node => node.infected > 0,
+        extractParameter = _.lethality / 100.0,
+        populationTypeTarget = _.infected,
+        adjustParameter = identity,
+        applyFunction = (infected, lethality) => (infected * lethality).toInt,
+        applyChange = (node, deaths) => node.decreasePopulation(deaths)
+      )
 
-    //object Death:
-  //  val StandardDeath: PopulationStrategy = FunctionalPopulationStrategy(
-  //    canApply = node => node.infected > 0,
-  //    extractParameter = _.lethality,
-  //    populationTypeTarget = _.infected,
-  //    adjustParameter = identity,
-  //    applyFunction = (infected, lethality) => (infected * lethality).toInt,
-  //    applyChange = (node, deaths) => node.applyDeath(deaths)
-  //  )
+      val ProbabilisticDeath: PopulationStrategy =
+        FunctionalPopulationStrategy(
+          canApply = node => node.infected > 0,
+          extractParameter = _.lethality / 100.0,
+          populationTypeTarget = _.infected,
+          adjustParameter = identity,
+          applyFunction = (infected, lethality) =>
+            (1 to infected).count(_ => Random.nextDouble() < lethality),
+          applyChange = (node, deaths) => node.decreasePopulation(deaths)
+        )
