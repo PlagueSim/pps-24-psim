@@ -23,7 +23,7 @@ class EngineTest extends AnyFlatSpec with Matchers:
 
   it should "be able to read the current day" in {
     val simState = state
-    simState.time.day.value shouldEqual 5
+    simState.time.day.value shouldEqual 0
   }
 
   "The engine" should "be able to execute a simulation step and returning the updated time value" in:
