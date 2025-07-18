@@ -2,7 +2,7 @@ package model.cure
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import model.events.BasicCureEvent
+import model.events.*
 import model.core.SimulationState
 import model.cure.Cure
 import model.plague.Disease
@@ -34,3 +34,22 @@ class CureEventTest extends AnyFlatSpec with Matchers:
     val (secondState, _) = event.execute().run(firstState).value
 
     secondState.cure.progress shouldEqual initialState.cure.progress + 2 * initialState.cure.baseSpeed
+
+  "LinearInfectedThresholdEvent" should "add additive modifier only for nodes above threshold" in:
+    val nodeA = model.world.Node.Builder(population = 100, infected = 60, cureEffectiveness = 0.0).build()
+    val nodeB = model.world.Node.Builder(population = 100, infected = 30, cureEffectiveness = 0.0).build()
+    val nodes = Map("A" -> nodeA, "B" -> nodeB)
+    val state = basicSimulationState.copy(world = World(nodes, Set.empty, Map(Static -> 1.0)))
+    val event = LinearInfectedThresholdEvent(threshold = 0.5)
+
+    val (_, cure) = event.execute().run(state).value
+    val modIdA = model.cure.ModifierId(
+      model.cure.ModifierSource.Node(model.cure.NodeId("A")),
+      model.cure.ModifierKind.Additive
+    )
+    val modIdB = model.cure.ModifierId(
+      model.cure.ModifierSource.Node(model.cure.NodeId("B")),
+      model.cure.ModifierKind.Additive
+    )
+    cure.modifiers.modifiers should contain key modIdA
+    cure.modifiers.modifiers shouldNot contain key modIdB

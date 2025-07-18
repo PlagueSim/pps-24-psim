@@ -8,5 +8,6 @@ case class NodeView(
                      position: () => (Double, Double),
                      labelId: Text,
                      labelPop: Text,
-                     labelInf: Text
+                     labelInf: Text,
+                     labelDied: Text
                    )

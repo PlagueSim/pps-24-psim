@@ -23,17 +23,19 @@ class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
     val labelId = new Text(s"Node: $id")
     val labelPop = new Text(s"Pop: ${data.population}")
     val labelInf = new Text(s"Infected: ${data.infected}")
+    val labelDied = new Text(s"Died: ${data.died}")
 
-    updateLabelPositions(posX, posY, labelId, labelPop, labelInf)
-    makeDraggable(circle, labelId, labelPop, labelInf)
+    updateLabelPositions(posX, posY, labelId, labelPop, labelInf, labelDied)
+    makeDraggable(circle, labelId, labelPop, labelInf, labelDied)
 
     NodeView(
       id = id,
-      visuals = Seq(circle.delegate, labelId.delegate, labelPop.delegate, labelInf.delegate),
+      visuals = Seq(circle.delegate, labelId.delegate, labelPop.delegate, labelInf.delegate, labelDied.delegate),
       position = () => (circle.centerX.value, circle.centerY.value),
       labelId = labelId,
       labelPop = labelPop,
-      labelInf = labelInf
+      labelInf = labelInf,
+      labelDied = labelDied
     )
 
   private def updateLabelPositions(
@@ -41,7 +43,8 @@ class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
                                     y: Double,
                                     labelId: Text,
                                     labelPop: Text,
-                                    labelInf: Text
+                                    labelInf: Text,
+                                    labelDied: Text
                                   ): Unit =
     labelId.x = x - 15
     labelId.y = y - 20
@@ -49,12 +52,15 @@ class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
     labelPop.y = y + 30
     labelInf.x = x - 20
     labelInf.y = y + 45
+    labelDied.x = x - 20
+    labelDied.y = y + 60
 
   private def makeDraggable(
                              circle: Circle,
                              labelId: Text,
                              labelPop: Text,
-                             labelInf: Text
+                             labelInf: Text,
+                             labelDied: Text
                            ): Unit =
     def onDrag(startOffsetX: Double, startOffsetY: Double): MouseEvent => Unit =
       e =>
@@ -63,7 +69,7 @@ class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
 
         circle.centerX = newX
         circle.centerY = newY
-        updateLabelPositions(newX, newY, labelId, labelPop, labelInf)
+        updateLabelPositions(newX, newY, labelId, labelPop, labelInf, labelDied)
 
         onMoved()
 

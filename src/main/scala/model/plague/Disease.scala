@@ -55,7 +55,7 @@ case class Disease private(
    * @return A [[Double]] representing the [[Disease]] current mutation chance.
    */
   def mutationChance: Double =
-    traits.toList.map(_.stats.mutationChance).sum + (1 + traits.size) * 0.05
+    traits.toList.map(_.stats.mutationChance).sum + traits.count(_.category == Symptom) * 0.005
 
   /**
    * Checks whether the [[Disease]] has already evolved a [[Trait]] with the given name.

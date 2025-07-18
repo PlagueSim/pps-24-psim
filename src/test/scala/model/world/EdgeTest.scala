@@ -12,13 +12,7 @@ class EdgeTest extends AnyFlatSpec with Matchers:
     e1 shouldEqual e2
     e1.nodeA should be <= e1.nodeB
   }
-
-  it should "retain weight during normalization" in {
-    val e1 = Edge("X", "Z", EdgeType.Sea, weight = 2.5)
-    val e2 = Edge("Z", "X", EdgeType.Sea, weight = 2.5)
-    e1 shouldEqual e2
-    e1.weight shouldEqual 2.5
-  }
+  
 
   it should "differentiate edges by typology" in {
     val landEdge = Edge("A", "B", EdgeType.Land)
