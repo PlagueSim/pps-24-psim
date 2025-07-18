@@ -71,3 +71,8 @@ object DSL:
       ssb: SimulationStateBuilder
   ): Unit =
     ssb.withInfectionLogic(init)
+    
+  def deathLogic(init: SimulationStateBuilder ?=> PopulationStrategy)(using
+      ssb: SimulationStateBuilder
+  ): Unit =
+    ssb.withDeathLogic(init)

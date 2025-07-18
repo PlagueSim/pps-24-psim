@@ -34,5 +34,8 @@ case class SimulationStateBuilder(
   ): SimulationStateBuilder =
     copy(infectionLogic = infectionLogic)
 
+  def withDeathLogic(deathLogic: PopulationStrategy): SimulationStateBuilder =
+    copy(deathLogic = deathLogic)
+
   def build(): SimulationState =
     SimulationState(time, disease, cure, world, infectionLogic, deathLogic)

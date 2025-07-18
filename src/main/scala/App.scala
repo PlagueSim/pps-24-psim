@@ -29,6 +29,8 @@ object App extends JFXApp3:
           initialState.time
         infectionLogic:
           initialState.infectionLogic
+        deathLogic:
+          initialState.deathLogic
       conditions: (s: SimulationState) =>
         s.time.day.value < 50
       bindings:

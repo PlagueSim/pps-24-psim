@@ -8,9 +8,10 @@ import model.events.movementEvent.MovementEvent
 import model.events.{
   AdvanceDayEvent,
   BasicCureEvent,
+  ChangeNodesInWorldEvent,
+  DeathEvent,
   Event,
-  InfectionEvent,
-  ChangeNodesInWorldEvent
+  InfectionEvent
 }
 import model.time.TimeTypes.*
 import model.world.World
@@ -72,6 +73,8 @@ object SimulationEngine:
       _     <- executeEvent(ChangeNodesInWorldEvent(moves))
       x     <- executeEvent(InfectionEvent())
       _     <- executeEvent(ChangeNodesInWorldEvent(x))
+      y     <- executeEvent(DeathEvent())
+      _     <- executeEvent(ChangeNodesInWorldEvent(y))
       _     <- executeEvent(BasicCureEvent())
       _     <- executeEvent(Mutation())
       _     <- executeEvent(AdvanceDayEvent())
