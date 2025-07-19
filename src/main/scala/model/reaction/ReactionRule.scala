@@ -4,11 +4,8 @@ import model.core.SimulationState
 
 final case class ReactionRule(
     condition: ReactionCondition,
-    action: ReactionAction,
+    actionFactory: String => ReactionAction, // Changed to factory function
     duration: Option[Int] = None
 ):
-
-  /** Checks if the reaction should be triggered for a node
-    */
   def shouldTrigger(state: SimulationState, nodeId: String): Boolean =
     condition.isSatisfied(state, nodeId)
