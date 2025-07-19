@@ -34,3 +34,10 @@ class ReactionActionTest extends AnyFlatSpec with Matchers:
     updatedWorld.edges.count(e =>
       e.typology == EdgeType.Air && e.isClose
     ) shouldBe 0
+
+  it should "reopen closed edges when reverse is called" in:
+    val world        = testWorld
+    val action       = ReactionAction.CloseEdges(EdgeType.Land, "A")
+    val closedWorld  = action.apply(world)
+    val reopenedWorld = action.reverse(closedWorld)
+    reopenedWorld.edges.count(e => e.isClose) shouldBe 0

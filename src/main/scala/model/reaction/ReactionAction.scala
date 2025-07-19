@@ -17,9 +17,9 @@ object ReactionAction:
     */
   case class CloseEdges(edgeType: EdgeType, nodeId: String)
       extends ReactionAction:
-    override def apply: World => World = world =>
+    private def updateEdges(world: World, updateFn: model.world.Edge => model.world.Edge): World =
       val updatedEdges = world.edges.map: e =>
-        if e.connects(nodeId) && e.typology == edgeType then e.close
+        if e.connects(nodeId) && e.typology == edgeType then updateFn(e)
         else e
       World(
         world.nodes,
@@ -27,15 +27,11 @@ object ReactionAction:
         world.movements
       )
 
+    override def apply: World => World = world =>
+      updateEdges(world, _.close)
+
     override def reverse: World => World = world =>
-      val updatedEdges = world.edges.map: e =>
-        if e.connects(nodeId) && e.typology == edgeType then e.open
-        else e
-      World(
-        world.nodes,
-        updatedEdges,
-        world.movements
-      )
+      updateEdges(world, _.open)
 
   case class CompositeAction(actions: List[ReactionAction])
       extends ReactionAction:
