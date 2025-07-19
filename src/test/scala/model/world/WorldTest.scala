@@ -115,6 +115,32 @@ class WorldTest extends AnyFlatSpec with Matchers:
     world.neighbors("B") should contain theSameElementsAs Set("A", "C")
     world.neighbors("C") should contain theSameElementsAs Set("B")
   }
+  
+  it should "modify nodes correctly" in {
+    val nodeA = Node.withPopulation(10).build()
+    val nodeB = Node.withPopulation(5).build()
+
+    val nodes = Map(
+      "A" -> nodeA,
+      "B" -> nodeB
+    )
+    val edges = Set(
+      Edge("A", "B", EdgeType.Land)
+    )
+    val movements: Map[MovementStrategy, Double] = Map(
+      Static -> 1.0
+    )
+
+    val world = World(nodes, edges, movements)
+
+    val newNodeC = Node.withPopulation(7).build()
+    val modifiedWorld = world.modifyNodes(
+      world.nodes + ("C" -> newNodeC)
+    )
+
+    modifiedWorld.nodes should contain key "C"
+    modifiedWorld.nodes("C").population shouldBe 7
+  }
 
   it should "check if two nodes are connected" in {
     val nodeA = Node.withPopulation(1).build()
