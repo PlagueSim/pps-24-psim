@@ -6,6 +6,7 @@ import model.cure.Cure
 import model.events.DiseaseEvents.Mutation
 import model.events.movementEvent.MovementEvent
 import model.events.{
+  EventBuffer,
   AdvanceDayEvent,
   BasicCureEvent,
   ChangeNodesInWorldEvent,
@@ -69,6 +70,7 @@ object SimulationEngine:
 
   def runStandardSimulation(state: SimulationState): SimulationState =
     val tick = for
+      _     <- executeEvent(EventBuffer)
       moves <- executeEvent(MovementEvent())
       _     <- executeEvent(ChangeNodesInWorldEvent(moves))
       x     <- executeEvent(InfectionEvent())

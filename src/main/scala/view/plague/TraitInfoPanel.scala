@@ -1,6 +1,8 @@
 package view.plague
 
 import model.core.SimulationState
+import model.events.DiseaseEvents.*
+import model.events.EventBuffer.newEvent
 import scalafx.scene.layout.{BorderPane, VBox}
 import model.plague.Trait
 import scalafx.geometry.Insets
@@ -15,9 +17,11 @@ class TraitInfoPanel(tr: Trait) extends BorderPane with UpdatableView:
     padding = Insets(10)
 
   private val evolveButton = StdButton("Evolve"):
+    newEvent(Evolution(tr))
     println(s"Evolved: ${tr.name}")
 
   private val involveButton = StdButton("Involve"):
+    newEvent(Involution(tr))
     println(s"Involved: ${tr.name}")
 
   private def statLabel(name: String, value: Double): Option[Label] = value match
