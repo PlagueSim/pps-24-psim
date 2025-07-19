@@ -5,6 +5,7 @@ import model.world.{EdgeType, Node, World}
 
 trait ReactionAction:
   def apply: World => World
+  def reverse: World => World
 
 object ReactionAction:
 
@@ -16,7 +17,7 @@ object ReactionAction:
     */
   case class CloseEdges(edgeType: EdgeType, nodeId: String)
       extends ReactionAction:
-    def apply: World => World = world =>
+    override def apply: World => World = world =>
       val updatedEdges = world.edges.map: e =>
         if e.connects(nodeId) && e.typology == edgeType then e.close
         else e
@@ -26,7 +27,20 @@ object ReactionAction:
         world.movements
       )
 
+    override def reverse: World => World = world =>
+      val updatedEdges = world.edges.map: e =>
+        if e.connects(nodeId) && e.typology == edgeType then e.open
+        else e
+      World(
+        world.nodes,
+        updatedEdges,
+        world.movements
+      )
+
   case class CompositeAction(actions: List[ReactionAction])
       extends ReactionAction:
-    def apply: World => World =
+    override def apply: World => World =
       actions.foldLeft(identity[World] _)((acc, action) => acc.andThen(action.apply))
+
+    override def reverse: World => World = 
+      actions.foldRight(identity[World] _)((action, acc) => acc.andThen(action.reverse))
