@@ -26,12 +26,14 @@ class ReactionRuleTest extends AnyFlatSpec with Matchers:
 
   "Reaction" should "trigger when the condition is satisfied" in:
     val cond     = InfectedCondition(threshold = 0.0)
-    val reaction = ReactionRule(cond, (nodeId) => CloseEdges(EdgeType.Land, nodeId))
-    val state    = testSimulationState
+    val reaction =
+      ReactionRule(cond, nodeId => CloseEdges(EdgeType.Land, nodeId))
+    val state = testSimulationState
     reaction.shouldTrigger(state, "A") shouldBe true
 
   it should "not trigger when the condition is not satisfied" in:
     val cond     = InfectedCondition(threshold = 0.5)
-    val reaction = ReactionRule(cond, (nodeId) => CloseEdges(EdgeType.Land, nodeId))
-    val state    = testSimulationState
+    val reaction =
+      ReactionRule(cond, nodeId => CloseEdges(EdgeType.Land, nodeId))
+    val state = testSimulationState
     reaction.shouldTrigger(state, "A") shouldBe false
