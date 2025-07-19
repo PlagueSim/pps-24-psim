@@ -15,7 +15,6 @@ class WorldView(
 
   private val nodeViews: Seq[NodeView] = buildNodeViews()
   private val nodeViewMap: Map[String, NodeView] = nodeViews.map(n => n.id -> n).toMap
-
   renderInitialView()
 
   private def buildNodeViews(): Seq[NodeView] =
@@ -32,12 +31,11 @@ class WorldView(
       case fx: FxNode => fx
     }
 
-  // === Edge Rendering ===
   private def currentEdges(): Seq[FxNode] =
     val livePositions = nodeViews.map(n => n.id -> n.position()).toMap
-    val visuals = worldController.getEdges.toSeq.map { edge =>
-      edgeFactory.createEdge(edge, livePositions)
-    }
+    val visuals = worldController.getEdges.toSeq.map: 
+      edge => edgeFactory.createEdge(edge, livePositions)
+    
     toJavaFXNodes(visuals)
 
   def redrawEdges(): Unit =
