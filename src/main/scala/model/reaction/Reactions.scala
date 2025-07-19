@@ -1,0 +1,20 @@
+package model.reaction
+
+import model.time.Time
+import cats.syntax.foldable.*
+import model.core.SimulationState
+import model.world.EdgeType
+
+/** Centralized container for reaction state and rules */
+final case class Reactions(
+    rules: List[ReactionRule] = Nil,
+    activeReactions: List[ActiveReaction] = Nil
+):
+  /** Adds new active reactions
+    * @param newReactions
+    *   List of new active reactions to be added
+    * @return
+    *   A new Reactions instance with the added active reactions
+    */
+  def addActive(newReactions: List[ActiveReaction]): Reactions =
+    this.copy(activeReactions = activeReactions ++ newReactions)
