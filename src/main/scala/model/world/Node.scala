@@ -11,9 +11,20 @@ case class Node private (
                           infected: Int,
                           died: Int,
                           cureEffectiveness: Double
-                        )
+                        ):
+  def updateDied(died: Int): Node =
+    require(died >= 0, "Died must be >= 0")
+    require(died <= this.infected, "Died cannot exceed infected")
+    this.copy(
+      population = this.population - died,
+      infected = this.infected - died,
+      died = this.died + died
+    )
+
+
 
 object Node:
+
 
   /**
    * Starts the building process for a Node by specifying the mandatory population field.
