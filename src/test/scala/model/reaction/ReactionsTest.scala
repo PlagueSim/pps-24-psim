@@ -10,7 +10,7 @@ import org.scalatest.matchers.should.Matchers
 class ReactionsTest extends AnyFlatSpec with Matchers:
   def defaultRule: ReactionRule = ReactionRule(
     InfectedCondition(threshold = 0.2),
-    (nodeId) => CloseEdges(EdgeType.Land, nodeId),
+    nodeId => CloseEdges(EdgeType.Land, nodeId),
     duration = Some(5)
   )
 
