@@ -20,4 +20,10 @@ final case class Reactions(
     this.copy(activeReactions = activeReactions ++ newReactions)
 
   def removeExpired(currentDay: Time): Reactions =
-    this.copy(activeReactions = activeReactions.filter(_.isActive(currentDay)))
+    remove(expired(currentDay))
+    
+  def expired(currentDay: Time): List[ActiveReaction] =
+    activeReactions.filterNot(_.isActive(currentDay))
+    
+  def remove(list: List[ActiveReaction]): Reactions =
+    this.copy(activeReactions = activeReactions.filterNot(list.contains))
