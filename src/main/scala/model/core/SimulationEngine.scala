@@ -5,15 +5,7 @@ import cats.syntax.all.*
 import model.cure.Cure
 import model.events.DiseaseEvents.Mutation
 import model.events.movementEvent.MovementEvent
-import model.events.{
-  EventBuffer,
-  AdvanceDayEvent,
-  BasicCureEvent,
-  ChangeNodesInWorldEvent,
-  DeathEvent,
-  Event,
-  InfectionEvent
-}
+import model.events.{AdvanceDayEvent, BasicCureEvent, ChangeNodesInWorldEvent, CureEventBuffer, DeathEvent, DiseaseEventBuffer, Event, EventBuffer, InfectionEvent}
 import model.time.TimeTypes.*
 import model.world.World
 
@@ -70,7 +62,8 @@ object SimulationEngine:
 
   def runStandardSimulation(state: SimulationState): SimulationState =
     val tick = for
-      _     <- executeEvent(EventBuffer)
+      _     <- executeEvent(DiseaseEventBuffer)
+      _     <- executeEvent(CureEventBuffer)
       moves <- executeEvent(MovementEvent())
       _     <- executeEvent(ChangeNodesInWorldEvent(moves))
       x     <- executeEvent(InfectionEvent())

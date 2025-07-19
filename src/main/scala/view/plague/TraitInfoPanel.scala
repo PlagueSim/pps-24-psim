@@ -2,7 +2,8 @@ package view.plague
 
 import model.core.SimulationState
 import model.events.DiseaseEvents.*
-import model.events.EventBuffer.newEvent
+import model.events.DiseaseEventBuffer
+import model.events.DiseaseEventBuffer.newEvent
 import scalafx.scene.layout.{BorderPane, VBox}
 import model.plague.Trait
 import scalafx.geometry.Insets
