@@ -1,9 +1,6 @@
 package model.reaction
 
 import model.time.Time
-import cats.syntax.foldable.*
-import model.core.SimulationState
-import model.world.EdgeType
 
 /** Centralized container for reaction state and rules */
 final case class Reactions(

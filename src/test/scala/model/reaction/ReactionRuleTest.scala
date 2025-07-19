@@ -21,7 +21,8 @@ class ReactionRuleTest extends AnyFlatSpec with Matchers:
       Cure(),
       initialWorld,
       model.infection.InfectionAndDeathPopulation.Infection.StandardInfection,
-      model.infection.InfectionAndDeathPopulation.Infection.Death.StandardDeath
+      model.infection.InfectionAndDeathPopulation.Infection.Death.StandardDeath,
+      Reactions()
     )
 
   "Reaction" should "trigger when the condition is satisfied" in:
