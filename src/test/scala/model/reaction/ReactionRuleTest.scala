@@ -3,9 +3,10 @@ package model.reaction
 import model.core.SimulationState
 import model.cure.Cure
 import model.plague.Disease
+import model.reaction.ReactionAction.CloseEdges
 import model.time.BasicYear
-import model.time.TimeTypes._
-import model.world.{World, Node, Static}
+import model.time.TimeTypes.*
+import model.world.{EdgeType, Node, Static, World}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -25,14 +26,12 @@ class ReactionRuleTest extends AnyFlatSpec with Matchers:
 
   "Reaction" should "trigger when the condition is satisfied" in:
     val cond     = InfectedCondition(threshold = 0.0)
-    val action   = ReactionAction.CloseEdges(model.world.EdgeType.Land, "A")
-    val reaction = ReactionRule(cond, action)
+    val reaction = ReactionRule(cond, (nodeId) => CloseEdges(EdgeType.Land, nodeId))
     val state    = testSimulationState
     reaction.shouldTrigger(state, "A") shouldBe true
 
   it should "not trigger when the condition is not satisfied" in:
     val cond     = InfectedCondition(threshold = 0.5)
-    val action   = ReactionAction.CloseEdges(model.world.EdgeType.Land, "A")
-    val reaction = ReactionRule(cond, action)
+    val reaction = ReactionRule(cond, (nodeId) => CloseEdges(EdgeType.Land, nodeId))
     val state    = testSimulationState
     reaction.shouldTrigger(state, "A") shouldBe false
