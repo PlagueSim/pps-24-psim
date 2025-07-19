@@ -64,20 +64,21 @@ object Abilities:
     .cureSlowdown(0.3)
     .build()
 
-  final val geneticReShuffle1: Trait = define("Genetic ReShuffle 1", Ability)
+  final val geneticReShuffle1: Trait = define("Genetic Reshuffle 1", Ability)
     .cost(17)
     .cureReset(0.25)
+    .prerequisite("Drug Resistance 1")
     .build()
 
-  final val geneticReShuffle2: Trait = define("Genetic ReShuffle 2", Ability)
+  final val geneticReShuffle2: Trait = define("Genetic Reshuffle 2", Ability)
     .cost(21)
-    .prerequisite("Genetic ReShuffle 1")
+    .prerequisite("Genetic Reshuffle 1")
     .cureReset(0.25)
     .build()
 
   final val geneticReShuffle3: Trait = define("Genetic ReShuffle 3", Ability)
     .cost(25)
-    .prerequisite("Genetic ReShuffle 2")
+    .prerequisite("Genetic Reshuffle 2")
     .cureReset(0.25)
     .build()
 

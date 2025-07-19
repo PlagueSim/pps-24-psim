@@ -123,7 +123,7 @@ case class Disease private(
    * @return [[true]] if the [[Trait]] can be involved, [[false]] otherwise
    */
   private def canInvolve(t: Trait): Boolean =
-    val remaining = traits - t
+    val remaining = traits.filter(_.category.equals(t.category)) - t
     val traitMap = remaining.iterator.map(tr => tr.name -> tr).toMap
     val roots = remaining.filter(_.isRoot)
 
