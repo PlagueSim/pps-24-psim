@@ -12,7 +12,7 @@ import org.scalatest.matchers.should.Matchers
 
 class ReactionRuleTest extends AnyFlatSpec with Matchers:
   def testSimulationState: SimulationState =
-    val defaultNode  = Node.Builder(100, 0, 0, 0.0).build()
+    val defaultNode  = Node.Builder(100, 0, 0).build()
     val initialNodes = Map("A" -> defaultNode, "B" -> defaultNode)
     val initialWorld = World(initialNodes, Set.empty, Map(Static -> 1.0))
     SimulationState(
@@ -21,8 +21,7 @@ class ReactionRuleTest extends AnyFlatSpec with Matchers:
       Cure(),
       initialWorld,
       model.infection.InfectionAndDeathPopulation.Infection.StandardInfection,
-      model.infection.InfectionAndDeathPopulation.Infection.Death.StandardDeath,
-      Reactions()
+      model.infection.InfectionAndDeathPopulation.Infection.Death.StandardDeath
     )
 
   "Reaction" should "trigger when the condition is satisfied" in:

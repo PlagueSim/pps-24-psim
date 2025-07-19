@@ -11,7 +11,7 @@ import org.scalatest.matchers.should.Matchers
 
 class ReactionConditionTest extends AnyFlatSpec with Matchers:
   def testSimulationState: SimulationState =
-    val defaultNode  = model.world.Node.Builder(100, 0, 0, 0.0).build()
+    val defaultNode  = model.world.Node.Builder(100, 0, 0).build()
     val initialNodes =
       Map("A" -> defaultNode, "B" -> defaultNode, "C" -> defaultNode)
     val initialWorld =
@@ -35,8 +35,7 @@ class ReactionConditionTest extends AnyFlatSpec with Matchers:
       .Builder(
         node.population,
         infectedCount,
-        node.died,
-        node.cureEffectiveness
+        node.died
       )
       .build()
     val updatedWorld = World(
