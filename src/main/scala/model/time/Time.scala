@@ -8,3 +8,5 @@ trait Time:
   def season: Seasons = day.toSeason
 
   def +(days: Int): Time
+  def <(t: Time): Boolean
+  def >(t: Time): Boolean
