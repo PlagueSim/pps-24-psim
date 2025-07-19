@@ -18,3 +18,6 @@ final case class Reactions(
     */
   def addActive(newReactions: List[ActiveReaction]): Reactions =
     this.copy(activeReactions = activeReactions ++ newReactions)
+
+  def removeExpired(currentDay: Time): Reactions =
+    this.copy(activeReactions = activeReactions.filter(_.isActive(currentDay)))
