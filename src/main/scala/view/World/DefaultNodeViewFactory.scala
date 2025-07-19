@@ -10,6 +10,8 @@ import model.world.*
 
 class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
 
+  case class LabelData(label: Text, offsetX: Double, offsetY: Double)
+
   override def createNode(id: String, data: Node, position: (Double, Double)): NodeView =
     val (posX, posY) = position
 
@@ -20,57 +22,42 @@ class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
       fill = Color.LightGray
       stroke = Color.Black
 
-    val labelId = new Text(s"Node: $id")
-    val labelPop = new Text(s"Pop: ${data.population}")
-    val labelInf = new Text(s"Infected: ${data.infected}")
-    val labelDied = new Text(s"Died: ${data.died}")
+    val labels = Seq(
+      LabelData(new Text(s"Node: $id"), -15, -20),
+      LabelData(new Text(s"Pop: ${data.population}"), -20, 30),
+      LabelData(new Text(s"Infected: ${data.infected}"), -20, 45),
+      LabelData(new Text(s"Died: ${data.died}"), -20, 60)
+    )
 
-    updateLabelPositions(posX, posY, labelId, labelPop, labelInf, labelDied)
-    makeDraggable(circle, labelId, labelPop, labelInf, labelDied)
+    updateLabelPositions(posX, posY, labels)
+    makeDraggable(circle, labels)
 
     NodeView(
       id = id,
-      visuals = Seq(circle.delegate, labelId.delegate, labelPop.delegate, labelInf.delegate, labelDied.delegate),
+      visuals = circle.delegate +: labels.map(_.label.delegate),
       position = () => (circle.centerX.value, circle.centerY.value),
-      labelId = labelId,
-      labelPop = labelPop,
-      labelInf = labelInf,
-      labelDied = labelDied
+      labelId = labels.head.label,
+      labelPop = labels(1).label,
+      labelInf = labels(2).label,
+      labelDied = labels(3).label
     )
 
-  private def updateLabelPositions(
-                                    x: Double,
-                                    y: Double,
-                                    labelId: Text,
-                                    labelPop: Text,
-                                    labelInf: Text,
-                                    labelDied: Text
-                                  ): Unit =
-    labelId.x = x - 15
-    labelId.y = y - 20
-    labelPop.x = x - 20
-    labelPop.y = y + 30
-    labelInf.x = x - 20
-    labelInf.y = y + 45
-    labelDied.x = x - 20
-    labelDied.y = y + 60
+  private def updateLabelPositions(x: Double, y: Double, labels: Seq[LabelData]): Unit =
+    labels.foreach { case LabelData(label, dx, dy) =>
+      label.x = x + dx
+      label.y = y + dy
+    }
 
-  private def makeDraggable(
-                             circle: Circle,
-                             labelId: Text,
-                             labelPop: Text,
-                             labelInf: Text,
-                             labelDied: Text
-                           ): Unit =
-    def onDrag(startOffsetX: Double, startOffsetY: Double): MouseEvent => Unit =
+  private def makeDraggable(circle: Circle, labels: Seq[LabelData]): Unit =
+    def onDrag(offsetX: Double, offsetY: Double): MouseEvent => Unit =
       e =>
-        val newX = (e.sceneX - startOffsetX).max(20).min(780)
-        val newY = (e.sceneY - startOffsetY).max(20).min(580)
+        val newX = (e.sceneX - offsetX).max(20).min(780)
+        val newY = (e.sceneY - offsetY).max(20).min(580)
 
         circle.centerX = newX
         circle.centerY = newY
-        updateLabelPositions(newX, newY, labelId, labelPop, labelInf, labelDied)
 
+        updateLabelPositions(newX, newY, labels)
         onMoved()
 
     circle.onMouseEntered = (_: MouseEvent) =>
