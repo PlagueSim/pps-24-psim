@@ -16,6 +16,21 @@ trait ReactionCondition:
     */
   def isSatisfied(state: SimulationState, nodeId: String): Boolean
 
+
+object ReactionCondition:
+  implicit class ConditionOps(condition: ReactionCondition):
+    
+    def and(other: ReactionCondition): ReactionCondition =
+      (state, nodeId) =>
+        condition.isSatisfied(state, nodeId) && other.isSatisfied(state, nodeId)
+        
+    def or(other: ReactionCondition): ReactionCondition =
+        (state, nodeId) =>
+            condition.isSatisfied(state, nodeId) || other.isSatisfied(state, nodeId)
+            
+    def unary_! : ReactionCondition =
+      (state, nodeId) => !condition.isSatisfied(state, nodeId)
+
 /** Simple condition when infected on a node are grater than a threshold
   * @param threshold
   *   the minimum number of infected individuals required to satisfy the
