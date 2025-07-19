@@ -105,7 +105,7 @@ object InfectionAndDeathPopulation:
         populationTypeTarget = _.infected,
         adjustParameter = identity,
         applyFunction = (infected, lethality) => (infected * lethality).toInt,
-        applyChange = (node, deaths) => node.decreasePopulation(deaths)
+        applyChange = (node, deaths) => node.updateDied(deaths)
       )
 
       val ProbabilisticDeath: PopulationStrategy =
@@ -116,5 +116,5 @@ object InfectionAndDeathPopulation:
           adjustParameter = identity,
           applyFunction = (infected, lethality) =>
             (1 to infected).count(_ => Random.nextDouble() < lethality),
-          applyChange = (node, deaths) => node.decreasePopulation(deaths)
+          applyChange = (node, deaths) => node.updateDied(deaths)
         )

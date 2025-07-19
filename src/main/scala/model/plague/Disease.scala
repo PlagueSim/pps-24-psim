@@ -59,14 +59,15 @@ case class Disease private(
 
   /**
    *
-   * @return
+   * @return a [[TraitStats]] containing the sum of the [[Disease]] stats
    */
   def allStats(): TraitStats = sum(traits.map(_.stats).toList)
 
   /**
+   *  computes the sum of the [[Disease]] stats
    *
    * @param stats
-   * @return
+   * @return [[TraitStats]]
    */
   private def sum(stats: List[TraitStats]): TraitStats =
     stats.foldLeft(TraitStats())((prev, current) =>
@@ -83,10 +84,10 @@ case class Disease private(
     )
 
   /**
-   *
-   * @param a
-   * @param b
-   * @return
+   *  merges two maps by summing values with the same key
+   * @param a first Map
+   * @param b second Map
+   * @return A merged [[Map]] but elements with the same key are summed together
    */
   private def mergeEffectiveness(a: Map[Any, Double], b: Map[Any, Double]): Map[Any, Double] =
     (a.keySet ++ b.keySet).map(key =>
@@ -123,7 +124,7 @@ case class Disease private(
    * @return [[true]] if the [[Trait]] can be involved, [[false]] otherwise
    */
   private def canInvolve(t: Trait): Boolean =
-    val remaining = traits - t
+    val remaining = traits.filter(_.category.equals(t.category)) - t
     val traitMap = remaining.iterator.map(tr => tr.name -> tr).toMap
     val roots = remaining.filter(_.isRoot)
 

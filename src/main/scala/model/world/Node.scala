@@ -4,16 +4,25 @@ package model.world
  * Represents a node in the simulation.
  * @param population total number of people in the node
  * @param infected number of infected people in the node
- * @param cureEffectiveness percentage [0.0 - 1.0] of effectiveness when curing
  */
 case class Node private (
                           population: Int,
                           infected: Int,
                           died: Int,
-                          cureEffectiveness: Double
-                        )
+                        ):
+  def updateDied(died: Int): Node =
+    require(died >= 0, "Died must be >= 0")
+    require(died <= this.infected, "Died cannot exceed infected")
+    this.copy(
+      population = this.population - died,
+      infected = this.infected - died,
+      died = this.died + died
+    )
+
+
 
 object Node:
+
 
   /**
    * Starts the building process for a Node by specifying the mandatory population field.
@@ -31,13 +40,11 @@ object Node:
    *
    * @param population total number of people (mandatory)
    * @param infected optional number of infected people (default = 0)
-   * @param cureEffectiveness optional cure percentage (default = 0.0)
    */
   final case class Builder (
                                      population: Int,
                                      infected: Int = 0,
                                      died: Int = 0,
-                                     cureEffectiveness: Double = 0.0
                                    ):
 
 
@@ -54,16 +61,7 @@ object Node:
     def withDied(value: Int): Builder =
       require(value >= 0, "Died must be >= 0")
       copy(died = value)
-
-    /**
-     * Sets the effectiveness of the cure.
-     *
-     * @param value cure effectiveness as a percentage between 0.0 and 1.0
-     * @return a copy of the Builder with updated cure effectiveness
-     */
-    def withCureEffectiveness(value: Double): Builder =
-      require(value >= 0.0 && value <= 1.0, "Cure effectiveness must be between 0.0 and 1.0")
-      copy(cureEffectiveness = value)
+    
 
     /**
      * Finalizes and returns the constructed Node.
@@ -73,7 +71,7 @@ object Node:
      */
     def build(): Node =
       require(infected <= population, "Infected cannot exceed population")
-      Node(population, infected, died, cureEffectiveness)
+      Node(population, infected, died)
   /** Extension methods for immutable Node operations */
   extension (node: Node)
 
@@ -85,16 +83,7 @@ object Node:
     def infectedPercentage(): Double =
       if node.population == 0 then 0.0
       else node.infected.toDouble / node.population
-
-    /**
-     * Applies a cure to the node based on the current cureEffectiveness.
-     * The infected count is reduced accordingly.
-     *
-     * @return a new Node with updated infected count
-     */
-    def applyCure(): Node =
-      val healed = (node.infected * node.cureEffectiveness).toInt
-      node.copy(infected = (node.infected - healed).max(0))
+    
 
     /**
      * Increases the infected count by the given value, capped at total population.

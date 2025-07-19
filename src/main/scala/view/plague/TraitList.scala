@@ -17,11 +17,13 @@ class TraitList(traits: Seq[Trait]) extends ListView[Trait](ObservableBuffer.fro
         item.onChange((_, _, newItem) =>
           text = Option(newItem).map(_.name).orNull
 
-          if !newState.disease.canEvolve(newItem) then
+          if newItem != null && !newState.disease.canEvolve(newItem) then
             disable = true
             style = "-fx-background-color: lightgray; -fx-text-fill: darkgray;"
+          else if newState.disease.traits.contains(newItem) then
+            disable = false
+            style = "-fx-background-color: palegreen; -fx-text-fill: darkgreen;"
           else
             disable = false
             style = ""
-
         )

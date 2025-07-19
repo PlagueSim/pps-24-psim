@@ -10,10 +10,11 @@ import view.updatables.UpdatableView
 class TraitsView(allTraits: Seq[Trait]) extends BorderPane with UpdatableView:
 
   private val traitList: TraitList = TraitList(allTraits)
+  private val infoPanels: Map[String, TraitInfoPanel] = allTraits.map(t=> (t.name, TraitInfoPanel(t))).toMap
 
   traitList.selectionModel().selectedItemProperty().onChange((_, _, selectedTrait) =>
     if selectedTrait != null then
-      val infoPanel = TraitInfoPanel(selectedTrait)
+      val infoPanel = infoPanels(selectedTrait.name)
       right = infoPanel
   )
 
@@ -22,3 +23,4 @@ class TraitsView(allTraits: Seq[Trait]) extends BorderPane with UpdatableView:
 
   override def update(newState: SimulationState): Unit =
     traitList.update(newState)
+    infoPanels.values.foreach(_.update(newState))
