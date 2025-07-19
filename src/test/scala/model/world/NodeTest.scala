@@ -9,11 +9,20 @@ class NodeTest extends AnyFlatSpec with Matchers:
 
   import model.world.Node.*
 
+  
   "NodeBuilder" should "build a node with only population" in {
     val node = Node.withPopulation(100).build()
     node.population shouldBe 100
     node.infected shouldBe 0
     node.cureEffectiveness shouldBe 0.0
+  }
+  
+  "updateDied" should "update the node's infected and population correctly" in {
+    val node = Node.withPopulation(100).withInfected(30).build()
+    val updatedNode = node.updateDied(10)
+    updatedNode.population shouldBe 90
+    updatedNode.infected shouldBe 20
+    updatedNode.died shouldBe 10
   }
 
   it should "build a node with population and infected" in {
@@ -109,4 +118,6 @@ class NodeTest extends AnyFlatSpec with Matchers:
     an[IllegalArgumentException] should be thrownBy {
       Node.withPopulation(10).withCureEffectiveness(1.5)
     }
+    
+    
   }
