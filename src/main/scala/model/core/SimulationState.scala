@@ -84,4 +84,6 @@ object SimulationState:
       case newWorld: World                  => state.copy(world = newWorld)
       case newInfection: PopulationStrategy=>
         state.copy(infectionLogic = newInfection)
+      case newReactions: Reactions =>
+        state.copy(reactions = newReactions)
       case _ => state
