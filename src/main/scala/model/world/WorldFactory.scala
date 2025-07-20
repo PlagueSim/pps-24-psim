@@ -6,7 +6,17 @@ object WorldFactory:
     val nodes =
       (1 to 15).map { i =>
         val id = ('A' + (i - 1)).toChar.toString
-        id -> Node.withPopulation(10 + i).withDied(2).build()
+        val baseBuilder = Node.withPopulation(10 + i).withDied(2)
+
+        val builderWithInfection = id match
+          case "A" => baseBuilder.withInfected(5)
+          case "C" => baseBuilder.withInfected(3)
+          case "F" => baseBuilder.withInfected(6)
+          case "J" => baseBuilder.withInfected(4)
+          case "O" => baseBuilder.withInfected(7)
+          case _   => baseBuilder
+
+        id -> builderWithInfection.build()
       }.toMap
 
     val edges = Set(
@@ -26,7 +36,6 @@ object WorldFactory:
       Edge("M", "N", EdgeType.Land),
       Edge("N", "O", EdgeType.Sea),
       Edge("O", "A", EdgeType.Air), // wrap around to A
-      // Some extra cross connections:
       Edge("A", "H", EdgeType.Sea),
       Edge("C", "I", EdgeType.Land),
       Edge("D", "K", EdgeType.Air).close,

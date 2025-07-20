@@ -47,19 +47,11 @@ object SimulationState:
     val STARTING_DAY: Int  = 0
     val STARTING_YEAR: Int = 2025
 
-    val node = Node.withPopulation(100).withInfected(1).build()
-
-    val world = World(
-      nodes = Map("A" -> node, "B" -> node),
-      Set(Edge("A", "B", EdgeType.Land)),
-      Map(Static -> 0.5, RandomNeighbor -> 0.5)
-    )
-
     SimulationState(
       BasicYear(Day(STARTING_DAY), Year(STARTING_YEAR)),
       Disease("StandardDisease", Set(pulmonaryEdema), 1),
       Cure(),
-      world,
+      WorldFactory.mockWorld(),
       StandardInfection,
       StandardDeath
     )

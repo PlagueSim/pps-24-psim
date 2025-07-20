@@ -14,7 +14,7 @@ class WorldView(
                ) extends Pane with UpdatableView:
 
   private val nodeViews: Seq[NodeView] = buildNodeViews()
-  private val nodeViewMap: Map[String, NodeView] = nodeViews.map(n => n.id -> n).toMap
+  private var nodeViewMap: Map[String, NodeView] = nodeViews.map(n => n.id -> n).toMap
   renderInitialView()
 
   private def buildNodeViews(): Seq[NodeView] =
@@ -32,10 +32,17 @@ class WorldView(
     }
 
   private def currentEdges(): Seq[FxNode] =
-    val livePositions = nodeViews.map(n => n.id -> n.position()).toMap
-    val visuals = worldController.getEdges.toSeq.map: 
-      edge => edgeFactory.createEdge(edge, livePositions)
-    
+    val liveNodeIds = nodeViewMap.keySet
+
+    val livePositions = nodeViews
+      .filter(n => liveNodeIds.contains(n.id))
+      .map(n => n.id -> n.position())
+      .toMap
+
+    val visuals = worldController.getEdges.toSeq
+      .filter(edge => liveNodeIds.contains(edge.nodeA) && liveNodeIds.contains(edge.nodeB))
+      .map(edge => edgeFactory.createEdge(edge, livePositions))
+
     toJavaFXNodes(visuals)
 
   def redrawEdges(): Unit =
@@ -43,6 +50,14 @@ class WorldView(
     children.prependAll(currentEdges())
 
   override def update(newState: SimulationState): Unit =
+    val orphanedNodes = nodeViewMap.keySet -- newState.world.nodes.keySet
+    orphanedNodes.foreach { id =>
+      children --= toJavaFXNodes(nodeViewMap(id).visuals)
+      nodeViewMap = nodeViewMap - id
+    }
+
+    redrawEdges()
+
     newState.world.nodes.foreach { case (id, node) =>
       nodeViewMap.get(id).foreach { view =>
         view.labels("id").text = s"Node: $id"
@@ -51,3 +66,6 @@ class WorldView(
         view.labels("died").text = s"Died: ${node.died}"
       }
     }
+
+
+
