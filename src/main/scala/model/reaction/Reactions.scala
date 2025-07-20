@@ -28,7 +28,7 @@ final case class Reactions(
     this.copy(activeReactions = activeReactions.filterNot(list.contains))
     
 object Reactions:
-  val standardReactions: Reactions =
+  val StandardReactions: Reactions =
     Reactions(
       rules = List(
         ReactionRule(
