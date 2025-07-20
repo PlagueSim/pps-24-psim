@@ -18,11 +18,12 @@ class ReactionConditionTest extends AnyFlatSpec with Matchers:
       World(initialNodes, Set.empty, Map(model.world.Static -> 1.0))
     SimulationState(
       BasicYear(Day(0), Year(2023)),
-      Disease("TestDisease", Set.empty, 1),
-      Cure(),
+      null,
+      null,
       initialWorld,
-      model.infection.InfectionAndDeathPopulation.Infection.StandardInfection,
-      model.infection.InfectionAndDeathPopulation.Infection.Death.StandardDeath
+      null,
+      null,
+      null
     )
 
   def simulationStateWithInfected(
@@ -49,7 +50,8 @@ class ReactionConditionTest extends AnyFlatSpec with Matchers:
       baseState.cure,
       updatedWorld,
       baseState.infectionLogic,
-      baseState.deathLogic
+      baseState.deathLogic,
+      baseState.reactions
     )
 
   "InfectedCondition" should "not be satisfied if infected is below threshold" in:

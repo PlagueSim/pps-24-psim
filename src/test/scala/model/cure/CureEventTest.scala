@@ -13,9 +13,10 @@ import model.time.*
 class CureEventTest extends AnyFlatSpec with Matchers:
   def basicSimulationState = SimulationState(
     BasicYear(Day(0), Year(2023)),
-    Disease("TestDisease", Set.empty, 1),
+    null,
     Cure(),
     World(Map.empty, Set.empty, Map(Static -> 1.0)),
+    null,
     null,
     null
   )

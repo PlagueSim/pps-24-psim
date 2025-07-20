@@ -5,12 +5,10 @@ import model.cure.Cure
 import model.events.InfectionEvent
 import model.infection.InfectionAndDeathPopulation.*
 import model.infection.InfectionAndDeathPopulation.Infection.*
-import model.infection.InfectionAndDeathPopulation.Infection.Death.{
-  ProbabilisticDeath,
-  StandardDeath
-}
+import model.infection.InfectionAndDeathPopulation.Infection.Death.{ProbabilisticDeath, StandardDeath}
 import model.plague.Disease
 import model.plague.Symptoms.*
+import model.reaction.Reactions.StandardReactions
 import model.time.BasicYear
 import model.time.TimeTypes.{Day, Year}
 import model.world.*
@@ -37,7 +35,8 @@ class InfectionEventTest extends AnyFlatSpec with Matchers:
       Cure(),
       world,
       StandardInfection,
-      StandardDeath
+      StandardDeath,
+      StandardReactions
     )
     val infectionEvent = InfectionEvent()
 

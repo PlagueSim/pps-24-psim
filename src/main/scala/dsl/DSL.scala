@@ -76,3 +76,8 @@ object DSL:
       ssb: SimulationStateBuilder
   ): Unit =
     ssb.withDeathLogic(init)
+    
+  def reactions(init: SimulationStateBuilder ?=> model.reaction.Reactions)(using
+      ssb: SimulationStateBuilder
+  ): Unit =
+    ssb.withReactions(init)

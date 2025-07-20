@@ -6,6 +6,8 @@ import model.infection.InfectionAndDeathPopulation.PopulationStrategy
 import model.infection.InfectionAndDeathPopulation.Infection.StandardInfection
 import model.plague.Disease
 import model.plague.Symptoms.pulmonaryEdema
+import model.reaction.Reactions
+import model.reaction.Reactions.StandardReactions
 import model.time.TimeTypes.{Day, Year}
 import model.time.{BasicYear, Time}
 import model.world.*
@@ -16,7 +18,8 @@ sealed case class SimulationState private (
     cure: Cure,
     world: World,
     infectionLogic: PopulationStrategy,
-    deathLogic: PopulationStrategy
+    deathLogic: PopulationStrategy,
+    reactions: Reactions
 )
 
 object SimulationState:
@@ -39,9 +42,10 @@ object SimulationState:
       cure: Cure,
       world: World,
       infectionLogic: PopulationStrategy,
-      deathLogic: PopulationStrategy
+      deathLogic: PopulationStrategy,
+      reactions: Reactions
   ): SimulationState =
-    new SimulationState(time, disease, cure, world, infectionLogic, deathLogic)
+    new SimulationState(time, disease, cure, world, infectionLogic, deathLogic, reactions)
 
   def createStandardSimulationState(): SimulationState =
     val STARTING_DAY: Int  = 0
@@ -61,7 +65,8 @@ object SimulationState:
       Cure(),
       world,
       StandardInfection,
-      StandardDeath
+      StandardDeath,
+      StandardReactions
     )
 
   extension (state: SimulationState)

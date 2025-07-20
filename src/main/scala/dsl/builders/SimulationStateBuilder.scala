@@ -15,7 +15,9 @@ case class SimulationStateBuilder(
     infectionLogic: PopulationStrategy =
       SimulationState.createStandardSimulationState().infectionLogic,
     deathLogic: PopulationStrategy =
-      SimulationState.createStandardSimulationState().deathLogic
+      SimulationState.createStandardSimulationState().deathLogic,
+    reactions: model.reaction.Reactions =
+        SimulationState.createStandardSimulationState().reactions
 ):
   def withWorld(world: World): SimulationStateBuilder =
     copy(world = world)
@@ -36,6 +38,9 @@ case class SimulationStateBuilder(
 
   def withDeathLogic(deathLogic: PopulationStrategy): SimulationStateBuilder =
     copy(deathLogic = deathLogic)
+    
+  def withReactions(reactions: model.reaction.Reactions): SimulationStateBuilder =
+    copy(reactions = reactions)
 
   def build(): SimulationState =
-    SimulationState(time, disease, cure, world, infectionLogic, deathLogic)
+    SimulationState(time, disease, cure, world, infectionLogic, deathLogic, reactions)

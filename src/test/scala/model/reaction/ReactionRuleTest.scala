@@ -2,8 +2,11 @@ package model.reaction
 
 import model.core.SimulationState
 import model.cure.Cure
+import model.infection.InfectionAndDeathPopulation.Infection.Death.StandardDeath
+import model.infection.InfectionAndDeathPopulation.Infection.StandardInfection
 import model.plague.Disease
 import model.reaction.ReactionAction.CloseEdges
+import model.reaction.Reactions.StandardReactions
 import model.time.BasicYear
 import model.time.TimeTypes.*
 import model.world.{EdgeType, Node, Static, World}
@@ -17,11 +20,12 @@ class ReactionRuleTest extends AnyFlatSpec with Matchers:
     val initialWorld = World(initialNodes, Set.empty, Map(Static -> 1.0))
     SimulationState(
       BasicYear(Day(0), Year(2023)),
-      Disease("TestDisease", Set.empty, 1),
-      Cure(),
+      null,
+      null,
       initialWorld,
-      model.infection.InfectionAndDeathPopulation.Infection.StandardInfection,
-      model.infection.InfectionAndDeathPopulation.Infection.Death.StandardDeath
+      null,
+      null,
+      null
     )
 
   "Reaction" should "trigger when the condition is satisfied" in:
