@@ -1,6 +1,8 @@
 package model.reaction
 
+import model.reaction.ReactionAction.CloseEdges
 import model.time.Time
+import model.world.EdgeType.Air
 
 /** Centralized container for reaction state and rules */
 final case class Reactions(
@@ -24,3 +26,14 @@ final case class Reactions(
     
   def remove(list: List[ActiveReaction]): Reactions =
     this.copy(activeReactions = activeReactions.filterNot(list.contains))
+    
+object Reactions:
+  val standardReactions: Reactions =
+    Reactions(
+      rules = List(
+        ReactionRule(
+          condition = InfectedCondition(0.7),
+          actionFactory = nodeId => CloseEdges(Air, nodeId)
+        )
+      )
+    )
