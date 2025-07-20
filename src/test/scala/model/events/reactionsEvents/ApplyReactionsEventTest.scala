@@ -72,3 +72,23 @@ class ApplyReactionsEventTest extends AnyFlatSpec with Matchers:
     val event        = ApplyReactionsEvent()
     val updatedWorld = event.modifyFunction(state)
     updatedWorld shouldBe world
+
+  it should "apply only active reactions when a mix of active and inactive are present" in:
+    val world = testWorld
+    val alwaysTrueRule = ReactionRule(
+      condition = ConditionFactory.alwaysTrue,
+      actionFactory = nodeId => ReactionAction.CloseEdges(EdgeType.Land, nodeId)
+    )
+    val alwaysFalseRule = ReactionRule(
+      condition = ConditionFactory.alwaysFalse,
+      actionFactory = nodeId => ReactionAction.CloseEdges(EdgeType.Sea, nodeId)
+    )
+    val activeA = ActiveReaction(alwaysTrueRule, "A", BasicYear(Day(0), Year(2023)))
+    val inactiveB = ActiveReaction(alwaysFalseRule, "B", BasicYear(Day(0), Year(2023)))
+    val reactions = Reactions(rules = List(alwaysTrueRule, alwaysFalseRule), activeReactions = Set(activeA, inactiveB))
+    val state = simulationState(world, reactions)
+    val event = ApplyReactionsEvent()
+    val updatedWorld = event.modifyFunction(state)
+    // Only the Land edge should be closed
+    updatedWorld.edges.count(e => e.isClose && e.typology == EdgeType.Land) shouldBe 1
+    updatedWorld.edges.count(e => e.isClose && e.typology == EdgeType.Sea) shouldBe 0

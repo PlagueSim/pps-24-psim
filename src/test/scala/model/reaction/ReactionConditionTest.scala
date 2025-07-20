@@ -73,3 +73,19 @@ class ReactionConditionTest extends AnyFlatSpec with Matchers:
     val state = testSimulationState
     val cond  = InfectedCondition(threshold = 0.1)
     cond.isSatisfied(state, "Z") shouldBe false
+
+  it should "return false for node with zero population" in:
+    val state = simulationStateWithInfected("A", 0)
+    val zeroPopNode = model.world.Node.Builder(0, 0, 0).build()
+    val updatedWorld = state.world.modifyNodes(state.world.nodes.updated("A", zeroPopNode))
+    val updatedState = SimulationState(
+      state.time,
+      state.disease,
+      state.cure,
+      updatedWorld,
+      state.infectionLogic,
+      state.deathLogic,
+      state.reactions
+    )
+    val cond  = InfectedCondition(threshold = 0.1)
+    cond.isSatisfied(updatedState, "A") shouldBe false
