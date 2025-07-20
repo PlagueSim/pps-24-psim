@@ -17,7 +17,7 @@ class ReactionsTest extends AnyFlatSpec with Matchers:
   "Reactions" should "add active reactions correctly" in:
     val initialReactions = Reactions()
     initialReactions.activeReactions shouldBe empty
-    val newReactions = List(
+    val newReactions = Set(
       ActiveReaction(defaultRule, "A", BasicYear(Day(1), Year(2023)))
     )
     val updatedReactions = initialReactions.addActive(newReactions)
@@ -25,7 +25,7 @@ class ReactionsTest extends AnyFlatSpec with Matchers:
 
   it should "remove expired reactions correctly" in:
     val initialReactions = Reactions(
-      activeReactions = List(
+      activeReactions = Set(
         ActiveReaction(defaultRule, "A", BasicYear(Day(1), Year(2023))),
         ActiveReaction(defaultRule, "B", BasicYear(Day(2), Year(2023)))
       )

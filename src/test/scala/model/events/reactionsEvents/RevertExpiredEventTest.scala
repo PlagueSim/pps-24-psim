@@ -39,7 +39,7 @@ class RevertExpiredEventTest extends AnyFlatSpec with Matchers:
       closedWorld,
       null,
       null,
-      Reactions(activeReactions = List(expired))
+      Reactions(activeReactions = Set(expired))
     )
     val event = RevertExpiredEvent()
     val revertedWorld = event.modifyFunction(state)
@@ -57,7 +57,7 @@ class RevertExpiredEventTest extends AnyFlatSpec with Matchers:
       closedWorld,
       null,
       null,
-      Reactions(activeReactions = List(active))
+      Reactions(activeReactions = Set(active))
     )
     val event = RevertExpiredEvent()
     val revertedWorld = event.modifyFunction(state)
@@ -73,7 +73,7 @@ class RevertExpiredEventTest extends AnyFlatSpec with Matchers:
       world,
       null,
       null,
-      Reactions(activeReactions = Nil)
+      Reactions(activeReactions = Set.empty)
     )
     val event = RevertExpiredEvent()
     val revertedWorld = event.modifyFunction(state)
