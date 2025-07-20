@@ -2,7 +2,7 @@ package model.reaction
 
 import model.reaction.ReactionAction.CloseEdges
 import model.time.Time
-import model.world.EdgeType.Air
+import model.world.EdgeType
 
 /** Centralized container for reaction state and rules */
 final case class Reactions(
@@ -35,8 +35,8 @@ object Reactions:
     Reactions(
       rules = List(
         ReactionRule(
-          condition = InfectedCondition(0.7),
-          actionFactory = nodeId => CloseEdges(Air, nodeId)
+          condition = InfectedCondition(0.5),
+          actionFactory = nodeId => CloseEdges(EdgeType.Land, nodeId)
         )
       )
     )

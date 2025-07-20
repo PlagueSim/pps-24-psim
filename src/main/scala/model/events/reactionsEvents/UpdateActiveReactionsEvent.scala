@@ -37,5 +37,5 @@ class UpdateActiveReactionsEvent extends Event[Reactions]:
       state: SimulationState
   ): Reactions =
     val newActiveReactions =
-      reactions.rules.flatMap(rule => activateReaction(rule, state))
-    reactions.addActive(newActiveReactions.toSet)
+      reactions.rules.flatMap(rule => activateReaction(rule, state)).toSet
+    reactions.addActive(newActiveReactions)
