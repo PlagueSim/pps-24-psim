@@ -5,6 +5,7 @@ import model.core.SimulationState
 import scalafx.scene.layout.Pane
 import view.updatables.UpdatableView
 import javafx.scene.Node as FxNode
+import model.world.Edge
 
 class WorldView(
                  worldController: WorldController,
@@ -33,39 +34,55 @@ class WorldView(
 
   private def currentEdges(): Seq[FxNode] =
     val liveNodeIds = nodeViewMap.keySet
+    val livePositions = computeLiveNodePositions(liveNodeIds)
+    val visibleEdges = filterValidEdges(liveNodeIds)
 
-    val livePositions = nodeViews
-      .filter(n => liveNodeIds.contains(n.id))
-      .map(n => n.id -> n.position())
+    val edgeVisuals = visibleEdges.map(edge => edgeFactory.createEdge(edge, livePositions))
+    toJavaFXNodes(edgeVisuals)
+
+  private def computeLiveNodePositions(liveNodeIds: Set[String]): Map[String, (Double, Double)] =
+    nodeViews
+      .filter(view => liveNodeIds.contains(view.id))
+      .map(view => view.id -> view.position())
       .toMap
 
-    val visuals = worldController.getEdges.toSeq
+  private def filterValidEdges(liveNodeIds: Set[String]): Seq[Edge] =
+    worldController.getEdges.toSeq
       .filter(edge => liveNodeIds.contains(edge.nodeA) && liveNodeIds.contains(edge.nodeB))
-      .map(edge => edgeFactory.createEdge(edge, livePositions))
-
-    toJavaFXNodes(visuals)
 
   def redrawEdges(): Unit =
     children --= children.collect { case line: javafx.scene.shape.Line => line }
     children.prependAll(currentEdges())
 
   override def update(newState: SimulationState): Unit =
-    val orphanedNodes = nodeViewMap.keySet -- newState.world.nodes.keySet
-    orphanedNodes.foreach { id =>
-      children --= toJavaFXNodes(nodeViewMap(id).visuals)
-      nodeViewMap = nodeViewMap - id
+    removeOrphanedNodes(newState)
+    redrawEdges()
+    updateExistingNodes(newState)
+
+  private def removeOrphanedNodes(newState: SimulationState): Unit =
+    val currentNodeIds = nodeViewMap.keySet
+    val updatedNodeIds = newState.world.nodes.keySet
+    val orphanedNodeIds = currentNodeIds -- updatedNodeIds
+
+    orphanedNodeIds.foreach { id =>
+      val visualsToRemove = toJavaFXNodes(nodeViewMap(id).visuals)
+      children --= visualsToRemove
+      nodeViewMap -= id
     }
 
-    redrawEdges()
-
+  private def updateExistingNodes(newState: SimulationState): Unit =
     newState.world.nodes.foreach { case (id, node) =>
       nodeViewMap.get(id).foreach { view =>
-        view.labels("id").text = s"Node: $id"
-        view.labels("pop").text = s"Pop: ${node.population}"
-        view.labels("inf").text = s"Infected: ${node.infected}"
-        view.labels("died").text = s"Died: ${node.died}"
+        updateNodeView(view, id, node)
       }
     }
+
+  private def updateNodeView(view: NodeView, id: String, node: model.world.Node): Unit =
+    view.labels("id").text = s"Node: $id"
+    view.labels("pop").text = s"Pop: ${node.population}"
+    view.labels("inf").text = s"Infected: ${node.infected}"
+    view.labels("died").text = s"Died: ${node.died}"
+
 
 
 
