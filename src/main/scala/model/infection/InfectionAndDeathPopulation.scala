@@ -4,35 +4,9 @@ import model.plague.Disease
 import model.world.Node
 import scala.util.Random
 import model.infection.Probability.Probability
+import model.infection.TemperatureAdjuster.TemperatureAdjuster
 
 object InfectionAndDeathPopulation:
-
-  trait Rounding:
-    def round(value: Double): Int
-  object Rounding:
-    given floor: Rounding with
-      def round(value: Double): Int = math.floor(value).toInt
-
-  trait TemperatureAdjuster:
-    def adjustForTemperature(value: Double, temperature: Double): Double
-
-  given defaultTemperatureAdjuster: TemperatureAdjuster with
-    private val idealMin = 10.0
-    private val idealMax = 30.0
-    private val penalty  = 0.03
-
-    def adjustForTemperature(
-        value: Double,
-        temp: Double
-    ): Double =
-      temp match
-        case low if temp < idealMin => value * (1 - (idealMin - temp) * penalty)
-        case high if temp > idealMax =>
-          value * (1 - (temp - idealMax) * penalty)
-        case _ => value
-
-  trait PopulationStrategy:
-    def applyToPopulation(node: Node, disease: Disease): Node
 
   private case class FunctionalPopulationStrategy(
       canApply: Node => Boolean,
