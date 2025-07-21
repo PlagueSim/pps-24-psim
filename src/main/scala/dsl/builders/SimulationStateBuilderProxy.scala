@@ -4,7 +4,7 @@ import model.world.World
 import model.plague.Disease
 import model.cure.Cure
 import model.time.Time
-import model.infection.InfectionAndDeathPopulation.PopulationStrategy
+import model.infection.PopulationStrategy
 import model.core.SimulationState
 
 class SimulationStateBuilderProxy(get: () => SimulationStateBuilder,
