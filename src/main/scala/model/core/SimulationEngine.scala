@@ -3,7 +3,7 @@ package model.core
 import cats.data.State
 import cats.syntax.all.*
 import model.cure.Cure
-import model.events.DiseaseEvents.Mutation
+import model.events.DiseaseEvents.*
 import model.events.movementEvent.MovementEvent
 import model.events.reactionsEvents.{ApplyReactionsEvent, RevertExpiredEvent, UpdateActiveReactionsEvent}
 import model.events.{AdvanceDayEvent, BasicCureEvent, ChangeNodesInWorldEvent, CureEventBuffer, DeathEvent, DiseaseEventBuffer, Event, EventBuffer, InfectionEvent}
@@ -71,6 +71,7 @@ object SimulationEngine:
       moves <- executeEvent(MovementEvent())
       _     <- executeEvent(ChangeNodesInWorldEvent(moves))
       x     <- executeEvent(InfectionEvent())
+      _     <- executeEvent(DnaPointsAddition(x))
       _     <- executeEvent(ChangeNodesInWorldEvent(x))
       y     <- executeEvent(DeathEvent())
       _     <- executeEvent(ChangeNodesInWorldEvent(y))
