@@ -3,15 +3,9 @@ package model.infection
 import model.plague.Disease
 import model.world.Node
 import scala.util.Random
-import model.infection.InfectionAndDeathPopulation.Probability.value
+import model.infection.Probability.Probability
 
 object InfectionAndDeathPopulation:
-
-  opaque type Probability = Double
-
-  object Probability:
-    def fromPercentage(p: Double): Probability   = (p / 100.0).max(0).min(1)
-    extension (p: Probability) def value: Double = p
 
   trait Rounding:
     def round(value: Double): Int
