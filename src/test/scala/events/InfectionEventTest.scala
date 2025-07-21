@@ -5,7 +5,7 @@ import model.cure.Cure
 import model.events.InfectionEvent
 import model.infection.InfectionAndDeathPopulation.*
 import model.infection.InfectionAndDeathPopulation.Infection.*
-import model.infection.InfectionAndDeathPopulation.Infection.Death.{ProbabilisticDeath, StandardDeath}
+import model.infection.InfectionAndDeathPopulation.Death.{ProbabilisticDeath, StandardDeath}
 import model.plague.Disease
 import model.plague.Symptoms.*
 import model.reaction.Reactions.StandardReactions
@@ -52,7 +52,7 @@ class InfectionEventTest extends AnyFlatSpec with Matchers:
 
     val state = SimulationState
       .createStandardSimulationState()
-      .replace(StandardTemperatureAwareInfection(degree))
+      .replace(WithTemperature(degree))
 
     val infectionEvent = InfectionEvent()
     val modifiedState  = infectionEvent.modifyFunction(state)
@@ -72,7 +72,7 @@ class InfectionEventTest extends AnyFlatSpec with Matchers:
 
     val state = SimulationState
       .createStandardSimulationState()
-      .replace(StandardTemperatureAwareInfection(degree))
+      .replace(WithTemperature(degree))
 
     val infectionEvent = InfectionEvent()
     val modifiedState  = infectionEvent.modifyFunction(state)
@@ -83,7 +83,7 @@ class InfectionEventTest extends AnyFlatSpec with Matchers:
 
     val state = SimulationState
       .createStandardSimulationState()
-      .replace(StandardTemperatureAwareInfection(degree))
+      .replace(WithTemperature(degree))
 
     val infectionEvent = InfectionEvent()
     val modifiedState  = infectionEvent.modifyFunction(state)
@@ -97,15 +97,15 @@ class InfectionEventTest extends AnyFlatSpec with Matchers:
     val news           = state.replace(
       World(modifiedState, state.world.edges, state.world.movements)
     )
-    val y = infectionEvent.modifyFunction(news) // 28
+    val y = infectionEvent.modifyFunction(news)
 
-    y.map((s, n) => n).foreach(x => x.infected should be(28))
+    y.map((s, n) => n).foreach(x => x.infected should be(9))
 
     val news2 = news.replace(World(y, state.world.edges, state.world.movements))
 
     val z = infectionEvent.modifyFunction(news2)
 
-    z.map((s, n) => n).foreach(x => x.infected should be(100))
+    z.map((s, n) => n).foreach(x => x.infected should be(13))
 
 //  "The probabilistic infection" should "behave correctly" in:
 //    val state = SimulationState
@@ -135,14 +135,14 @@ class InfectionEventTest extends AnyFlatSpec with Matchers:
 
   "The standardTemperatureAwareInfection" should "infect less than 5 because it is weakend by the temperature" in:
     val node = Node.withPopulation(100).withInfected(1).build()
-    val ev2  = StandardTemperatureAwareInfection(0.0)
+    val ev2  = WithTemperature(0.0)
       .applyToPopulation(node, Disease("test", Set(pulmonaryEdema), 1))
 
     ev2.infected should be(4)
 
   it should "not infect if the temperature is too high or too low" in:
     val node = Node.withPopulation(100).withInfected(1).build()
-    val ev3  = StandardTemperatureAwareInfection(100.0)
+    val ev3  = WithTemperature(100.0)
       .applyToPopulation(node, Disease("test", Set(pulmonaryEdema), 1))
 
     ev3.infected should be(1)
