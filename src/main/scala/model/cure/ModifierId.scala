@@ -19,4 +19,8 @@ final case class MutationId(name: String)
 final case class ModifierId(
     source: ModifierSource,
     kind: ModifierKind
-)
+):
+  override def equals(obj: Any): Boolean = obj match
+    case that: ModifierId =>
+      this.source == that.source && this.kind == that.kind
+    case _ => false
