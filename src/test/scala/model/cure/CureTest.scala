@@ -71,3 +71,15 @@ class CureTest extends AnyFlatSpec with Matchers:
     cure.modifiers.modifiers should contain key id
     val newCure = cure.advance()
     newCure.progress shouldEqual (0.7 + newCure.baseSpeed +- 0.0001)
+
+  "if the same modifier is added twice" should "only be considered once" in {
+    val id = ModifierId(
+      ModifierSource.Mutation(MutationId("m1")),
+      ModifierKind.Additive
+    )
+    val mod = CureModifier.Additive(id, 0.05)
+    val modifiers = CureModifiers.empty.add(mod).add(mod)
+    modifiers.modifiers.size shouldEqual 1
+    modifiers.modifiers should contain key id
+    modifiers.modifiers(id) shouldEqual mod
+  }
