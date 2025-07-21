@@ -3,8 +3,39 @@ package model.infection
 import model.plague.Disease
 import model.world.Node
 import scala.util.Random
+import model.infection.InfectionAndDeathPopulation.Probability.value
 
 object InfectionAndDeathPopulation:
+
+  opaque type Probability = Double
+
+  object Probability:
+    def fromPercentage(p: Double): Probability   = (p / 100.0).max(0).min(1)
+    extension (p: Probability) def value: Double = p
+
+  trait Rounding:
+    def round(value: Double): Int
+  object Rounding:
+    given floor: Rounding with
+      def round(value: Double): Int = math.floor(value).toInt
+
+  trait TemperatureAdjuster:
+    def adjustForTemperature(value: Double, temperature: Double): Double
+
+  given defaultTemperatureAdjuster: TemperatureAdjuster with
+    private val idealMin = 10.0
+    private val idealMax = 30.0
+    private val penalty  = 0.03
+
+    def adjustForTemperature(
+        value: Double,
+        temp: Double
+    ): Double =
+      temp match
+        case low if temp < idealMin => value * (1 - (idealMin - temp) * penalty)
+        case high if temp > idealMax =>
+          value * (1 - (temp - idealMax) * penalty)
+        case _ => value
 
   trait PopulationStrategy:
     def applyToPopulation(node: Node, disease: Disease): Node
@@ -13,108 +44,95 @@ object InfectionAndDeathPopulation:
       canApply: Node => Boolean,
       extractParameter: Disease => Double,
       populationTypeTarget: Node => Int,
-      adjustParameter: Double => Double,
-      applyFunction: (Int, Double) => Int,
+      adjustParameter: Double => Probability,
+      applyFunction: (Int, Probability) => Int,
       applyChange: (Node, Int) => Node
   ) extends PopulationStrategy:
-    override def applyToPopulation(
-        node: Node,
-        disease: Disease
-    ): Node =
+    override def applyToPopulation(node: Node, disease: Disease): Node =
       if canApply(node) then
-        val parameter         = extractParameter(disease)
-        val adjustedParameter = adjustParameter(parameter)
-        val basePopulation    = populationTypeTarget(node)
-        val infectionPressure =
-          if node.population equals 0 then 0.0
-          else node.infected.toDouble / node.population
-        val probability = adjustedParameter * infectionPressure
-        val change      = applyFunction(basePopulation, probability)
+        lazy val rawParam       = extractParameter(disease)
+        lazy val probability    = adjustParameter(rawParam)
+        lazy val basePopulation = populationTypeTarget(node)
+        val change              = applyFunction(basePopulation, probability)
         applyChange(node, change)
       else node
 
+  private object PopulationStrategyBuilder:
+    def withProbability(
+        param: Disease => Double,
+        affected: Node => Int,
+        change: (Node, Int) => Node,
+        adjust: Double => Probability = Probability.fromPercentage,
+        applyFn: (Int, Probability) => Int
+    ): PopulationStrategy =
+      FunctionalPopulationStrategy(
+        canApply = node => affected(node) > 0,
+        extractParameter = param,
+        populationTypeTarget = affected,
+        adjustParameter = adjust,
+        applyFunction = applyFn,
+        applyChange = change
+      )
+
   object Infection:
 
-    val StandardInfection: PopulationStrategy = FunctionalPopulationStrategy(
-      canApply = n => n.population - n.infected >= 0 && (n.infected > 0),
-      extractParameter = _.infectivity,
-      populationTypeTarget = node => node.population - node.infected,
-      adjustParameter = identity,
-      applyFunction = (parameter, pressure) => (pressure * parameter).toInt,
-      applyChange = (node, change) => node.applyInfection(change)
-    )
-
-    def StandardTemperatureAwareInfection(temp: Double): PopulationStrategy =
-      FunctionalPopulationStrategy(
-        canApply =
-          node => node.population - node.infected > 0 && node.infected > 0,
-        extractParameter = _.infectivity,
-        populationTypeTarget = node => node.population - node.infected,
-        adjustParameter =
-          infectivity => applyTemperatureVariation(infectivity, temp),
-        applyFunction = (healthy, probability) => (healthy * probability).toInt,
-        applyChange = (node, newInfected) => node.applyInfection(newInfected)
+    val StandardInfection: PopulationStrategy =
+      PopulationStrategyBuilder.withProbability(
+        _.infectivity,
+        node => node.population - node.infected,
+        (node, infected) => node.applyInfection(infected),
+        applyFn = (healthy, prob) => (healthy * prob.value).toInt
       )
 
-    val ProbabilisticInfection: PopulationStrategy =
-      FunctionalPopulationStrategy(
-        canApply =
-          node => node.population - node.infected > 0 && node.infected > 0,
-        extractParameter = _.infectivity,
-        populationTypeTarget = node => node.population - node.infected,
-        adjustParameter = identity,
-        applyFunction = (healthy, probability) =>
-          (1 to healthy).count(_ => Random.nextDouble() < probability),
-        applyChange = (node, newInfected) => node.applyInfection(newInfected)
+    def WithTemperature(temp: Double)(using
+        adjuster: TemperatureAdjuster
+    ): PopulationStrategy =
+      PopulationStrategyBuilder.withProbability(
+        _.infectivity,
+        node => node.population - node.infected,
+        (node, infected) => node.applyInfection(infected),
+        adjust = p =>
+          Probability.fromPercentage(adjuster.adjustForTemperature(p, temp)),
+        applyFn = (healthy, prob) => (healthy * prob.value).toInt
       )
 
-    def ProbabilisticTemperatureInfection(temp: Double): PopulationStrategy =
-      FunctionalPopulationStrategy(
-        canApply =
-          node => node.population - node.infected > 0 && node.infected > 0,
-        extractParameter = _.infectivity,
-        populationTypeTarget = node => node.population - node.infected,
-        adjustParameter =
-          infectivity => applyTemperatureVariation(infectivity, temp),
-        applyFunction = (healthy, probability) =>
-          (1 to healthy).count(_ => Random.nextDouble() < probability),
-        applyChange = (node, newInfected) => node.applyInfection(newInfected)
+    val Probabilistic: PopulationStrategy =
+      PopulationStrategyBuilder.withProbability(
+        _.infectivity,
+        node => node.population - node.infected,
+        (node, infected) => node.applyInfection(infected),
+        applyFn = (healthy, prob) =>
+          (1 to healthy).count(_ => Random.nextDouble() < prob.value)
       )
 
-    private def applyTemperatureVariation(
-        infectivity: Double,
-        temperature: Double
-    ): Double =
-      val idealMinTemp     = 10.0
-      val idealMaxTemp     = 30.0
-      val penaltyPerDegree = 0.03
-
-      temperature match
-        case _ if temperature < idealMinTemp =>
-          val penalty = (idealMinTemp - temperature) * penaltyPerDegree
-          (infectivity * (1.0 - penalty)).max(0)
-        case _ if temperature > idealMaxTemp =>
-          val penalty = (temperature - idealMaxTemp) * penaltyPerDegree
-          (infectivity * (1.0 - penalty)).max(0)
-        case _ => infectivity
-
-    object Death:
-      val StandardDeath: PopulationStrategy = FunctionalPopulationStrategy(
-        canApply = node => node.infected > 0,
-        extractParameter = _.lethality / 100.0,
-        populationTypeTarget = _.infected,
-        adjustParameter = identity,
-        applyFunction = (infected, lethality) => (infected * lethality).toInt,
-        applyChange = (node, deaths) => node.updateDied(deaths)
+    def ProbabilisticWithTemperature(temp: Double)(using
+        adjuster: TemperatureAdjuster
+    ): PopulationStrategy =
+      PopulationStrategyBuilder.withProbability(
+        _.infectivity,
+        node => node.population - node.infected,
+        (node, infected) => node.applyInfection(infected),
+        adjust = p =>
+          Probability.fromPercentage(adjuster.adjustForTemperature(p, temp)),
+        applyFn = (healthy, prob) =>
+          (1 to healthy).count(_ => Random.nextDouble() < prob.value)
       )
 
-      val ProbabilisticDeath: PopulationStrategy =
-        FunctionalPopulationStrategy(
-          canApply = node => node.infected > 0,
-          extractParameter = _.lethality / 100.0,
-          populationTypeTarget = _.infected,
-          adjustParameter = identity,
-          applyFunction = (infected, lethality) =>
-            (1 to infected).count(_ => Random.nextDouble() < lethality),
-          applyChange = (node, deaths) => node.updateDied(deaths)
-        )
+  object Death:
+
+    val StandardDeath: PopulationStrategy =
+      PopulationStrategyBuilder.withProbability(
+        _.lethality,
+        _.infected,
+        (node, deaths) => node.updateDied(deaths),
+        applyFn = (infected, prob) => (infected * prob.value).toInt
+      )
+
+    val ProbabilisticDeath: PopulationStrategy =
+      PopulationStrategyBuilder.withProbability(
+        _.lethality,
+        _.infected,
+        (node, deaths) => node.updateDied(deaths),
+        applyFn = (infected, prob) =>
+          (1 to infected).count(_ => Random.nextDouble() < prob.value)
+      )
