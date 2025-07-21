@@ -66,8 +66,8 @@ case class Disease private(
   /**
    *  computes the sum of the [[Disease]] stats
    *
-   * @param stats
-   * @return [[TraitStats]]
+   * @param stats the list of [[TraitStats]] to be summed together
+   * @return [[TraitStats]] the sum of all of the [[stats]] of this [[Disease]]
    */
   private def sum(stats: List[TraitStats]): TraitStats =
     stats.foldLeft(TraitStats())((prev, current) =>
