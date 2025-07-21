@@ -1,9 +1,7 @@
 package model.core
 
 import model.cure.Cure
-import model.infection.InfectionAndDeathPopulation.Death.StandardDeath
-import model.infection.PopulationStrategy
-import model.infection.InfectionAndDeathPopulation.Infection.StandardInfection
+import model.infection.InfectionAndDeathPopulation.*
 import model.plague.Disease
 import model.plague.Symptoms.pulmonaryEdema
 import model.reaction.Reactions

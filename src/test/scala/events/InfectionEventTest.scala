@@ -4,8 +4,6 @@ import model.core.SimulationState
 import model.cure.Cure
 import model.events.InfectionEvent
 import model.infection.InfectionAndDeathPopulation.*
-import model.infection.InfectionAndDeathPopulation.Infection.*
-import model.infection.InfectionAndDeathPopulation.Death.{ProbabilisticDeath, StandardDeath}
 import model.plague.Disease
 import model.plague.Symptoms.*
 import model.reaction.Reactions.StandardReactions
