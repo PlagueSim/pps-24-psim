@@ -32,6 +32,9 @@ object DiseaseEvents:
    * @param traitToRemove the [[Trait]] that needs to be removed
    */
   case class Involution(traitToRemove: Trait) extends Event[Disease]:
+    if traitToRemove.stats.cureSlowdown != 0 ||
+      traitToRemove.stats.cureReset != 0 then
+      CureEventBuffer.newEvent(RemoveCureModifier(traitToRemove))
 
     /**
      * @param state current [[SimulationState]] to be updated
@@ -84,4 +87,20 @@ object DiseaseEvents:
      * @return a new instance of [[Cure]] with its speed updated
      */
     override def modifyFunction(state: SimulationState): Cure =
-      state.cure.copy(modifiers = state.cure.modifiers.add(mod)).advance()
+      state.cure.copy(modifiers = state.cure.modifiers.add(mod))
+
+
+  /**
+   * The [[Event]] used to remove the [[Cure]] modifiers applied
+   * by a trait that is now being involved
+   *
+   * @param tr the [[Trait]] that is being involved
+   */
+  case class RemoveCureModifier(tr: Trait) extends Event[Cure]:
+    val source: ModifierSource.Mutation = ModifierSource.Mutation(MutationId(tr.name))
+    /**
+     * @param state current [[SimulationState]] to be updated
+     * @return a new instance of [[Cure]] with its speed updated
+     */
+    override def modifyFunction(state: SimulationState): Cure =
+      state.cure.copy(modifiers = state.cure.modifiers.removeBySource(source))
