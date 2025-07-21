@@ -4,8 +4,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import model.events.*
 import model.core.SimulationState
-import model.cure.Cure
-import model.plague.Disease
+import model.events.cure.{AdvanceCureEvent, LinearInfectedThresholdEvent, ProgressSubtractExampleEvent}
 import model.world.{MovementStrategy, Static, World}
 import model.time.TimeTypes.{Day, Year}
 import model.time.*
@@ -23,14 +22,14 @@ class CureEventTest extends AnyFlatSpec with Matchers:
 
   "BasicCureEvent" should "advance the cure progress when executed" in:
     val initialState = basicSimulationState
-    val event = BasicCureEvent()
+    val event = AdvanceCureEvent()
 
     val (newState, cure) = event.execute().run(initialState).value
     newState.cure.progress shouldEqual initialState.cure.progress + initialState.cure.baseSpeed
 
   it should "allow to be executed multiple times" in:
     val initialState = basicSimulationState
-    val event = BasicCureEvent()
+    val event = AdvanceCureEvent()
 
     val (firstState, _) = event.execute().run(initialState).value
     val (secondState, _) = event.execute().run(firstState).value
@@ -55,3 +54,30 @@ class CureEventTest extends AnyFlatSpec with Matchers:
     )
     cure.modifiers.modifiers should contain key modIdA
     cure.modifiers.modifiers shouldNot contain key modIdB
+
+  "ProgressSubtractExampleEvent" should "subtract progress immediately and store the modifier" in:
+    val initialState = basicSimulationState.replace(Cure(progress = 0.5))
+    val event = model.events.cure.ProgressSubtractExampleEvent(-0.2)
+    val (newState, cure) = event.execute().run(initialState).value
+    // Progress should be subtracted immediately
+    cure.progress shouldEqual 0.3
+
+  "Modifier" should "be added to the cure modifiers" in:
+    val initialState = basicSimulationState.replace(Cure(progress = 0.5))
+    val event = ProgressSubtractExampleEvent(-0.2)
+    val (newState, cure) = event.execute().run(initialState).value
+    val modId = model.cure.ModifierId(
+      model.cure.ModifierSource.Global,
+      model.cure.ModifierKind.ProgressModifier
+    )
+    cure.modifiers.modifiers should contain key modId
+    cure.modifiers.modifiers(modId) shouldBe a[model.cure.CureModifier.ProgressModifier]
+
+  it should "be executed only once" in:
+    val initialState = basicSimulationState.replace(Cure(progress = 0.5))
+    val event = ProgressSubtractExampleEvent(-0.2)
+    val cureAdvanceEvent = AdvanceCureEvent()
+    val (firstState, firstCure) = event.execute().run(initialState).value
+    val (secondState, secondCure) = cureAdvanceEvent.execute().run(firstState).value
+
+    secondCure.progress shouldEqual firstCure.progress + secondCure.baseSpeed

@@ -1,16 +1,17 @@
-package model.events
+package model.events.cure
 
-import model.core.SimulationState
-import model.core.SimulationEngine.Simulation
-import model.cure.Cure
 import cats.data.State
+import model.core.SimulationEngine.Simulation
+import model.core.SimulationState
+import model.cure.Cure
+import model.events.Event
 
 /** Event that only execute the advance of the cure progress.
   *
   * This event modifies the simulation state by advancing the cure's progress
   * based on the current day and applying any modifiers that may be present.
   */
-case class BasicCureEvent() extends Event[Cure]:
+case class AdvanceCureEvent() extends Event[Cure]:
   override def modifyFunction(state: SimulationState): Cure =
     state.cure.advance()
 
@@ -39,3 +40,12 @@ case class LinearInfectedThresholdEvent(threshold: Double = 0.5)
   override def modifyFunction(state: SimulationState): Cure =
     missingModifiers(state).values.foldLeft(state.cure): (cure, mod) =>
       cure.addModifier(mod)
+
+case class ProgressSubtractExampleEvent(progress: Double) extends Event[Cure]:
+  override def modifyFunction(state: SimulationState): Cure =
+    val modId = model.cure.ModifierId(
+      model.cure.ModifierSource.Global,
+      model.cure.ModifierKind.ProgressModifier
+    )
+    val modifier = model.cure.CureModifier.ProgressModifier(modId, progress)
+    state.cure.addModifier(modifier)
