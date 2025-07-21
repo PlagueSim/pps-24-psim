@@ -1,7 +1,7 @@
 package model.core
 
 import model.cure.Cure
-import model.infection.InfectionAndDeathPopulation.Infection.Death.StandardDeath
+import model.infection.InfectionAndDeathPopulation.Death.StandardDeath
 import model.infection.InfectionAndDeathPopulation.PopulationStrategy
 import model.infection.InfectionAndDeathPopulation.Infection.StandardInfection
 import model.plague.Disease

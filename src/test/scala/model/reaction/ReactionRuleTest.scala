@@ -1,12 +1,7 @@
 package model.reaction
 
 import model.core.SimulationState
-import model.cure.Cure
-import model.infection.InfectionAndDeathPopulation.Infection.Death.StandardDeath
-import model.infection.InfectionAndDeathPopulation.Infection.StandardInfection
-import model.plague.Disease
 import model.reaction.ReactionAction.CloseEdges
-import model.reaction.Reactions.StandardReactions
 import model.time.BasicYear
 import model.time.TimeTypes.*
 import model.world.{EdgeType, Node, Static, World}
