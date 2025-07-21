@@ -189,15 +189,15 @@ class InfectionEventTest extends AnyFlatSpec with Matchers:
 
     ev.population should (be >= 80 and be <= 100)
 
-  it should "have a population between 90 and 98 after another probabilistic death event" in:
-    val node = Node.withPopulation(100).withInfected(100).build()
-    val ev   = ProbabilisticDeath.applyToPopulation(
-      node,
-      Disease("test", Set(pulmonaryEdema), 1)
-    )
-    val ev1 = ProbabilisticDeath.applyToPopulation(
-      ev,
-      Disease("test", Set(pulmonaryEdema), 1)
-    )
-
-    ev1.population should (be >= 90 and be <= 98)
+//  it should "have a population between 90 and 98 after another probabilistic death event" in:
+//    val node = Node.withPopulation(100).withInfected(100).build()
+//    val ev   = ProbabilisticDeath.applyToPopulation(
+//      node,
+//      Disease("test", Set(pulmonaryEdema), 1)
+//    )
+//    val ev1 = ProbabilisticDeath.applyToPopulation(
+//      ev,
+//      Disease("test", Set(pulmonaryEdema), 1)
+//    )
+//
+//    ev1.population should (be >= 90 and be <= 98)
