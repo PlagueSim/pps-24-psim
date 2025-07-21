@@ -16,6 +16,15 @@ final case class ActiveReaction(
     nodeId: String,
     startDay: Time
 ):
+
+  private def key: (ReactionRule, String) =
+    (rule, nodeId)
+
+  override def equals(obj: Any): Boolean =
+    obj match
+      case that: ActiveReaction => this.key == that.key
+      case _                    => false
+
   /** Checks if the reaction is still active.
     */
   def isActive(currentDay: Time): Boolean =

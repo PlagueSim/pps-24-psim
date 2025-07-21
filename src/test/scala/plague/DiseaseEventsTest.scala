@@ -21,6 +21,7 @@ class DiseaseEventsTest extends AnyFlatSpec with Matchers:
     Cure(),
     World(Map.empty, Set.empty, movements),
     null,
+    null,
     null
   )
 
