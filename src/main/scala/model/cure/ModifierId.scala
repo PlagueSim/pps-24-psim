@@ -8,9 +8,10 @@ object ModifierSource:
 
 sealed trait ModifierKind
 object ModifierKind:
-  case object Multiplier extends ModifierKind
-  case object Additive   extends ModifierKind
-  case object Generic    extends ModifierKind
+  case object Multiplier       extends ModifierKind
+  case object Additive         extends ModifierKind
+  case object ProgressModifier extends ModifierKind
+  case object Generic          extends ModifierKind
 
 final case class NodeId(name: String)
 final case class MutationId(name: String)

@@ -38,4 +38,4 @@ case class LinearInfectedThresholdEvent(threshold: Double = 0.5)
 
   override def modifyFunction(state: SimulationState): Cure =
     missingModifiers(state).values.foldLeft(state.cure): (cure, mod) =>
-      cure.copy(modifiers = cure.modifiers.add(mod))
+      cure.addModifier(mod)

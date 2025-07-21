@@ -84,4 +84,4 @@ object DiseaseEvents:
      * @return a new instance of [[Cure]] with its speed updated
      */
     override def modifyFunction(state: SimulationState): Cure =
-      state.cure.copy(modifiers = state.cure.modifiers.add(mod)).advance()
+      state.cure.addModifier(mod)
