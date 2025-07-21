@@ -1,13 +1,11 @@
 package model.infection
 
-import model.infection.TemperatureAdjuster.TemperatureAdjuster
 import model.infection.Probability.Probability
+import model.infection.TemperatureAdjuster.TemperatureAdjuster
+
 import scala.util.Random
 
 object InfectionTypes:
-  import PopulationStrategyBuilder.withProbability
-  
-  
   val StandardInfection: PopulationStrategy =
     PopulationStrategyBuilder.withProbability(
       _.infectivity,

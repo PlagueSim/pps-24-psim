@@ -3,7 +3,6 @@ package model.infection
 import scala.util.Random
 
 object DeathTypes:
-  import PopulationStrategyBuilder.withProbability
   
   val StandardDeath: PopulationStrategy =
     PopulationStrategyBuilder.withProbability(
