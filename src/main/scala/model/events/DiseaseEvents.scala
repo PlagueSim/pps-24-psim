@@ -15,6 +15,7 @@ object DiseaseEvents:
    */
   case class Evolution(traitToEvolve: Trait) extends Event[Disease]:
     if traitToEvolve.stats.cureSlowdown != 0 then CureEventBuffer.newEvent(CureSlowDown(traitToEvolve))
+//    if traitToEvolve.stats.cureReset != 0 then CureEventBuffer.newEvent(CurePushBack(traitToEvolve))
 
     /**
      * @param state current [[SimulationState]] to be updated
@@ -89,6 +90,19 @@ object DiseaseEvents:
     override def modifyFunction(state: SimulationState): Cure =
       state.cure.copy(modifiers = state.cure.modifiers.add(mod))
 
+//  /**
+//   * The [[Event]] used to reduce the [[Cure]] progress
+//   *
+//   * @param tr the [[Trait]] that pushes the [[Cure]] progress back
+//   */
+//  case class CurePushBack(tr: Trait) extends Event[Cure]:
+//    val mod: Additive = ???//Additive(ModifierId(ModifierSource.Mutation(MutationId(tr.name)), ModifierKind.Additive), -tr.stats.cureReset)
+//
+//    /**
+//     * @param state current [[SimulationState]] to be updated
+//     * @return a new instance of [[Cure]] with its progress updated
+//     */
+//    override def modifyFunction(state: SimulationState): Cure = ???
 
   /**
    * The [[Event]] used to remove the [[Cure]] modifiers applied
