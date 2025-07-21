@@ -10,11 +10,12 @@ case class MovementEvent() extends Event[Map[String, Node]]:
                                     nodes: Map[String, Node],
                                     movements: Map[MovementStrategy, Double],
                                     neighbors: String => Set[String],
+                                    isEdgeOpen: (String, String) => Boolean,
                                     rng: scala.util.Random
                                   ): Map[String, Int] =
     val allArrivals =
       nodes.toList.flatMap { case (nodeId, node) =>
-        MovementHelpers.computeNodeArrivals(nodeId, node, movements, neighbors, rng)
+        MovementHelpers.computeNodeArrivals(nodeId, node, movements, neighbors, isEdgeOpen, rng)
       }
 
     val grouped =
@@ -63,7 +64,11 @@ case class MovementEvent() extends Event[Map[String, Node]]:
     val movements = s.world.movements
     val neighbors = s.world.neighbors
 
-    val arrivals: Map[String, Int] = computeTotalArrivals(nodes, movements, neighbors, rng)
+    val isEdgeOpen = (a: String, b: String) => s.world.edges.exists(e =>
+      (e.nodeA == a && e.nodeB == b || e.nodeA == b && e.nodeB == a) && !e.isClose
+    )
+
+    val arrivals: Map[String, Int] = computeTotalArrivals(nodes, movements, neighbors,isEdgeOpen, rng)
 
     val unknownDestinations = arrivals.keySet.diff(nodes.keySet)
 

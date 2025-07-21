@@ -1,15 +1,14 @@
 package view
 
 import controller.ViewController
-import model.world.WorldFactory
 import model.core.SimulationState
+import model.world.WorldFactory
 import scalafx.geometry.Insets
-import scalafx.scene.Scene
 import scalafx.scene.control.Label
 import scalafx.scene.layout.BorderPane
 import view.cure.CureProgressBar
-import view.updatables.UpdatableView
 import view.plague.PlagueView
+import view.updatables.UpdatableView
 import view.world.WorldViewFactory
 
 class MainView extends BorderPane with UpdatableView:
@@ -19,6 +18,7 @@ class MainView extends BorderPane with UpdatableView:
   private val controlPane = ControlPane(controller)
   private val datePane = DatePane()
   private val progressBar = CureProgressBar()
+  private val dnaPoints = DnaPointsCounter
 
   private object ControlPane:
     def apply(controller: ViewController): BorderPane = new BorderPane:
@@ -33,6 +33,7 @@ class MainView extends BorderPane with UpdatableView:
       padding = Insets(10)
   end ControlPane
 
+  controlPane.top = dnaPoints
   controlPane.center = progressBar
 
   center = mapPane
@@ -40,6 +41,7 @@ class MainView extends BorderPane with UpdatableView:
   top = datePane
 
   override def update(newState: SimulationState): Unit =
+    dnaPoints.update(newState)
     plgPane.update(newState)
     datePane.update(newState)
     progressBar.update(newState)
@@ -53,3 +55,10 @@ class DatePane extends BorderPane with UpdatableView:
 
   override def update(newState: SimulationState): Unit =
     dateLabel.text = s"Day: ${newState.time.day.value}, Year: ${newState.time.year.value}"
+
+
+case object DnaPointsCounter extends Label with UpdatableView:
+  text = "DNA points: 0"
+  padding = Insets(3)
+  override def update(newState: SimulationState): Unit =
+    this.text = s"DNA points: ${newState.disease.dnaPoints}"

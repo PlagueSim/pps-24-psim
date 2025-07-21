@@ -2,7 +2,7 @@ package events.movementevent
 import model.world.*
 import model.core.{SimulationEngine, SimulationState}
 import model.events.movementEvent.MovementEvent
-import model.events.MovementChangeInWorldEvent
+import model.events.ChangeNodesInWorldEvent
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -26,11 +26,11 @@ class MovementEventTest extends AnyFlatSpec with Matchers:
 
     val worldBefore = World(nodes, edges, movements)
 
-    val simulationState = SimulationState(null, null, null, worldBefore)
+    val simulationState = SimulationState(null, null, null, worldBefore, null, null, null)
 
     val newWorld = for 
       e <- SimulationEngine.executeEvent(MovementEvent())
-      c <- SimulationEngine.executeEvent(MovementChangeInWorldEvent(e))
+      c <- SimulationEngine.executeEvent(ChangeNodesInWorldEvent(e))
     yield c
 
     val worldAfter = newWorld.runA(simulationState).value

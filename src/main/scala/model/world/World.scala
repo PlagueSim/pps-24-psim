@@ -12,6 +12,12 @@ case class World private(
                           edges: Set[Edge],
                           movements: Map[MovementStrategy, Double]
                         ):
+  def modifyNodes(newNodes: Map[String, Node]): World = copy(nodes = newNodes)
+
+  def modifyEdges(newEdges: Set[Edge]): World = copy(edges = newEdges)
+
+  def modifyMovements(newMovements: Map[MovementStrategy, Double]): World = copy(movements = newMovements)
+
 
   /**
    * Returns the set of neighboring node IDs for the given node.
@@ -30,8 +36,9 @@ case class World private(
       (e.nodeA == nodeA && e.nodeB == nodeB) ||
         (e.nodeA == nodeB && e.nodeB == nodeA)
     )
-  
-  
+
+
+
 
 object World:
 

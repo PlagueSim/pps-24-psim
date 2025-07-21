@@ -58,6 +58,43 @@ case class Disease private(
     traits.toList.map(_.stats.mutationChance).sum + traits.count(_.category == Symptom) * 0.005
 
   /**
+   *
+   * @return a [[TraitStats]] containing the sum of the [[Disease]] stats
+   */
+  def allStats(): TraitStats = sum(traits.map(_.stats).toList)
+
+  /**
+   *  computes the sum of the [[Disease]] stats
+   *
+   * @param stats
+   * @return [[TraitStats]]
+   */
+  private def sum(stats: List[TraitStats]): TraitStats =
+    stats.foldLeft(TraitStats())((prev, current) =>
+      TraitStats(
+        infectivity = prev.infectivity + current.infectivity,
+        severity = prev.severity + current.severity,
+        lethality = prev.lethality + current.lethality,
+        cost = prev.cost + current.cost,
+        mutationChance = prev.mutationChance + current.mutationChance,
+        cureSlowdown = prev.cureSlowdown + current.cureSlowdown,
+        cureReset = prev.cureReset + current.cureReset,
+        effectiveness = mergeEffectiveness(prev.effectiveness, current.effectiveness)
+      )
+    )
+
+  /**
+   *  merges two maps by summing values with the same key
+   * @param a first Map
+   * @param b second Map
+   * @return A merged [[Map]] but elements with the same key are summed together
+   */
+  private def mergeEffectiveness(a: Map[Any, Double], b: Map[Any, Double]): Map[Any, Double] =
+    (a.keySet ++ b.keySet).map(key =>
+      key -> (a.getOrElse(key, 0.0) + b.getOrElse(key, 0.0))
+    ).toMap
+
+  /**
    * Checks whether the [[Disease]] has already evolved a [[Trait]] with the given name.
    *
    * @param name The name of the [[Trait]] to check for duplicate.
@@ -75,7 +112,7 @@ case class Disease private(
    * @param t The [[Trait]] to check if evolution is possible.
    * @return [[true]] if the [[Trait]] can be evolved, [[false]] otherwise.
    */
-  private def canEvolve(t: Trait): Boolean = t.category match
+  def canEvolve(t: Trait): Boolean = t.category match
     case Symptom => t.prerequisites.exists(hasTrait) || t.prerequisites.isEmpty
     case _ => t.prerequisites.forall(hasTrait)
 
@@ -87,7 +124,7 @@ case class Disease private(
    * @return [[true]] if the [[Trait]] can be involved, [[false]] otherwise
    */
   private def canInvolve(t: Trait): Boolean =
-    val remaining = traits - t
+    val remaining = traits.filter(_.category.equals(t.category)) - t
     val traitMap = remaining.iterator.map(tr => tr.name -> tr).toMap
     val roots = remaining.filter(_.isRoot)
 

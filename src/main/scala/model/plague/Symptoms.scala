@@ -5,6 +5,9 @@ import model.plague.TraitDsl.*
 
 import placehoderTypes.*
 
+/**
+ * An object containing all basic Symptom values
+ */
 object Symptoms:
 
   final val nausea: Trait = define("Nausea", Symptom)

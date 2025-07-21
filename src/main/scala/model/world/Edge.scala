@@ -12,13 +12,13 @@ enum EdgeType:
  * @param nodeA ID of one node
  * @param nodeB ID of the other node
  * @param typology Type of the connection (Air, Sea, Land)
- * @param weight Optional weight of the connection (default = 1.0)
+ * @param isClose Indicates if the edge is closed (default = false)
  */
 case class Edge private (
                           nodeA: String,
                           nodeB: String,
                           typology: EdgeType,
-                          weight: Double = 1.0
+                          isClose: Boolean = false,
                         ):
 
   /**
@@ -41,6 +41,12 @@ case class Edge private (
     if nodeId == nodeA then Some(nodeB)
     else if nodeId == nodeB then Some(nodeA)
     else None
+    
+  def close: Edge =
+    copy(isClose = true)
+    
+  def open: Edge =
+    copy(isClose = false)
 
 
 object Edge:
@@ -50,9 +56,8 @@ object Edge:
    * @param a one node ID
    * @param b another node ID
    * @param typology Type of the connection
-   * @param weight optional weight (default = 1.0)
    * @return an Edge with nodeA <= nodeB
    */
-  def apply(a: String, b: String, typology: EdgeType, weight: Double = 1.0): Edge =
-    if a <= b then new Edge(a, b, typology, weight)
-    else new Edge(b, a, typology, weight)
+  def apply(a: String, b: String, typology: EdgeType): Edge =
+    if a <= b then new Edge(a, b, typology)
+    else new Edge(b, a, typology)

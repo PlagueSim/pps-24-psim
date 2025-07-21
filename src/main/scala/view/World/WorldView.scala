@@ -4,50 +4,50 @@ import controller.WorldController
 import model.core.SimulationState
 import scalafx.scene.layout.Pane
 import view.updatables.UpdatableView
+import javafx.scene.Node as FxNode
 
 class WorldView(
-                  world: WorldController,
-                  layout: GraphLayout,
-                  nodeFactory: NodeViewFactory,
-                  edgeFactory: EdgeViewFactory
+                 worldController: WorldController,
+                 layout: GraphLayout,
+                 nodeFactory: NodeViewFactory,
+                 edgeFactory: EdgeViewFactory
                ) extends Pane with UpdatableView:
 
-  private val nodeViews: Seq[NodeView] =
-    layout.computePositions(world.getNodes.keys.toSeq).toSeq.map { case (id, pos) =>
-      nodeFactory.createNode(id, world.getNodes(id), pos)
+  private val nodeViews: Seq[NodeView] = buildNodeViews()
+  private val nodeViewMap: Map[String, NodeView] = nodeViews.map(n => n.id -> n).toMap
+  renderInitialView()
+
+  private def buildNodeViews(): Seq[NodeView] =
+    val positions = layout.computePositions(worldController.getNodes.keys.toSeq)
+    for (id, pos) <- positions.toSeq yield
+      nodeFactory.createNode(id, worldController.getNodes(id), pos)
+
+  private def renderInitialView(): Unit =
+    children ++= toJavaFXNodes(nodeViews.flatMap(_.visuals))
+    redrawEdges()
+
+  private def toJavaFXNodes(visuals: Seq[Any]): Seq[FxNode] =
+    visuals.collect {
+      case fx: FxNode => fx
     }
 
-  addNodeViews()
-  redrawEdges()
-
-  private def currentEdges: Seq[Any] =
+  private def currentEdges(): Seq[FxNode] =
     val livePositions = nodeViews.map(n => n.id -> n.position()).toMap
-    world.getEdges.toSeq.map { edge =>
-      edgeFactory.createEdge(edge, livePositions)
-    }
-
-  private def addNodeViews(): Unit =
-    children ++= nodeViews.flatMap(n => toJavaFXNodes(n.visuals))
+    val visuals = worldController.getEdges.toSeq.map: 
+      edge => edgeFactory.createEdge(edge, livePositions)
+    
+    toJavaFXNodes(visuals)
 
   def redrawEdges(): Unit =
-    children --= children.collect {
-      case n: javafx.scene.shape.Line => n
-    }
-    children.prependAll(toJavaFXNodes(currentEdges))
-
-  private def toJavaFXNodes(visuals: Seq[Any]): Seq[javafx.scene.Node] =
-    visuals.map {
-      case node: javafx.scene.Node => node
-      case other => throw new IllegalArgumentException(s"Unsupported visual type: $other")
-    }
+    children --= children.collect { case line: javafx.scene.shape.Line => line }
+    children.prependAll(currentEdges())
 
   override def update(newState: SimulationState): Unit =
     newState.world.nodes.foreach { case (id, node) =>
-    nodeViews.find(_.id == id).foreach { view =>
-      view.labelId.text = s"Node: $id"
-      view.labelPop.text = s"Pop: ${node.population}"
-      view.labelInf.text = s"Infected: ${node.infected}"
+      nodeViewMap.get(id).foreach { view =>
+        view.labels("id").text = s"Node: $id"
+        view.labels("pop").text = s"Pop: ${node.population}"
+        view.labels("inf").text = s"Infected: ${node.infected}"
+        view.labels("died").text = s"Died: ${node.died}"
+      }
     }
-  }
-
-

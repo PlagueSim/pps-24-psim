@@ -71,7 +71,7 @@ class WorldTest extends AnyFlatSpec with Matchers:
     world.movements shouldBe movements
   }
 
-  it should "not allow multiple edges of the same typology between the same nodes" in {
+  it should "ignore the adding of an edge, if already exists" in {
     val nodeA = Node.withPopulation(10).build()
     val nodeB = Node.withPopulation(5).build()
 
@@ -80,16 +80,15 @@ class WorldTest extends AnyFlatSpec with Matchers:
       "B" -> nodeB
     )
     val edges = Set(
-      Edge("A", "B", EdgeType.Air, weight = 1.0),
-      Edge("A", "B", EdgeType.Air, weight = 2.0)
+      Edge("A", "B", EdgeType.Air),
+      Edge("A", "B", EdgeType.Air)
     )
+
     val movements : Map[MovementStrategy, Double] = Map(
       Static -> 1.0
     )
 
-    an[IllegalArgumentException] shouldBe thrownBy {
-      World(nodes, edges, movements)
-    }
+    edges.size should be (1)
   }
 
   it should "allow neighbors to be retrieved correctly" in {
@@ -115,6 +114,32 @@ class WorldTest extends AnyFlatSpec with Matchers:
     world.neighbors("A") should contain theSameElementsAs Set("B")
     world.neighbors("B") should contain theSameElementsAs Set("A", "C")
     world.neighbors("C") should contain theSameElementsAs Set("B")
+  }
+  
+  it should "modify nodes correctly" in {
+    val nodeA = Node.withPopulation(10).build()
+    val nodeB = Node.withPopulation(5).build()
+
+    val nodes = Map(
+      "A" -> nodeA,
+      "B" -> nodeB
+    )
+    val edges = Set(
+      Edge("A", "B", EdgeType.Land)
+    )
+    val movements: Map[MovementStrategy, Double] = Map(
+      Static -> 1.0
+    )
+
+    val world = World(nodes, edges, movements)
+
+    val newNodeC = Node.withPopulation(7).build()
+    val modifiedWorld = world.modifyNodes(
+      world.nodes + ("C" -> newNodeC)
+    )
+
+    modifiedWorld.nodes should contain key "C"
+    modifiedWorld.nodes("C").population shouldBe 7
   }
 
   it should "check if two nodes are connected" in {

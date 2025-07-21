@@ -14,11 +14,7 @@ object WorldViewFactory:
     )
 
     val controller = new WorldController(world)
-
-    var viewRef: WorldView = null
-
-    val nodeFactory = new DefaultNodeViewFactory(() => viewRef.redrawEdges())
-
+    
     val edgeFactory = new DefaultEdgeViewFactory(
       edgeStyle = Map(
         EdgeType.Land -> ((-8, -8), Color.Green),
@@ -26,14 +22,13 @@ object WorldViewFactory:
         EdgeType.Air  -> ((8, 8), Color.Red)
       )
     )
-
-    val view = new WorldView(
-      world = controller,
-      layout = layout,
-      nodeFactory = nodeFactory,
-      edgeFactory = edgeFactory
+    lazy val view: WorldView = new WorldView(
+      controller,
+      layout,
+      nodeFactory,
+      edgeFactory
     )
 
-    viewRef = view
+    lazy val nodeFactory = new DefaultNodeViewFactory(() => view.redrawEdges())
 
     view

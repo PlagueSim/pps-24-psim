@@ -1,6 +1,6 @@
 package view.world
 
-import scalafx.scene.shape.Circle
+import scalafx.scene.shape.{Circle, Shape}
 import scalafx.scene.text.Text
 import scalafx.scene.Cursor
 import scalafx.scene.input.MouseEvent
@@ -9,6 +9,8 @@ import scalafx.Includes.*
 import model.world.*
 
 class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
+
+  private case class LabelData(label: Text, offsetX: Double, offsetY: Double)
 
   override def createNode(id: String, data: Node, position: (Double, Double)): NodeView =
     val (posX, posY) = position
@@ -20,60 +22,61 @@ class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
       fill = Color.LightGray
       stroke = Color.Black
 
-    val labelId = new Text(s"Node: $id")
-    val labelPop = new Text(s"Pop: ${data.population}")
-    val labelInf = new Text(s"Infected: ${data.infected}")
+    val labels = Seq(
+      LabelData(new Text(s"Node: $id"), -15, -20),
+      LabelData(new Text(s"Pop: ${data.population}"), -20, 30),
+      LabelData(new Text(s"Infected: ${data.infected}"), -20, 45),
+      LabelData(new Text(s"Died: ${data.died}"), -20, 60)
+    )
 
-    updateLabelPositions(posX, posY, labelId, labelPop, labelInf)
-    makeDraggable(circle, labelId, labelPop, labelInf)
+    updateLabelPositions(posX, posY, labels)
+
+    Draggable.make(circle, posX, posY, (x, y) => {
+      circle.centerX = x
+      circle.centerY = y
+    }, (dx, dy) => {
+      updateLabelPositions(dx, dy, labels)
+      onMoved()
+    })
 
     NodeView(
       id = id,
-      visuals = Seq(circle.delegate, labelId.delegate, labelPop.delegate, labelInf.delegate),
+      visuals = circle.delegate +: labels.map(_.label.delegate),
       position = () => (circle.centerX.value, circle.centerY.value),
-      labelId = labelId,
-      labelPop = labelPop,
-      labelInf = labelInf
+      labelId = labels.head.label,
+      labelPop = labels(1).label,
+      labelInf = labels(2).label,
+      labelDied = labels(3).label
     )
 
-  private def updateLabelPositions(
-                                    x: Double,
-                                    y: Double,
-                                    labelId: Text,
-                                    labelPop: Text,
-                                    labelInf: Text
-                                  ): Unit =
-    labelId.x = x - 15
-    labelId.y = y - 20
-    labelPop.x = x - 20
-    labelPop.y = y + 30
-    labelInf.x = x - 20
-    labelInf.y = y + 45
+  private def updateLabelPositions(x: Double, y: Double, labels: Seq[LabelData]): Unit =
+    labels.foreach { case LabelData(label, dx, dy) =>
+      label.x = x + dx
+      label.y = y + dy
+    }
 
-  private def makeDraggable(
-                             circle: Circle,
-                             labelId: Text,
-                             labelPop: Text,
-                             labelInf: Text
-                           ): Unit =
-    def onDrag(startOffsetX: Double, startOffsetY: Double): MouseEvent => Unit =
+object Draggable:
+  def make(
+            shape: Shape,
+            initialX: Double,
+            initialY: Double,
+            setPosition: (Double, Double) => Unit,
+            onMove: (Double, Double) => Unit
+          ): Unit =
+    def onDrag(offsetX: Double, offsetY: Double): MouseEvent => Unit =
       e =>
-        val newX = (e.sceneX - startOffsetX).max(20).min(780)
-        val newY = (e.sceneY - startOffsetY).max(20).min(580)
+        val newX = (e.sceneX - offsetX).max(20).min(780)
+        val newY = (e.sceneY - offsetY).max(20).min(580)
+        setPosition(newX, newY)
+        onMove(newX, newY)
 
-        circle.centerX = newX
-        circle.centerY = newY
-        updateLabelPositions(newX, newY, labelId, labelPop, labelInf)
+    shape.onMouseEntered = (_: MouseEvent) =>
+      shape.cursor = Cursor.Hand
 
-        onMoved()
+    shape.onMouseExited = (_: MouseEvent) =>
+      shape.cursor = Cursor.Default
 
-    circle.onMouseEntered = (_: MouseEvent) =>
-      circle.cursor = Cursor.Hand
-
-    circle.onMouseExited = (_: MouseEvent) =>
-      circle.cursor = Cursor.Default
-
-    circle.onMousePressed = (e: MouseEvent) =>
-      val offsetX = e.sceneX - circle.centerX.value
-      val offsetY = e.sceneY - circle.centerY.value
-      circle.onMouseDragged = onDrag(offsetX, offsetY)
+    shape.onMousePressed = (e: MouseEvent) =>
+      val offsetX = e.sceneX - initialX
+      val offsetY = e.sceneY - initialY
+      shape.onMouseDragged = onDrag(offsetX, offsetY)
