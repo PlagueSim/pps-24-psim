@@ -6,13 +6,13 @@ import model.plague.Disease
 
 private[infection] object PopulationStrategyBuilder:
   private case class FunctionalPopulationStrategy(
-                                                   canApply: Node => Boolean,
-                                                   extractParameter: Disease => Double,
-                                                   populationTypeTarget: Node => Int,
-                                                   adjustParameter: Double => Probability,
-                                                   applyFunction: (Int, Probability) => Int,
-                                                   applyChange: (Node, Int) => Node
-                                                 ) extends PopulationStrategy:
+      canApply: Node => Boolean,
+      extractParameter: Disease => Double,
+      populationTypeTarget: Node => Int,
+      adjustParameter: Double => Probability,
+      applyFunction: (Int, Probability) => Int,
+      applyChange: (Node, Int) => Node
+  ) extends PopulationStrategy:
     override def applyToPopulation(node: Node, disease: Disease): Node =
       if canApply(node) then
         lazy val rawParam       = extractParameter(disease)
@@ -22,18 +22,19 @@ private[infection] object PopulationStrategyBuilder:
         applyChange(node, change)
       else node
 
-  def withProbability(
-                       param: Disease => Double,
-                       affected: Node => Int,
-                       change: (Node, Int) => Node,
-                       adjust: Double => Probability = Probability.fromPercentage,
-                       applyFn: (Int, Probability) => Int
-                     ): PopulationStrategy =
+  def apply(
+             canApply: Node => Boolean,
+             param: Disease => Double,
+             affected: Node => Int,
+             adjust: Double => Probability = Probability.fromPercentage,
+             applyFunction: (Int, Probability) => Int,
+             change: (Node, Int) => Node
+  ): PopulationStrategy =
     FunctionalPopulationStrategy(
-      canApply = node => affected(node) > 0,
+      canApply = canApply,
       extractParameter = param,
       populationTypeTarget = affected,
       adjustParameter = adjust,
-      applyFunction = applyFn,
+      applyFunction = applyFunction,
       applyChange = change
     )
