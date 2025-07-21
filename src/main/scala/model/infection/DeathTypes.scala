@@ -6,19 +6,19 @@ object DeathTypes:
 
   val StandardDeath: PopulationStrategy =
     PopulationStrategyBuilder.apply(
-      _.infected > 0,
-      _.lethality,
-      _.infected,
-      (node, deaths) => node.updateDied(deaths),
+      canApply = _.infected > 0,
+      param = _.lethality,
+      affected = _.infected,
+      change = (node, deaths) => node.updateDied(deaths),
       applyFunction = (infected, prob) => (infected * prob.value).toInt
     )
 
   val ProbabilisticDeath: PopulationStrategy =
     PopulationStrategyBuilder.apply(
-      _.infected > 0,
-      _.lethality,
-      _.infected,
-      (node, deaths) => node.updateDied(deaths),
+      canApply = _.infected > 0,
+      param = _.lethality,
+      affected = _.infected,
+      change = (node, deaths) => node.updateDied(deaths),
       applyFunction = (infected, prob) =>
         (1 to infected).count(_ => Random.nextDouble() < prob.value)
     )
