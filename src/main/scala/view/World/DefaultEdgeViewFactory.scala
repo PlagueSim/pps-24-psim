@@ -1,25 +1,28 @@
 package view.world
 
-import scalafx.scene.shape.Line
+import javafx.scene.shape.Line
 import scalafx.scene.paint.Color
-import model.world.*
+import model.world.{Edge, EdgeType}
 
 class DefaultEdgeViewFactory(
-                              edgeStyle: Map[EdgeType, ((Int, Int), Color)]
+                              edgeStyle: Map[EdgeType, ((Double, Double), Color)]
                             ) extends EdgeViewFactory:
 
-  override def createEdge(edge: Edge, nodePositions: Map[String, (Double, Double)]): Any =
-    val ((dx, dy), color) = edgeStyle(edge.typology)
-    val edgeColor = if edge.isClose then Color.LightGray else color
-    val (x1, y1) = nodePositions(edge.nodeA)
-    val (x2, y2) = nodePositions(edge.nodeB)
+  override def createEdge(
+                           id: String,
+                           edge: Edge,
+                           positions: Map[String, (Double, Double)]
+                         ): EdgeView =
+    val (startX, startY) = positions(edge.nodeA)
+    val (endX, endY) = positions(edge.nodeB)
 
-    (
-      new Line:
-        startX = x1 + dx
-        startY = y1 + dy
-        endX = x2 + dx
-        endY = y2 + dy
-        stroke = edgeColor
-        strokeWidth = 2
-      ).delegate
+    val ((dx, dy), color) = edgeStyle.getOrElse(edge.typology, ((0.0, 0.0), Color.Gray))
+
+    val line = new Line(
+      startX + dx, startY + dy,
+      endX + dx, endY + dy
+    )
+    line.setStroke(color)
+    line.setStrokeWidth(2.0)
+
+    new EdgeView(line, id)

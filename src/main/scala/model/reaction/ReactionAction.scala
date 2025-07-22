@@ -18,12 +18,12 @@ object ReactionAction:
   case class CloseEdges(edgeType: EdgeType, nodeId: String)
       extends ReactionAction:
     private def updateEdges(world: World, updateFn: model.world.Edge => model.world.Edge): World =
-      val updatedEdges = world.edges.map { case (id, edge) =>
-        if edge.connects(nodeId) && edge.typology == edgeType then
-          id -> updateFn(edge)
-        else
-          id -> edge
-      }
+      val updatedEdges = world.edges.map:
+        case (id, edge) =>
+          if edge.connects(nodeId) && edge.typology == edgeType then
+            id -> updateFn(edge)
+          else
+            id -> edge
 
       World(
         world.nodes,

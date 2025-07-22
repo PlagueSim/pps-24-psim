@@ -20,7 +20,7 @@ object WorldFactory:
       }.toMap
 
     val edgeSet: Set[Edge] = Set(
-      Edge("A", "C", EdgeType.Land),
+      Edge("A", "C", EdgeType.Land).close,
       Edge("A", "B", EdgeType.Land),
       Edge("B", "C", EdgeType.Sea),
       Edge("C", "D", EdgeType.Air),
@@ -45,6 +45,7 @@ object WorldFactory:
 
     val edgeMap: Map[String, Edge] = edgeSet.map { edge =>
       val id = edgeId(edge.nodeA, edge.nodeB, edge.typology)
+      println("id" + id)
       id -> edge
     }.toMap
 
