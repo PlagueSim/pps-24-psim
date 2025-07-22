@@ -30,10 +30,11 @@ final case class Cure(
 
   def addModifier(mod: CureModifier): Cure =
     mod match
-      case oneTime: OneTimeModifier =>
-        copy(progress = oneTime.apply(progress), modifiers = modifiers.add(mod))
+      case oneTime: OneTimeModifier if !modifiers.modifiers.contains(oneTime.id) =>
+        copy(progress = oneTime.apply(progress), modifiers = modifiers.add(oneTime))
       case persistent: PersistentModifier =>
         copy(modifiers = modifiers.add(persistent))
+      case _ => this // Ignore if the modifier is already present
 
   /** Removes a modifier by its ID. */
   def removeModifierById(id: ModifierId): Cure =
