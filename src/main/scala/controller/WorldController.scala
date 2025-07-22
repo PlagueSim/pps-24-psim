@@ -11,8 +11,8 @@ class WorldController(initialWorld: World):
   def getNodes: Map[String, Node] =
     world.nodes
 
-  def getEdges: Set[Edge] =
-    world.edges
+  def getEdges: Iterable[Edge] = 
+    world.edges.values
 
   def getNodePositions: Map[String, (Double, Double)] =
     nodePositions

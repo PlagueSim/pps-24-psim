@@ -19,7 +19,7 @@ object WorldFactory:
         id -> builderWithInfection.build()
       }.toMap
 
-    val edges = Set(
+    val edgeSet: Set[Edge] = Set(
       Edge("A", "C", EdgeType.Land),
       Edge("A", "B", EdgeType.Land),
       Edge("B", "C", EdgeType.Sea),
@@ -43,8 +43,17 @@ object WorldFactory:
       Edge("G", "O", EdgeType.Land)
     )
 
+    val edgeMap: Map[String, Edge] = edgeSet.map { edge =>
+      val id = edgeId(edge.nodeA, edge.nodeB, edge.typology)
+      id -> edge
+    }.toMap
+
     World(
       nodes,
-      edges,
+      edgeMap,
       Map(Static -> 0.6, RandomNeighbor -> 0.4)
     )
+
+  private def edgeId(a: String, b: String, typology: EdgeType): String =
+    val sorted = if a < b then s"$a-$b" else s"$b-$a"
+    s"$sorted-${typology.toString}"
