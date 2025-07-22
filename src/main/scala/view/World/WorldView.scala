@@ -48,25 +48,17 @@ class WorldView(
     worldController.getEdges.toSeq
       .filter(edge => liveNodeIds.contains(edge.nodeA) && liveNodeIds.contains(edge.nodeB))
 
-  /** Redraws all edges based on the current world from the controller */
   def redrawEdges(): Unit =
-    val world = worldController.getWorld
+    redrawEdges(worldController.getWorld)
+  
+
+
+  def redrawEdges(world: World): Unit =
     val liveNodeIds = nodeViewMap.keySet
     val livePositions = computeLiveNodePositions(liveNodeIds)
     val visibleEdges = world.edges.values.filter(e =>
       liveNodeIds.contains(e.nodeA) && liveNodeIds.contains(e.nodeB)
     )
-
-  def redrawEdges(simulationState: SimulationState): Unit =
-    val world = simulationState.world
-    val liveNodeIds = nodeViewMap.keySet
-    val livePositions = computeLiveNodePositions(liveNodeIds)
-    val visibleEdges = world.edges.values.filter(e =>
-      liveNodeIds.contains(e.nodeA) && liveNodeIds.contains(e.nodeB)
-    )
-
-
-
 
 
     val updatedEdgeMap = visibleEdges.map { edge =>
@@ -92,7 +84,7 @@ class WorldView(
 
   override def update(newState: SimulationState): Unit =
     removeOrphanedNodes(newState)
-    redrawEdges(newState)
+    redrawEdges(newState.world)
     updateExistingNodes(newState)
 
   private def removeOrphanedNodes(newState: SimulationState): Unit =
