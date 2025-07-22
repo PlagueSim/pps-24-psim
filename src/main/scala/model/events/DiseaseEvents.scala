@@ -1,7 +1,7 @@
 package model.events
 import model.core.SimulationState
-import model.cure.{Cure, CureModifier, ModifierId, ModifierKind, ModifierSource, MutationId}
-import model.cure.CureModifier.Additive
+import model.cure.{Cure, CureModifier, ModifierId, ModifierKind, ModifierSource, MutationId, OneTimeModifier}
+import model.cure.CureModifier.{Additive, ProgressModifier}
 import model.plague.{Disease, Trait}
 
 import scala.util.Random
@@ -9,13 +9,22 @@ import scala.util.Random
 object DiseaseEvents:
 
   /**
+   * Checks if the [[Trait]] has elements that modify the cure in any way
+   *
+   * @param tr The [[Trait]] that is checked to eventually trigger
+   *           events for [[Cure]] modification
+   */
+  private def triggerCureEvents(tr: Trait): Unit =
+    if tr.stats.cureSlowdown != 0 then CureEventBuffer.newEvent(CureSlowDown(tr))
+    if tr.stats.cureReset != 0 then CureEventBuffer.newEvent(CurePushBack(tr))
+
+  /**
    * The [[Event]] used to evolve a new [[Trait]] in the [[Disease]]
    *
    * @param traitToEvolve the [[Trait]] that needs to be evolved
    */
   case class Evolution(traitToEvolve: Trait) extends Event[Disease]:
-    if traitToEvolve.stats.cureSlowdown != 0 then CureEventBuffer.newEvent(CureSlowDown(traitToEvolve))
-//    if traitToEvolve.stats.cureReset != 0 then CureEventBuffer.newEvent(CurePushBack(traitToEvolve))
+    triggerCureEvents(traitToEvolve)
 
     /**
      * @param state current [[SimulationState]] to be updated
@@ -33,8 +42,7 @@ object DiseaseEvents:
    * @param traitToRemove the [[Trait]] that needs to be removed
    */
   case class Involution(traitToRemove: Trait) extends Event[Disease]:
-    if traitToRemove.stats.cureSlowdown != 0 ||
-      traitToRemove.stats.cureReset != 0 then
+    if traitToRemove.stats.cureSlowdown != 0 || traitToRemove.stats.cureReset != 0 then
       CureEventBuffer.newEvent(RemoveCureModifier(traitToRemove))
 
     /**
@@ -61,7 +69,7 @@ object DiseaseEvents:
       state.disease.addDnaPoints(pointsToAdd)
 
   /**
-   * The [[Event]] used to check if the [[Disease]] will randomly evolve
+   * The [[Event]] used to check and if the [[Disease]] will randomly evolve
    */
   case class Mutation() extends Event[Disease]:
     /**
@@ -70,8 +78,10 @@ object DiseaseEvents:
      *         or the old one
      */
     override def modifyFunction(state: SimulationState): Disease =
-      if state.disease.mutationChance >= Random.nextDouble()
-      then state.disease.randomMutation()
+      if state.disease.mutationChance >= Random.nextDouble() then
+        val (maybeTr, disease) = state.disease.randomMutation()
+        maybeTr.foreach(triggerCureEvents)
+        disease
       else state.disease
 
 
@@ -90,19 +100,21 @@ object DiseaseEvents:
     override def modifyFunction(state: SimulationState): Cure =
       state.cure.addModifier(mod)
 
-//  /**
-//   * The [[Event]] used to reduce the [[Cure]] progress
-//   *
-//   * @param tr the [[Trait]] that pushes the [[Cure]] progress back
-//   */
-//  case class CurePushBack(tr: Trait) extends Event[Cure]:
-//    val mod: Additive = ???//Additive(ModifierId(ModifierSource.Mutation(MutationId(tr.name)), ModifierKind.Additive), -tr.stats.cureReset)
-//
-//    /**
-//     * @param state current [[SimulationState]] to be updated
-//     * @return a new instance of [[Cure]] with its progress updated
-//     */
-//    override def modifyFunction(state: SimulationState): Cure = ???
+  /**
+   * The [[Event]] used to reduce the [[Cure]] progress
+   *
+   * @param tr the [[Trait]] that pushes the [[Cure]] progress back
+   */
+  case class CurePushBack(tr: Trait) extends Event[Cure]:
+    val mod: OneTimeModifier =
+      ProgressModifier(ModifierId(ModifierSource.Mutation(MutationId(tr.name)), ModifierKind.Additive), -tr.stats.cureReset)
+
+    /**
+     * @param state current [[SimulationState]] to be updated
+     * @return a new instance of [[Cure]] with its progress updated
+     */
+    override def modifyFunction(state: SimulationState): Cure =
+      state.cure.addModifier(mod)
 
   /**
    * The [[Event]] used to remove the [[Cure]] modifiers applied
@@ -117,4 +129,4 @@ object DiseaseEvents:
      * @return a new instance of [[Cure]] with its speed updated
      */
     override def modifyFunction(state: SimulationState): Cure =
-      state.cure.copy(modifiers = state.cure.modifiers.removeBySource(source))
+      state.cure.removeModifiersBySource(source)
