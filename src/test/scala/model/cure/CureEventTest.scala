@@ -18,7 +18,7 @@ class CureEventTest extends AnyFlatSpec with Matchers:
   def simulationState(
       cure: Cure = Cure(0.0, 0.1),
       nodes: Map[String, model.world.Node] = Map.empty
-  ) = SimulationState(
+  ): SimulationState = SimulationState(
     time = BasicYear(Day(0), Year(2023)),
     disease = null,
     cure = cure,
@@ -26,16 +26,6 @@ class CureEventTest extends AnyFlatSpec with Matchers:
     infectionLogic = null,
     deathLogic = null,
     reactions = null
-  )
-
-  def basicSimulationState = SimulationState(
-    BasicYear(Day(0), Year(2023)),
-    null,
-    Cure(),
-    World(Map.empty, Set.empty, Map(Static -> 1.0)),
-    null,
-    null,
-    null
   )
 
   "AdvanceCureEvent" should "advance cure progress by effective speed" in {

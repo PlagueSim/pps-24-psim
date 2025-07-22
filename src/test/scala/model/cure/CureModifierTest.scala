@@ -5,13 +5,13 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 class CureModifierTest extends AnyFlatSpec with Matchers:
-  val nodeId =
+  val nodeId: ModifierId =
     ModifierId(ModifierSource.Node(NodeId("testNode")), ModifierKind.Multiplier)
-  val mutationId = ModifierId(
+  val mutationId: ModifierId = ModifierId(
     ModifierSource.Mutation(MutationId("testMutation")),
     ModifierKind.Additive
   )
-  val globalId =
+  val globalId: ModifierId =
     ModifierId(ModifierSource.Global, ModifierKind.ProgressModifier)
 
   "A CureModifier" should "correctly implement modifier types" in:

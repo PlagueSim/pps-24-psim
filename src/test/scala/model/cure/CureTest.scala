@@ -6,16 +6,16 @@ import org.scalatest.matchers.should.Matchers
 
 class CureTest extends AnyFlatSpec with Matchers:
 
-  val nodeId =
+  val nodeId: ModifierId =
     ModifierId(ModifierSource.Node(NodeId("n1")), ModifierKind.Multiplier)
-  val mutationId =
+  val mutationId: ModifierId =
     ModifierId(ModifierSource.Mutation(MutationId("m1")), ModifierKind.Additive)
-  val globalId =
+  val globalId: ModifierId =
     ModifierId(ModifierSource.Global, ModifierKind.ProgressModifier)
 
-  val multiplier  = Multiplier(nodeId, 2.0)
-  val additive    = Additive(mutationId, 0.03)
-  val progressMod = ProgressModifier(globalId, -0.15)
+  val multiplier: Multiplier = Multiplier(nodeId, 2.0)
+  val additive: Additive = Additive(mutationId, 0.03)
+  val progressMod: ProgressModifier = ProgressModifier(globalId, -0.15)
 
   "Cure" should "correctly advance progress" in {
     val cure     = Cure(progress = 0.3, baseSpeed = 0.1)
@@ -63,5 +63,5 @@ class CureTest extends AnyFlatSpec with Matchers:
       .removeModifierById(nodeId)
 
     cure.modifiers.modifiers should not contain key(nodeId)
-    cure.modifiers.modifiers should contain key (mutationId)
+    cure.modifiers.modifiers should contain key mutationId
   }
