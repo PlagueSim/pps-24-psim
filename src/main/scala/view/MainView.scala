@@ -4,8 +4,9 @@ import controller.ViewController
 import model.core.SimulationState
 import model.world.WorldFactory
 import scalafx.geometry.Insets
+import scalafx.geometry.Pos.Center
 import scalafx.scene.control.Label
-import scalafx.scene.layout.BorderPane
+import scalafx.scene.layout.{BorderPane, VBox}
 import view.cure.CureProgressBar
 import view.plague.PlagueView
 import view.updatables.UpdatableView
@@ -19,6 +20,7 @@ class MainView extends BorderPane with UpdatableView:
   private val datePane = DatePane()
   private val progressBar = CureProgressBar()
   private val dnaPoints = DnaPointsCounter
+  private val infectionRecap = InfectionRecap
 
   private object ControlPane:
     def apply(controller: ViewController): BorderPane = new BorderPane:
@@ -32,9 +34,12 @@ class MainView extends BorderPane with UpdatableView:
       right = worldButton
       padding = Insets(10)
   end ControlPane
-
   controlPane.top = dnaPoints
-  controlPane.center = progressBar
+  controlPane.center = new VBox():
+    alignment = Center
+    children = Seq(infectionRecap, progressBar)
+
+
 
   center = mapPane
   bottom = controlPane
@@ -46,6 +51,7 @@ class MainView extends BorderPane with UpdatableView:
     datePane.update(newState)
     progressBar.update(newState)
     mapPane.update(newState)
+    infectionRecap.update(newState)
 end MainView
 
 class DatePane extends BorderPane with UpdatableView:
@@ -62,3 +68,14 @@ case object DnaPointsCounter extends Label with UpdatableView:
   padding = Insets(3)
   override def update(newState: SimulationState): Unit =
     this.text = s"DNA points: ${newState.disease.dnaPoints}"
+
+case object InfectionRecap extends Label with UpdatableView:
+  text = "Infected: 0 / Healthy: 0 \\ Deceased: 0"
+  padding = Insets(3)
+  override def update(newState: SimulationState): Unit =
+    val infected = newState.world.nodes.values.map(_.infected).sum
+    val deceased = newState.world.nodes.values.map(_.died).sum
+    val healthy = newState.world.nodes.values.map(_.population).sum - infected
+    this.text = s"Infected: $infected / " +
+      s"Healthy: $healthy \\ " +
+      s"Deceased: $deceased"

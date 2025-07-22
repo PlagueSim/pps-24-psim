@@ -3,9 +3,11 @@ package model.core
 import cats.data.State
 import cats.syntax.all.*
 import model.cure.Cure
-import model.events.DiseaseEvents.Mutation
+import model.events.DiseaseEvents.*
+import model.events.cure.AdvanceCureEvent
 import model.events.movementEvent.MovementEvent
-import model.events.{AdvanceDayEvent, BasicCureEvent, ChangeNodesInWorldEvent, CureEventBuffer, DeathEvent, DiseaseEventBuffer, Event, EventBuffer, InfectionEvent}
+import model.events.reactionsEvents.{ApplyReactionsEvent, RevertExpiredEvent, UpdateActiveReactionsEvent}
+import model.events.{AdvanceDayEvent, ChangeNodesInWorldEvent, CureEventBuffer, DeathEvent, DiseaseEventBuffer, Event, EventBuffer, InfectionEvent}
 import model.time.TimeTypes.*
 import model.world.World
 
@@ -64,13 +66,17 @@ object SimulationEngine:
     val tick = for
       _     <- executeEvent(DiseaseEventBuffer)
       _     <- executeEvent(CureEventBuffer)
+      _     <- executeEvent(RevertExpiredEvent())
+      _     <- executeEvent(UpdateActiveReactionsEvent())
+      _     <- executeEvent(ApplyReactionsEvent())
       moves <- executeEvent(MovementEvent())
       _     <- executeEvent(ChangeNodesInWorldEvent(moves))
       x     <- executeEvent(InfectionEvent())
+      _     <- executeEvent(DnaPointsAddition(x))
       _     <- executeEvent(ChangeNodesInWorldEvent(x))
       y     <- executeEvent(DeathEvent())
       _     <- executeEvent(ChangeNodesInWorldEvent(y))
-      _     <- executeEvent(BasicCureEvent())
+      _     <- executeEvent(AdvanceCureEvent())
       _     <- executeEvent(Mutation())
       _     <- executeEvent(AdvanceDayEvent())
     yield ()
