@@ -28,6 +28,26 @@ final case class Cure(
       math.min(newProgress, 1.0)
     ) // Ensure progress does not exceed 1.0
 
+  def addModifier(mod: CureModifier): Cure =
+    mod match
+      case oneTime: OneTimeModifier if !modifiers.modifiers.contains(oneTime.id) =>
+        copy(progress = oneTime.apply(progress), modifiers = modifiers.add(oneTime))
+      case persistent: PersistentModifier =>
+        copy(modifiers = modifiers.add(persistent))
+      case _ => this // Ignore if the modifier is already present
+
+  /** Removes a modifier by its ID. */
+  def removeModifierById(id: ModifierId): Cure =
+    copy(modifiers = modifiers.removeById(id))
+
+  /** Removes all modifiers from a given source. */
+  def removeModifiersBySource(src: ModifierSource): Cure =
+    copy(modifiers = modifiers.removeBySource(src))
+
+  /** Removes all modifiers matching a predicate on their ID. */
+  def removeModifiersIfId(pred: ModifierId => Boolean): Cure =
+    copy(modifiers = modifiers.removeIfId(pred))
+
 /** Represents a collection of modifiers that affect the cure's progress.
   *
   * @param modifiers
@@ -38,7 +58,9 @@ final case class CureModifiers(
 ):
 
   def factors: Iterable[Double => Double] =
-    modifiers.values.map(_.apply)
+    modifiers.values.collect:
+      case mod: PersistentModifier => mod.apply
+
 
   /** Adds a new modifier to the collection.
     * @param mod
@@ -46,34 +68,19 @@ final case class CureModifiers(
     * @return
     *   A new CureModifiers instance with the added modifier.
     */
-  def add(mod: CureModifier): CureModifiers =
+  private[cure] def add(mod: CureModifier): CureModifiers =
     copy(modifiers = modifiers + (mod.id -> mod))
 
-  /** Removes the modifier with the specified ID from the collection.
-    * @param id
-    *   The ID of the modifier to remove.
-    * @return
-    *   A new CureModifiers instance without the specified modifier.
-    */
-  def removeById(id: ModifierId): CureModifiers =
+  /** Removes the modifier with the specified ID from the collection. */
+  private[cure] def removeById(id: ModifierId): CureModifiers =
     copy(modifiers = modifiers - id)
 
-  /** Removes all modifiers whose ID matches the given predicate.
-    * @param src
-    *   The source of the modifiers to remove.
-    * @return
-    *   A new CureModifiers instance without the matching modifiers.
-    */
-  def removeBySource(src: ModifierSource): CureModifiers =
+  /** Removes all modifiers whose source matches the given predicate. */
+  private[cure] def removeBySource(src: ModifierSource): CureModifiers =
     copy(modifiers = modifiers.filterNot { case (mid, _) => mid.source == src })
 
-  /** Removes all modifiers whose value matches the given predicate.
-    * @param pred
-   *  The predicate to match against modifier IDs.
-    * @return
-    *   A new CureModifiers instance without the matching modifiers.
-    */
-  def removeIfId(pred: ModifierId => Boolean): CureModifiers =
+  /** Removes all modifiers whose ID matches the given predicate. */
+  private[cure] def removeIfId(pred: ModifierId => Boolean): CureModifiers =
     copy(modifiers = modifiers.filterNot { case (id, _) => pred(id) })
 
 /** Companion object for [[CureModifiers]].
