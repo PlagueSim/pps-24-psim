@@ -10,10 +10,8 @@ sealed trait OneTimeModifier extends CureModifier:
   def apply(progress: Double): Double
 
 object CureModifier:
-  private def clampToUnitInterval(value: Double): Double = value match
-    case v if v < 0.0 => 0.0
-    case v if v > 1.0 => 1.0
-    case _            => value
+  private def clampToUnitInterval(value: Double): Double =
+    value.max(0.0).min(1.0)
 
   /** Multiplies the base speed by a factor.
     *
@@ -21,6 +19,7 @@ object CureModifier:
     *   The factor to multiply the base speed by.
     */
   case class Multiplier(id: ModifierId, factor: Double) extends PersistentModifier:
+    require(factor >= 0.0, "Factor must be non-negative")
     def apply(baseSpeed: Double): Double = baseSpeed * factor
 
   /** Adds a fixed amount to the base speed.
@@ -36,4 +35,5 @@ object CureModifier:
    *  The amount to add or subtract from the progress.
    */
   case class ProgressModifier(id: ModifierId, amount: Double) extends OneTimeModifier:
+    require(amount >= -1.0 && amount <= 1.0, "Amount must be in the range [-1.0, 1.0]")
     def apply(progress: Double): Double = clampToUnitInterval(progress + amount)
