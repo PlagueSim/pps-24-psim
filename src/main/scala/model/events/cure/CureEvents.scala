@@ -25,12 +25,16 @@ case class LinearInfectedThresholdEvent(threshold: Double = 0.5)
   private def nodeModifiers(state: SimulationState) =
     state.world.nodes.collect:
       case (nodeId, node)
-          if node.population > 0 && node.infected.toDouble / node.population > threshold =>
-        val modId = model.cure.ModifierId(
-          model.cure.ModifierSource.Node(model.cure.NodeId(nodeId)),
-          model.cure.ModifierKind.Additive
-        )
-        modId -> model.cure.CureModifier.Additive(modId, 0.01)
+        if node.population > 0 && node.infected.toDouble / node.population > threshold =>
+          val modId = model.cure.ModifierId(
+            model.cure.ModifierSource.Node(model.cure.NodeId(nodeId)),
+            model.cure.ModifierKind.Additive
+          )
+          modId -> model.cure.CureModifier.additive(modId,0.1).getOrElse(
+            throw new IllegalArgumentException(
+              s"Invalid modifier for node $nodeId with threshold $threshold"
+            )
+          )
 
   private def missingModifiers(state: SimulationState) =
     nodeModifiers(state).filterNot:
@@ -47,5 +51,7 @@ case class ProgressSubtractExampleEvent(progress: Double) extends Event[Cure]:
       model.cure.ModifierSource.Global,
       model.cure.ModifierKind.ProgressModifier
     )
-    val modifier = model.cure.CureModifier.ProgressModifier(modId, progress)
-    state.cure.addModifier(modifier)
+    val modifier = model.cure.CureModifier.progressModifier(modId, progress)
+    modifier match
+      case Some(mod) => state.cure.addModifier(mod)
+      case None => state.cure
