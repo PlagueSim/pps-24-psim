@@ -11,11 +11,14 @@ package model.cure
   */
 final case class Cure(
     progress: Double = 0.0,
-    baseSpeed: Double = 0.01,
+    baseSpeed: Double = 0.00,
     modifiers: CureModifiers = CureModifiers.empty
 ):
+  require(progress >= 0.0 && progress <= 1.0, "Progress must be between 0.0 and 1.0")
+  require(baseSpeed >= 0.0, "Base speed must be non-negative")
+
   def effectiveSpeed: Double =
-    modifiers.factors.foldLeft(baseSpeed)((speed, factor) => factor(speed))
+    modifiers.factors.foldLeft(baseSpeed)((speed, factor) => factor(speed)).max(0.0)
 
   /** Advances the cure's progress by applying the effective speed.
     *
@@ -23,15 +26,13 @@ final case class Cure(
     *   A new Cure instance with the updated progress.
     */
   def advance(): Cure =
-    val newProgress = progress + effectiveSpeed
-    copy(progress =
-      math.min(newProgress, 1.0)
-    ) // Ensure progress does not exceed 1.0
+    val newProgress = (progress + effectiveSpeed).min(1.0).max(0.0)
+    copy(progress = newProgress)
 
   def addModifier(mod: CureModifier): Cure =
     mod match
       case oneTime: OneTimeModifier if !modifiers.modifiers.contains(oneTime.id) =>
-        copy(progress = oneTime.apply(progress), modifiers = modifiers.add(oneTime))
+        copy(progress = oneTime.apply(progress).min(1.0).max(0.0), modifiers = modifiers.add(oneTime))
       case persistent: PersistentModifier =>
         copy(modifiers = modifiers.add(persistent))
       case _ => this // Ignore if the modifier is already present
