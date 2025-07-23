@@ -52,14 +52,13 @@ class CureEventTest extends AnyFlatSpec with Matchers:
 
   it should "not add duplicate modifiers" in {
     val nodes = Map("A" -> model.world.Node.Builder(100, 60).build())
+    val mod = CureModifier.additive(
+      ModifierId(ModifierSource.Node(NodeId("A")), ModifierKind.Additive),
+      0.1
+    ).get
     val state = simulationState(
       nodes = nodes,
-      cure = Cure().addModifier(
-        Additive(
-          ModifierId(ModifierSource.Node(NodeId("A")), ModifierKind.Additive),
-          0.01
-        )
-      )
+      cure = Cure().addModifier(mod)
     )
     val event     = LinearInfectedThresholdEvent(0.5)
     val (_, cure) = event.execute().run(state).value
@@ -83,7 +82,7 @@ class CureEventTest extends AnyFlatSpec with Matchers:
     val (_, cure) = event.execute().run(state).value
 
     val mod = cure.modifiers.modifiers.values.collectFirst {
-      case m: ProgressModifier => m
+      case m: OneTimeModifier => m
     }
 
     mod shouldBe defined
