@@ -11,14 +11,19 @@ package model.cure
   */
 final case class Cure(
     progress: Double = 0.0,
-    baseSpeed: Double = 0.00,
+    baseSpeed: Double = 0.0,
     modifiers: CureModifiers = CureModifiers.empty
 ):
-  require(progress >= 0.0 && progress <= 1.0, "Progress must be between 0.0 and 1.0")
+  require(
+    progress >= 0.0 && progress <= 1.0,
+    "Progress must be between 0.0 and 1.0"
+  )
   require(baseSpeed >= 0.0, "Base speed must be non-negative")
 
   def effectiveSpeed: Double =
-    modifiers.factors.foldLeft(baseSpeed)((speed, factor) => factor(speed)).max(0.0)
+    modifiers.factors
+      .foldLeft(baseSpeed)((speed, factor) => factor(speed))
+      .max(0.0)
 
   /** Advances the cure's progress by applying the effective speed.
     *
@@ -31,8 +36,12 @@ final case class Cure(
 
   def addModifier(mod: CureModifier): Cure =
     mod match
-      case oneTime: OneTimeModifier if !modifiers.modifiers.contains(oneTime.id) =>
-        copy(progress = oneTime.apply(progress).min(1.0).max(0.0), modifiers = modifiers.add(oneTime))
+      case oneTime: OneTimeModifier
+          if !modifiers.modifiers.contains(oneTime.id) =>
+        copy(
+          progress = oneTime.apply(progress).min(1.0).max(0.0),
+          modifiers = modifiers.add(oneTime)
+        )
       case persistent: PersistentModifier =>
         copy(modifiers = modifiers.add(persistent))
       case _ => this // Ignore if the modifier is already present
@@ -62,7 +71,6 @@ final case class CureModifiers(
     modifiers.values.collect:
       case mod: PersistentModifier => mod.apply
 
-
   /** Adds a new modifier to the collection.
     * @param mod
     *   The modifier to add.
@@ -90,3 +98,34 @@ object CureModifiers:
   /** An empty collection of cure modifiers.
     */
   val empty: CureModifiers = CureModifiers(Map.empty)
+
+  def builder: CureModifiersBuilder = new CureModifiersBuilder(Map.empty)
+
+  final class CureModifiersBuilder private[CureModifiers] (
+      private val modifiers: Map[ModifierId, CureModifier]
+  ):
+    def addMultiplier(
+        id: ModifierId,
+        factor: Double
+    ): CureModifiersBuilder =
+      CureModifier.multiplier(id, factor) match
+        case Some(mod) => new CureModifiersBuilder(modifiers + (id -> mod))
+        case None => this
+        
+    def addAdditive(
+        id: ModifierId,
+        amount: Double
+    ): CureModifiersBuilder =
+      CureModifier.additive(id, amount) match
+        case Some(mod) => new CureModifiersBuilder(modifiers + (id -> mod))
+        case None => this
+        
+    def addProgressModifier(
+        id: ModifierId,
+        amount: Double
+    ): CureModifiersBuilder =
+      CureModifier.progressModifier(id, amount) match
+        case Some(mod) => new CureModifiersBuilder(modifiers + (id -> mod))
+        case None => this
+        
+    def build: CureModifiers = CureModifiers(modifiers)

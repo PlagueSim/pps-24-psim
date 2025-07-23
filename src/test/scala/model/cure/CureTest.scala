@@ -13,9 +13,9 @@ class CureTest extends AnyFlatSpec with Matchers:
   val globalId: ModifierId =
     ModifierId(ModifierSource.Global, ModifierKind.ProgressModifier)
 
-  val multiplier: Multiplier = Multiplier(nodeId, 2.0)
-  val additive: Additive = Additive(mutationId, 0.03)
-  val progressMod: ProgressModifier = ProgressModifier(globalId, -0.15)
+  val multiplier = CureModifier.multiplier(nodeId, 2.0).get
+  val additive = CureModifier.additive(mutationId, 0.03).get
+  val progressMod = CureModifier.progressModifier(globalId, -0.15).get
 
   "Cure" should "correctly advance progress" in {
     val cure     = Cure(progress = 0.3, baseSpeed = 0.1)
@@ -49,10 +49,10 @@ class CureTest extends AnyFlatSpec with Matchers:
 
   it should "clamp progress after one-time modification" in {
     Cure(progress = 0.1)
-      .addModifier(ProgressModifier(globalId, -0.2))
+      .addModifier(CureModifier.progressModifier(globalId, -0.2).get)
       .progress shouldEqual 0.0
     Cure(progress = 0.9)
-      .addModifier(ProgressModifier(globalId, 0.2))
+      .addModifier(CureModifier.progressModifier(globalId, 0.2).get)
       .progress shouldEqual 1.0
   }
 
