@@ -1,5 +1,36 @@
 package model.cure
 
+object Cure:
+
+  def apply(
+      progress: Double = 0.0,
+      baseSpeed: Double = 0.0,
+      modifiers: CureModifiers = CureModifiers.empty
+  ): Cure =
+    require(progress >= 0.0 && progress <= 1.0, "Progress must be between 0.0 and 1.0")
+    require(baseSpeed >= 0.0, "Base speed must be non-negative")
+    new Cure(progress, baseSpeed, modifiers)
+
+  def builder: CureBuilder = new CureBuilder(0.0, 0.0, CureModifiers.empty)
+
+  final class CureBuilder private[Cure] (
+    private val progress: Double,
+    private val baseSpeed: Double,
+    private val modifiers: CureModifiers
+  ):
+    def withProgress(progress: Double): CureBuilder =
+      require(progress >= 0.0 && progress <= 1.0, "Progress must be between 0.0 and 1.0")
+      new CureBuilder(progress, baseSpeed, modifiers)
+
+    def withBaseSpeed(baseSpeed: Double): CureBuilder =
+      require(baseSpeed >= 0.0, "Base speed must be non-negative")
+      new CureBuilder(progress, baseSpeed, modifiers)
+
+    def withModifiers(modifiers: CureModifiers): CureBuilder =
+      new CureBuilder(progress, baseSpeed, modifiers)
+
+    def build: Cure = Cure(progress, baseSpeed, modifiers)
+
 /** Represents the state of the cure in the simulation.
   *
   * @param progress
@@ -9,17 +40,11 @@ package model.cure
   * @param modifiers
   *   Modifiers that can affect the cure's progress speed.
   */
-final case class Cure(
+final case class Cure private(
     progress: Double = 0.0,
     baseSpeed: Double = 0.0,
     modifiers: CureModifiers = CureModifiers.empty
 ):
-  require(
-    progress >= 0.0 && progress <= 1.0,
-    "Progress must be between 0.0 and 1.0"
-  )
-  require(baseSpeed >= 0.0, "Base speed must be non-negative")
-
   def effectiveSpeed: Double =
     modifiers.factors
       .foldLeft(baseSpeed)((speed, factor) => factor(speed))
@@ -36,27 +61,21 @@ final case class Cure(
 
   def addModifier(mod: CureModifier): Cure =
     mod match
-      case oneTime: OneTimeModifier
-          if !modifiers.modifiers.contains(oneTime.id) =>
-        copy(
-          progress = oneTime.apply(progress).min(1.0).max(0.0),
-          modifiers = modifiers.add(oneTime)
-        )
+      case oneTime: OneTimeModifier if !modifiers.modifiers.contains(oneTime.id) =>
+        Cure(oneTime.apply(progress).min(1.0).max(0.0), baseSpeed, modifiers.add(oneTime))
       case persistent: PersistentModifier =>
-        copy(modifiers = modifiers.add(persistent))
+        Cure(progress, baseSpeed, modifiers.add(persistent))
       case _ => this // Ignore if the modifier is already present
 
   /** Removes a modifier by its ID. */
   def removeModifierById(id: ModifierId): Cure =
-    copy(modifiers = modifiers.removeById(id))
+    Cure(progress, baseSpeed, modifiers.removeById(id))
 
-  /** Removes all modifiers from a given source. */
   def removeModifiersBySource(src: ModifierSource): Cure =
-    copy(modifiers = modifiers.removeBySource(src))
+    Cure(progress, baseSpeed, modifiers.removeBySource(src))
 
-  /** Removes all modifiers matching a predicate on their ID. */
   def removeModifiersIfId(pred: ModifierId => Boolean): Cure =
-    copy(modifiers = modifiers.removeIfId(pred))
+    Cure(progress, baseSpeed, modifiers.removeIfId(pred))
 
 /** Represents a collection of modifiers that affect the cure's progress.
   *
@@ -111,7 +130,7 @@ object CureModifiers:
       CureModifier.multiplier(id, factor) match
         case Some(mod) => new CureModifiersBuilder(modifiers + (id -> mod))
         case None => this
-        
+
     def addAdditive(
         id: ModifierId,
         amount: Double
@@ -119,7 +138,7 @@ object CureModifiers:
       CureModifier.additive(id, amount) match
         case Some(mod) => new CureModifiersBuilder(modifiers + (id -> mod))
         case None => this
-        
+
     def addProgressModifier(
         id: ModifierId,
         amount: Double
@@ -127,5 +146,5 @@ object CureModifiers:
       CureModifier.progressModifier(id, amount) match
         case Some(mod) => new CureModifiersBuilder(modifiers + (id -> mod))
         case None => this
-        
+
     def build: CureModifiers = CureModifiers(modifiers)
