@@ -7,10 +7,10 @@ import model.core.SimulationState
 import model.world.{Edge, Node, World}
 import scalafx.scene.layout.Pane
 
-class WorldRenderer(worldController: WorldController, pane: Pane):
+class WorldRenderer(world: World, pane: Pane):
 
-  private var nodeLayer: NodeLayer = createNodeLayer(worldController.getNodes)
-  private var edgeLayer: EdgeLayer = createEdgeLayer(worldController.getEdges, nodeLayer.positions)
+  private var nodeLayer: NodeLayer = createNodeLayer(world.nodes)
+  private var edgeLayer: EdgeLayer = createEdgeLayer(world.edges.values, nodeLayer.positions)
 
   pane.children.addAll(
     (edgeLayer.edgeLines.values ++ nodeLayer.allVisuals).toSeq*
@@ -37,7 +37,7 @@ class WorldRenderer(worldController: WorldController, pane: Pane):
     edgeLayer = newEdgeLayer
 
   private def redraw(): Unit =
-    val updatedEdgeLines = edgeLayer.updateEdges(worldController.getEdges)
+    val updatedEdgeLines = edgeLayer.updateEdges(world.edges.values)
     updateScene(nodeLayer.allVisuals, updatedEdgeLines.values.toSeq)
 
   private def updateScene(nodes: Seq[FxNode], edges: Seq[FxNode]): Unit =

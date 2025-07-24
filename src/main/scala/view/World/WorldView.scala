@@ -2,32 +2,32 @@ package view.world
 
 import controller.WorldController
 import model.core.SimulationState
-import model.world.{Edge, Node}
+import model.world.{Edge, Node, World}
 import scalafx.scene.layout.Pane
 import view.updatables.UpdatableView
 import javafx.scene.shape.Line
 
-class WorldView(worldController: WorldController) extends Pane with UpdatableView:
+class WorldView(world: World) extends Pane with UpdatableView:
 
-  private val worldRenderer = new WorldRenderer(worldController, this)
+  private val worldRenderer = new WorldRenderer(world, this)
   private val layout = new CircularLayout()
 
   private var nodeViews: Map[String, NodeView] = Map.empty
   private var edgeViews: Map[String, Line] = Map.empty
 
   private val positionsMap: Map[String, (Double, Double)] =
-    layout.computePositions(worldController.getNodes.keySet.toSeq)
+    layout.computePositions(world.nodes.keySet.toSeq)
 
   private val nodeLayer: NodeLayer =
     NodeLayer.fromNodes(
-      nodes = worldController.getNodes,
+      nodes = world.nodes,
       layout = id => positionsMap(id),
-      onMoved = () => redrawEdges(worldController.getEdges)
+      onMoved = () => redrawEdges(world.edges.values)
     )
 
   private val edgeLayer: EdgeLayer =
     EdgeLayer(
-      edges = worldController.getEdges,
+      edges = world.edges.values,
       nodePositions = nodeLayer.positions
     )
 
