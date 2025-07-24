@@ -24,3 +24,5 @@ final case class ModifierId(
     case that: ModifierId =>
       this.source == that.source && this.kind == that.kind
     case _ => false
+
+  override def hashCode(): Int = (source, kind).##
