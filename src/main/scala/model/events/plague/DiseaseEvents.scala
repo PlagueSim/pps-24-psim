@@ -1,7 +1,9 @@
-package model.events
+package model.events.plague
+
 import model.core.SimulationState
-import model.cure.{Cure, CureModifier, ModifierId, ModifierKind, ModifierSource, MutationId, OneTimeModifier}
 import model.cure.CureModifier.{Additive, ProgressModifier}
+import model.cure.*
+import model.events.{CureEventBuffer, Event}
 import model.plague.{Disease, Trait}
 import model.world.Node
 
@@ -57,37 +59,22 @@ object DiseaseEvents:
         case Right(disease) => disease
 
   /**
-   * The [[Event]] used to increment the dna points of the [[Disease]]
+   * The [[Event]] used to compute the amount of dna points to give to the [[Disease]]
+   * depending on how many people where infected or deceased in a tick
    *
-   * @param pointsToAdd the amount of points to add
+   * @param nodes the new state of the [[World]]
    */
   case class DnaPointsAddition(nodes: Map[String, Node]) extends Event[Disease]:
-    private val newNodeDnaMul = 5
-    private val affectedPopDnaRatio = 10
-
-    private val infectedNodes = nodes.collect {
-      case (name, node) if node.infected > 0 => name
-    }.toSet
-    private val infectedPop = nodes.values.map(_.infected).sum
-    private val deceasedPop = nodes.values.map(_.died).sum
 
     /**
      * @param state current [[SimulationState]] to be updated
      * @return a new instance of [[Disease]] with incremented dna points
      */
     override def modifyFunction(state: SimulationState): Disease =
-      val prevInfectedPop = state.world.nodes.values.map(_.infected).sum
-      val prevInfectedNodes = state.world.nodes.filter(_._2.infected >= 0).keySet
-      val prevDeceasedPop = state.world.nodes.values.map(_.died).sum
+      val prevNodes = state.world.nodes
+      val currentNodes = nodes
 
-      val newInfectedNodes = infectedNodes -- prevInfectedNodes
-      val newInfectedPop = Math.max(infectedPop - prevInfectedPop, 0)
-      val newDeceasedPop = deceasedPop - prevDeceasedPop
-
-      val pointsToAdd: Int = 
-        newInfectedNodes.size * newNodeDnaMul +
-        newInfectedPop % affectedPopDnaRatio +
-        newDeceasedPop % affectedPopDnaRatio
+      val pointsToAdd: Int = DnaPointsCalculator.calculate(prevNodes, currentNodes)
 
       state.disease.addDnaPoints(pointsToAdd)
 

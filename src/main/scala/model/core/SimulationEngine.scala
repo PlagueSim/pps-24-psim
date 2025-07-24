@@ -3,7 +3,7 @@ package model.core
 import cats.data.State
 import cats.syntax.all.*
 import model.cure.Cure
-import model.events.DiseaseEvents.*
+import model.events.plague.DiseaseEvents.*
 import model.events.cure.AdvanceCureEvent
 import model.events.movementEvent.MovementEvent
 import model.events.reactionsEvents.{ApplyReactionsEvent, RevertExpiredEvent, UpdateActiveReactionsEvent}
