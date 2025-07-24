@@ -25,4 +25,4 @@ class DefaultEdgeViewFactory(
     line.setStroke(color)
     line.setStrokeWidth(2.0)
 
-    new EdgeView(line, id)
+    new EdgeView(line)

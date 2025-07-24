@@ -2,7 +2,7 @@ package view.world
 
 import scalafx.scene.paint.Color
 
-class EdgeView(private val line: javafx.scene.shape.Line, val id: String):
+class EdgeView(private val line: javafx.scene.shape.Line):
   def getLine: javafx.scene.shape.Line = line
 
   def updateLine(start: (Double, Double), end: (Double, Double)): Unit =

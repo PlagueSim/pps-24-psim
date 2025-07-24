@@ -4,7 +4,6 @@ import scalafx.scene.text.Text
 import javafx.scene.Node as FxNode
 
 case class NodeView(
-                     id: String,
                      visuals: Seq[FxNode],
                      position: () => (Double, Double),
                      labels: Map[String, Text]
@@ -35,7 +34,6 @@ object NodeView:
              labelDied: Text
            ): NodeView =
     NodeView(
-      id = id,
       visuals = visuals,
       position = position,
       labels = Map(
