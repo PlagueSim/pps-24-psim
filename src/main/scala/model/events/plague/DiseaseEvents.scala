@@ -59,9 +59,10 @@ object DiseaseEvents:
         case Right(disease) => disease
 
   /**
-   * The [[Event]] used to increment the dna points of the [[Disease]]
+   * The [[Event]] used to compute the amount of dna points to give to the [[Disease]]
+   * depending on how many people where infected or deceased in a tick
    *
-   * @param pointsToAdd the amount of points to add
+   * @param nodes the new state of the [[World]]
    */
   case class DnaPointsAddition(nodes: Map[String, Node]) extends Event[Disease]:
 
