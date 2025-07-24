@@ -19,7 +19,7 @@ class DiseaseEventsTest extends AnyFlatSpec with Matchers:
     BasicYear(Day(0), Year(2023)),
     Disease("Pax-12", Set.empty, 20),
     Cure(),
-    World(Map.empty, Set.empty, movements),
+    World(Map.empty, Map.empty, movements),
     null,
     null,
     null

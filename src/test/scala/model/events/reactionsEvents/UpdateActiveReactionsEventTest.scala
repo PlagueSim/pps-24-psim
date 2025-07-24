@@ -12,10 +12,9 @@ class UpdateActiveReactionsEventTest extends AnyFlatSpec with Matchers:
   def testWorld: World =
     val nodeA = Node.withPopulation(10).build()
     val nodeB = Node.withPopulation(10).build()
-    val edge  = Edge("A", "B", EdgeType.Land)
     World(
       Map("A" -> nodeA, "B" -> nodeB),
-      Set(edge),
+      Map("A-B" -> Edge("A", "B", EdgeType.Land)),
       Map(Static -> 1.0)
     )
 
