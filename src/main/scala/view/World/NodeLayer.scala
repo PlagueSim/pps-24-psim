@@ -9,6 +9,7 @@ case class NodeLayer(
                       positions: Map[String, () => (Double, Double)],
                       allVisuals: Seq[FxNode]
                     ):
+  /* Updates the label texts of the existing node views using data from a new NodeLayer.*/
   def updateWith(newLayer: NodeLayer): Unit =
     for ((id, newView) <- newLayer.nodeViews) do
       nodeViews.get(id).foreach { oldView =>
@@ -16,6 +17,7 @@ case class NodeLayer(
       }
 
 object NodeLayer:
+  /* Creates a NodeLayer from the given nodes and layout strategy.*/
   def fromNodes(
                  nodes: Map[String, Node],
                  layout: String => (Double, Double),
