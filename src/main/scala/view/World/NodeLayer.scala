@@ -1,0 +1,37 @@
+package view.world
+
+import javafx.scene.Node as FxNode
+import model.world.Node
+import scalafx.scene.text.Text
+
+case class NodeLayer(
+                      nodeViews: Map[String, NodeView],
+                      positions: Map[String, () => (Double, Double)],
+                      allVisuals: Seq[FxNode]
+                    ):
+  def updateWith(newLayer: NodeLayer): Unit =
+    for ((id, newView) <- newLayer.nodeViews) do
+      nodeViews.get(id).foreach { oldView =>
+        oldView.updateLabels(newView)
+      }
+
+object NodeLayer:
+  def fromNodes(
+                 nodes: Map[String, Node],
+                 layout: String => (Double, Double),
+                 onMoved: () => Unit
+               ): NodeLayer =
+    val factory = new DefaultNodeViewFactory(onMoved)
+
+    val nodeViews: Map[String, NodeView] = nodes.map { case (id, node) =>
+      val position = layout(id)
+      id -> factory.createNode(id, node, position)
+    }
+
+    val positions: Map[String, () => (Double, Double)] =
+      nodeViews.view.mapValues(_.position).toMap
+
+    val visuals: Seq[FxNode] =
+      nodeViews.values.flatMap(_.visuals).toSeq
+
+    NodeLayer(nodeViews, positions, visuals)

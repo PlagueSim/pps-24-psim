@@ -2,111 +2,53 @@ package view.world
 
 import controller.WorldController
 import model.core.SimulationState
+import model.world.{Edge, Node}
 import scalafx.scene.layout.Pane
 import view.updatables.UpdatableView
-import javafx.scene.Node as FxNode
-import model.world.{Edge, Node, World}
+import javafx.scene.shape.Line
 
-/**
- * WorldView renders the node and edge views for a world simulation.
- */
-class WorldView(
-                 worldController: WorldController,
-                 layout: GraphLayout,
-                 nodeFactory: NodeViewFactory,
-                 edgeFactory: EdgeViewFactory
-               ) extends Pane with UpdatableView:
+class WorldView(worldController: WorldController) extends Pane with UpdatableView:
 
-  private val nodeViews: Seq[NodeView] = buildNodeViews()
-  private var nodeViewMap: Map[String, NodeView] = nodeViews.map(n => n.id -> n).toMap
-  private var edgeViewMap: Map[String, EdgeView] = Map.empty
+  private val layout = new CircularLayout()
 
-  renderInitialView()
+  private var nodeViews: Map[String, NodeView] = Map.empty
+  private var edgeViews: Map[String, Line] = Map.empty
 
-  private def buildNodeViews(): Seq[NodeView] =
-    val positions = layout.computePositions(worldController.getNodes.keys.toSeq)
-    for (id, pos) <- positions.toSeq yield
-      nodeFactory.createNode(id, worldController.getNodes(id), pos)
+  private val positionsMap: Map[String, (Double, Double)] =
+    layout.computePositions(worldController.getNodes.keySet.toSeq)
 
-  private def renderInitialView(): Unit =
-    children ++= toJavaFXNodes(nodeViews.flatMap(_.visuals))
-    redrawEdges()
-
-  private def toJavaFXNodes(visuals: Seq[Any]): Seq[FxNode] =
-    visuals.collect { case fx: FxNode => fx }
-
-  private def edgeId(a: String, b: String): String =
-    if a < b then s"$a-$b" else s"$b-$a"
-
-  private def computeLiveNodePositions(liveNodeIds: Set[String]): Map[String, (Double, Double)] =
-    nodeViews
-      .filter(view => liveNodeIds.contains(view.id))
-      .map(view => view.id -> view.position())
-      .toMap
-
-  private def filterValidEdges(liveNodeIds: Set[String]): Seq[Edge] =
-    worldController.getEdges.toSeq
-      .filter(edge => liveNodeIds.contains(edge.nodeA) && liveNodeIds.contains(edge.nodeB))
-
-  def redrawEdges(): Unit =
-    redrawEdges(worldController.getWorld)
-  
-
-
-  def redrawEdges(world: World): Unit =
-    val liveNodeIds = nodeViewMap.keySet
-    val livePositions = computeLiveNodePositions(liveNodeIds)
-    val visibleEdges = world.edges.values.filter(e =>
-      liveNodeIds.contains(e.nodeA) && liveNodeIds.contains(e.nodeB)
+  private val nodeLayer: NodeLayer =
+    NodeLayer.fromNodes(
+      nodes = worldController.getNodes,
+      layout = id => positionsMap(id),
+      onMoved = () => redrawEdges(worldController.getEdges)
     )
 
+  private val edgeLayer: EdgeLayer =
+    EdgeLayer(
+      edges = worldController.getEdges,
+      nodePositions = nodeLayer.positions
+    )
 
-    val updatedEdgeMap = visibleEdges.map { edge =>
-      val id = edgeId(edge.nodeA, edge.nodeB)
-      val edgeView = edgeViewMap.get(id) match
-        case Some(existing) =>
-          existing.updateLine(livePositions(edge.nodeA), livePositions(edge.nodeB))
-          existing
-        case None =>
-          edgeFactory.createEdge(id, edge, livePositions)
+  children ++= edgeLayer.edgeLines.values.toSeq ++ nodeLayer.allVisuals
 
-      if edge.isClose then
-        edgeView.setColor(scalafx.scene.paint.Color.Gray)
+  nodeViews = nodeLayer.nodeViews
+  edgeViews = edgeLayer.edgeLines
 
-      id -> edgeView
-    }.toMap
+  def redrawEdges(updatedEdges: Iterable[Edge]): Unit =
+    val (newEdgeMap, toAdd, toRemove) =
+      EdgeUpdater.update(edgeViews, updatedEdges, nodeViews.view.mapValues(nv => () => nv.position()).toMap)
 
-    edgeViewMap = updatedEdgeMap
-    val edgeLines = updatedEdgeMap.values.map(_.getLine)
+    edgeViews = newEdgeMap
+    children.removeAll(toRemove.toSeq*)
+    children.addAll(toAdd.toSeq*)
 
-    children --= children.collect { case l: javafx.scene.shape.Line => l }
-    children.prependAll(edgeLines)
+  private def redrawNodes(updatedNodes: Map[String, Node]): Unit =
+    val (newNodeMap, toAdd, toRemove) = NodeUpdater.update(nodeViews, updatedNodes)
+    nodeViews = newNodeMap
+    children.removeAll(toRemove.toSeq*)
+    children.addAll(toAdd.toSeq*)
 
-  override def update(newState: SimulationState): Unit =
-    removeOrphanedNodes(newState)
-    redrawEdges(newState.world)
-    updateExistingNodes(newState)
-
-  private def removeOrphanedNodes(newState: SimulationState): Unit =
-    val currentNodeIds = nodeViewMap.keySet
-    val updatedNodeIds = newState.world.nodes.keySet
-    val orphanedNodeIds = currentNodeIds -- updatedNodeIds
-
-    orphanedNodeIds.foreach { id =>
-      val visualsToRemove = toJavaFXNodes(nodeViewMap(id).visuals)
-      children --= visualsToRemove
-      nodeViewMap -= id
-    }
-
-  private def updateExistingNodes(newState: SimulationState): Unit =
-    newState.world.nodes.foreach { case (id, node) =>
-      nodeViewMap.get(id).foreach { view =>
-        updateNodeView(view, id, node)
-      }
-    }
-
-  private def updateNodeView(view: NodeView, id: String, node: Node): Unit =
-    view.labels("id").text = s"Node: $id"
-    view.labels("pop").text = s"Pop: ${node.population}"
-    view.labels("inf").text = s"Infected: ${node.infected}"
-    view.labels("died").text = s"Died: ${node.died}"
+  override def update(state: SimulationState): Unit =
+    redrawNodes(state.world.nodes)
+    redrawEdges(state.world.edges.values)
