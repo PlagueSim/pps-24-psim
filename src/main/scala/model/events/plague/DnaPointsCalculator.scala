@@ -31,5 +31,5 @@ object DnaPointsCalculator:
     val newInfectedNodes = currentInfectedNodes -- prevInfectedNodes
 
     newInfectedNodes.size * NewNodeDnaMul +
-      newInfectedPop % AffectedPopDnaRatio +
-      newDeceasedPop % AffectedPopDnaRatio
+      floor(sqrt(newInfectedPop)).toInt / AffectedPopDnaRatio +
+      floor(sqrt(newDeceasedPop)).toInt / AffectedPopDnaRatio
