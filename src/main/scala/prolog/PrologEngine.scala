@@ -1,5 +1,7 @@
-import alice.tuprolog.*
+package prolog
+
 import alice.tuprolog
+import alice.tuprolog.*
 
 object PrologEngine:
   given Conversion[String, Term] = Term.createTerm(_)
