@@ -1,16 +1,14 @@
 package view.world
 
-import controller.WorldController
 import javafx.scene.Node as FxNode
 import javafx.scene.shape.Line
-import model.core.SimulationState
 import model.world.{Edge, Node, World}
 import scalafx.scene.layout.Pane
 
-class WorldRenderer(worldController: WorldController, pane: Pane):
+class WorldRenderer(world: World, pane: Pane):
 
-  private var nodeLayer: NodeLayer = createNodeLayer(worldController.getNodes)
-  private var edgeLayer: EdgeLayer = createEdgeLayer(worldController.getEdges, nodeLayer.positions)
+  private var nodeLayer: NodeLayer = createNodeLayer(world.nodes)
+  private var edgeLayer: EdgeLayer = createEdgeLayer(world.edges.values, nodeLayer.positions)
 
   pane.children.addAll(
     (edgeLayer.edgeLines.values ++ nodeLayer.allVisuals).toSeq*
@@ -24,12 +22,12 @@ class WorldRenderer(worldController: WorldController, pane: Pane):
    *
    * @param state the current simulation state containing the latest world data
    */
-  def update(state: SimulationState): Unit =
-    val newNodeLayer = createNodeLayer(state.world.nodes)
+  def update(world: World): Unit =
+    val newNodeLayer = createNodeLayer(world.nodes)
     nodeLayer.updateWith(newNodeLayer)
 
-    val newEdgeLayer = createEdgeLayer(state.world.edges.values, newNodeLayer.positions)
-    val updatedEdgeLines = newEdgeLayer.updateEdges(state.world.edges.values)
+    val newEdgeLayer = createEdgeLayer(world.edges.values, newNodeLayer.positions)
+    val updatedEdgeLines = newEdgeLayer.updateEdges(world.edges.values)
 
     updateScene(newNodeLayer.allVisuals, updatedEdgeLines.values.toSeq)
 
@@ -37,7 +35,7 @@ class WorldRenderer(worldController: WorldController, pane: Pane):
     edgeLayer = newEdgeLayer
 
   private def redraw(): Unit =
-    val updatedEdgeLines = edgeLayer.updateEdges(worldController.getEdges)
+    val updatedEdgeLines = edgeLayer.updateEdges(world.edges.values)
     updateScene(nodeLayer.allVisuals, updatedEdgeLines.values.toSeq)
 
   private def updateScene(nodes: Seq[FxNode], edges: Seq[FxNode]): Unit =
@@ -63,5 +61,5 @@ class WorldRenderer(worldController: WorldController, pane: Pane):
     )
 
 
-  private def createEdgeLayer(edges: Iterable[Edge], nodePositions: Map[String, () => (Double, Double)]): EdgeLayer =
+  private def createEdgeLayer(edges: Iterable[Edge], nodePositions: Map[String, LivePosition]): EdgeLayer =
     EdgeLayer(edges, nodePositions)

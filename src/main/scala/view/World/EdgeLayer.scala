@@ -11,7 +11,7 @@ import scalafx.scene.paint.Color
  */
 class EdgeLayer(
                  edges: Iterable[Edge],
-                 nodePositions: Map[String, () => (Double, Double)]
+                 nodePositions: Map[String, LivePosition]
                ):
 
   import EdgeLayer.*
@@ -38,9 +38,9 @@ class EdgeLayer(
 object EdgeLayer:
 
   /* Creates a new Line visual representing the given edge. */
-  def createEdgeLine(edge: Edge, nodePositions: Map[String, () => (Double, Double)]): Line =
-    val (startX, startY) = nodePositions(edge.nodeA)()
-    val (endX, endY) = nodePositions(edge.nodeB)()
+  def createEdgeLine(edge: Edge, nodePositions: Map[String, LivePosition]): Line =
+    val (startX, startY) = nodePositions(edge.nodeA).get()
+    val (endX, endY) = nodePositions(edge.nodeB).get()
     val line = new Line(
       startX, startY,
       endX, endY
@@ -48,9 +48,9 @@ object EdgeLayer:
     line.setStroke(edgeColor(edge.typology, edge.isClose))
     line
 
-  private def updateLine(line: Line, edge: Edge, nodePositions: Map[String, () => (Double, Double)]): Unit =
-    val (startX, startY) = nodePositions(edge.nodeA)()
-    val (endX, endY) = nodePositions(edge.nodeB)()
+  private def updateLine(line: Line, edge: Edge, nodePositions: Map[String, LivePosition]): Unit =
+    val (startX, startY) = nodePositions(edge.nodeA).get()
+    val (endX, endY) = nodePositions(edge.nodeB).get()
     line.setStartX(startX)
     line.setStartY(startY)
     line.setEndX(endX)

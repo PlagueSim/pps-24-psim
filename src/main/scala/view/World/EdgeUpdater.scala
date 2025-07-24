@@ -17,7 +17,7 @@ object EdgeUpdater:
   def update(
               currentEdges: Map[String, Line],
               updatedEdges: Iterable[Edge],
-              nodePositions: Map[String, () => (Double, Double)]
+              nodePositions: Map[String, LivePosition]
             ): (Map[String, Line], Set[Line], Set[Line]) =
     val updatedMap = scala.collection.mutable.Map[String, Line]()
     val toAdd = scala.collection.mutable.Set[Line]()
@@ -27,8 +27,8 @@ object EdgeUpdater:
       val id = edge.edgeId
       val line = currentEdges.get(id) match
         case Some(existing) =>
-          val (startX, startY) = nodePositions(edge.nodeA)()
-          val (endX, endY) = nodePositions(edge.nodeB)()
+          val (startX, startY) = nodePositions(edge.nodeA).get()
+          val (endX, endY) = nodePositions(edge.nodeB).get()
           existing.setStartX(startX)
           existing.setStartY(startY)
           existing.setEndX(endX)

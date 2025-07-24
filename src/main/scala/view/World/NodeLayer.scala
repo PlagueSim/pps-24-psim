@@ -6,7 +6,7 @@ import scalafx.scene.text.Text
 
 case class NodeLayer(
                       nodeViews: Map[String, NodeView],
-                      positions: Map[String, () => (Double, Double)],
+                      positions:  Map[String, LivePosition],
                       allVisuals: Seq[FxNode]
                     ):
   /* Updates the label texts of the existing node views using data from a new NodeLayer.*/
@@ -30,8 +30,8 @@ object NodeLayer:
       id -> factory.createNode(id, node, position)
     }
 
-    val positions: Map[String, () => (Double, Double)] =
-      nodeViews.view.mapValues(_.position).toMap
+    val positions: Map[String, LivePosition] =
+      nodeViews.view.mapValues(nv => LivePosition(nv.position)).toMap
 
     val visuals: Seq[FxNode] =
       nodeViews.values.flatMap(_.visuals).toSeq
