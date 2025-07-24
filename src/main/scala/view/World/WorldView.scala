@@ -3,18 +3,18 @@ package view.world
 import model.core.SimulationState
 import model.world.{Edge, Node, World}
 import scalafx.scene.layout.Pane
-import view.world.View
 import view.event.ViewEvent
 import view.updatables.UpdatableView
 import javafx.scene.shape.Line
+import scalafx.scene.Node as NodeVisual
 
-class WorldView extends Pane with UpdatableView with View:
+class WorldView extends Pane with UpdatableView with VisualView:
 
   private var eventHandler: ViewEvent => Unit = _ => ()
   private var nodeViews: Map[String, NodeView] = Map.empty
   private var edgeViews: Map[String, Line] = Map.empty
 
-  private var layout: CircularLayout = CircularLayout()
+  private val layout: CircularLayout = CircularLayout()
   private var worldRenderer: Option[WorldRenderer] = None
   private var currentWorld: Option[World] = None
 
@@ -70,3 +70,5 @@ class WorldView extends Pane with UpdatableView with View:
 
   override def handleEvent(event: ViewEvent): Unit =
     eventHandler(event)
+
+  override def root: NodeVisual = this
