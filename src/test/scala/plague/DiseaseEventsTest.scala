@@ -19,8 +19,8 @@ class DiseaseEventsTest extends AnyFlatSpec with Matchers:
     Static -> 1.0
   )
   private val nodes = Map(
-    "Italy" -> Node.Builder(100, 0, 0).build(),
-    "France" -> Node.Builder(100, 1, 0).build()
+    "Italy" -> Node.Builder(100).build(),
+    "France" -> Node.Builder(100, 1).build()
   )
   private val edges = Map(
     "Ita-Fra" -> Edge("Italy", "France", Air)
@@ -61,7 +61,7 @@ class DiseaseEventsTest extends AnyFlatSpec with Matchers:
     val prevNodes = nodes
 
     val currentNodes = Map(
-      "Italy" -> Node.Builder(100, 1, 0).build(),
+      "Italy" -> Node.Builder(100, 1).build(),
       "France" -> Node.Builder(100, 100, 100).build()
     )
 
