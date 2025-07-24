@@ -1,9 +1,7 @@
 package view.world
 
-import controller.WorldController
 import javafx.scene.Node as FxNode
 import javafx.scene.shape.Line
-import model.core.SimulationState
 import model.world.{Edge, Node, World}
 import scalafx.scene.layout.Pane
 
@@ -24,12 +22,12 @@ class WorldRenderer(world: World, pane: Pane):
    *
    * @param state the current simulation state containing the latest world data
    */
-  def update(state: SimulationState): Unit =
-    val newNodeLayer = createNodeLayer(state.world.nodes)
+  def update(world: World): Unit =
+    val newNodeLayer = createNodeLayer(world.nodes)
     nodeLayer.updateWith(newNodeLayer)
 
-    val newEdgeLayer = createEdgeLayer(state.world.edges.values, newNodeLayer.positions)
-    val updatedEdgeLines = newEdgeLayer.updateEdges(state.world.edges.values)
+    val newEdgeLayer = createEdgeLayer(world.edges.values, newNodeLayer.positions)
+    val updatedEdgeLines = newEdgeLayer.updateEdges(world.edges.values)
 
     updateScene(newNodeLayer.allVisuals, updatedEdgeLines.values.toSeq)
 

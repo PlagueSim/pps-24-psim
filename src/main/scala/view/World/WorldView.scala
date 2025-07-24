@@ -1,40 +1,47 @@
 package view.world
 
-import controller.WorldController
 import model.core.SimulationState
 import model.world.{Edge, Node, World}
 import scalafx.scene.layout.Pane
+import view.world.View
+import view.event.ViewEvent
 import view.updatables.UpdatableView
 import javafx.scene.shape.Line
 
-class WorldView(world: World) extends Pane with UpdatableView:
+class WorldView extends Pane with UpdatableView with View:
 
-  private val worldRenderer = new WorldRenderer(world, this)
-  private val layout = new CircularLayout()
-
+  private var eventHandler: ViewEvent => Unit = _ => ()
   private var nodeViews: Map[String, NodeView] = Map.empty
   private var edgeViews: Map[String, Line] = Map.empty
 
-  private val positionsMap: Map[String, (Double, Double)] =
-    layout.computePositions(world.nodes.keySet.toSeq)
+  private var layout: CircularLayout = CircularLayout()
+  private var worldRenderer: Option[WorldRenderer] = None
+  private var currentWorld: Option[World] = None
 
-  private val nodeLayer: NodeLayer =
-    NodeLayer.fromNodes(
+  override def setEventHandler(handler: ViewEvent => Unit): Unit =
+    this.eventHandler = handler
+
+  override def render(world: World): Unit =
+    this.currentWorld = Some(world)
+    this.worldRenderer = Some(new WorldRenderer(world, this))
+
+    val positionsMap = layout.computePositions(world.nodes.keySet.toSeq)
+
+    val nodeLayer = NodeLayer.fromNodes(
       nodes = world.nodes,
       layout = id => positionsMap(id),
       onMoved = () => redrawEdges(world.edges.values)
     )
 
-  private val edgeLayer: EdgeLayer =
-    EdgeLayer(
+    val edgeLayer = EdgeLayer(
       edges = world.edges.values,
       nodePositions = nodeLayer.positions
     )
 
-  children ++= edgeLayer.edgeLines.values.toSeq ++ nodeLayer.allVisuals
+    nodeViews = nodeLayer.nodeViews
+    edgeViews = edgeLayer.edgeLines
 
-  nodeViews = nodeLayer.nodeViews
-  edgeViews = edgeLayer.edgeLines
+    children.setAll(edgeLayer.edgeLines.values.toSeq ++ nodeLayer.allVisuals: _*)
 
   private def redrawEdges(updatedEdges: Iterable[Edge]): Unit =
     val (newEdgeMap, toAdd, toRemove) =
@@ -43,8 +50,6 @@ class WorldView(world: World) extends Pane with UpdatableView:
         updatedEdges,
         nodeViews.view.mapValues(nv => LivePosition(nv.position)).toMap
       )
-
-
     edgeViews = newEdgeMap
     children.removeAll(toRemove.toSeq*)
     children.addAll(toAdd.toSeq*)
@@ -55,15 +60,13 @@ class WorldView(world: World) extends Pane with UpdatableView:
     children.removeAll(toRemove.toSeq*)
     children.addAll(toAdd.toSeq*)
 
-  /**
-   * Updates the visual representation of the world using the given simulation state.
-   *
-   * This includes updating the node views, edge views, and delegating to the world renderer
-   * to refresh layout and visuals.
-   *
-   * @param state the current simulation state with updated world data
-   */
-  override def update(state: SimulationState): Unit =
-    redrawNodes(state.world.nodes)
-    redrawEdges(state.world.edges.values)
-    worldRenderer.update(state)
+  private def update(world: World): Unit =
+    redrawNodes(world.nodes)
+    redrawEdges(world.edges.values)
+    worldRenderer.foreach(_.update(world))
+
+  override def update(newState: SimulationState): Unit =
+    update(newState.world)
+
+  override def handleEvent(event: ViewEvent): Unit =
+    eventHandler(event)
