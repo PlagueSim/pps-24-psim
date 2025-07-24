@@ -1,7 +1,7 @@
 package plague
 
-import model.world.{MovementStrategy, Static, World}
-import model.core.{SimulationState, SimulationEngine}
+import model.world.{Edge, EdgeType, MovementStrategy, Static, World}
+import model.core.{SimulationEngine, SimulationState}
 import model.cure.Cure
 import model.plague.{Disease, Symptoms, Trait}
 import model.plague.Symptoms.*
@@ -23,7 +23,7 @@ class DiseaseEventsTest extends AnyFlatSpec with Matchers:
     BasicYear(Day(0), Year(2023)),
     Disease("Pax-12", Set.empty, dna),
     Cure(baseCureProgress, baseCureSpeed),
-    World(Map.empty, Set.empty, movements),
+    null,
     null,
     null,
     null
@@ -33,12 +33,23 @@ class DiseaseEventsTest extends AnyFlatSpec with Matchers:
     val evolvedDisease = Disease("Pax-12", Set(coughing), dna - coughing.stats.cost)
     val nextState = SimulationEngine.executeEvent(Evolution(coughing)).run(simState).value._1
     nextState.disease shouldBe evolvedDisease
+
+  it should "not evolve anything if the Trait cannot be evolved" in:
+    val nextState = SimulationEngine.executeEvent(Evolution(totalOrganFailure)).run(simState).value._1
+    nextState.disease shouldBe simState.disease
+
     
   "Involution Event" should "remove an evolved trait if possible" in:
     val evolvedState = SimulationEngine.executeEvent(Evolution(coughing)).run(simState).value._1
     val backToNormal = SimulationEngine.executeEvent(Involution(coughing)).run(evolvedState).value._1
     backToNormal.disease shouldBe Disease("Pax-12", Set.empty, dna - coughing.stats.cost + 2)
-    
+
+  it should "not remove anything if the Trait cannot be involved" in:
+    val evolvedState = SimulationEngine.executeEvent(Evolution(coughing)).run(simState).value._1
+    val involved = SimulationEngine.executeEvent(Involution(totalOrganFailure)).run(evolvedState).value._1
+    involved.disease shouldBe evolvedState.disease
+
+
   //todo
   "Cure Slowdown Event" should "reduce Cure speed" in:
     val nextState = SimulationEngine.executeEvent(CureSlowDown(geneticHardening1)).run(simState).value._1
