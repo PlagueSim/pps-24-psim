@@ -8,10 +8,22 @@ import scalafx.scene.paint.Color
 import scalafx.Includes.*
 import model.world.*
 
+/**
+ * A factory for creating visual representations of nodes using circles and labels.
+ * Each node is draggable and displays information about its state.
+ *
+ * @param onMoved A callback invoked when a node is dragged.
+ */
+
 class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
 
   private case class LabelData(label: Text, offsetX: Double, offsetY: Double)
 
+  /**
+   * Creates a draggable NodeView consisting of a circle and several labels
+   * showing node-related data (population, infected, dead).
+   *
+   */
   override def createNode(id: String, data: Node, position: (Double, Double)): NodeView =
     val (posX, posY) = position
 
@@ -56,6 +68,15 @@ class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
     }
 
 object Draggable:
+  /**
+   * Makes a shape draggable on the scene. Handles mouse interaction and position update.
+   *
+   * @param shape       The shape to be made draggable.
+   * @param initialX    Initial X coordinate.
+   * @param initialY    Initial Y coordinate.
+   * @param setPosition Function to apply the new position.
+   * @param onMove      Callback called after every drag movement.
+   */
   def make(
             shape: Shape,
             initialX: Double,

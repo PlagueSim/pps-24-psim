@@ -1,7 +1,13 @@
 package model.world
+import model.world.EdgeExtensions.*
 
 object WorldFactory:
 
+  /*
+   * Creates a mock World instance with 15 nodes and predefined edges.
+   * Some nodes are initialized with infection and death values.
+   * A mix of edge types (Land, Sea, Air) is used for connections.
+   */
   def mockWorld(): World =
     val nodes =
       (1 to 15).map { i =>
@@ -44,8 +50,7 @@ object WorldFactory:
     )
 
     val edgeMap: Map[String, Edge] = edgeSet.map { edge =>
-      val id = edgeId(edge.nodeA, edge.nodeB, edge.typology)
-      println("id" + id)
+      val id = edge.edgeId
       id -> edge
     }.toMap
 
@@ -54,7 +59,3 @@ object WorldFactory:
       edgeMap,
       Map(Static -> 0.6, RandomNeighbor -> 0.4)
     )
-
-  private def edgeId(a: String, b: String, typology: EdgeType): String =
-    val sorted = if a < b then s"$a-$b" else s"$b-$a"
-    s"$sorted-${typology.toString}"

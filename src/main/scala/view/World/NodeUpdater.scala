@@ -5,6 +5,19 @@ import javafx.scene.Node as FxNode
 
 object NodeUpdater:
 
+  /**
+   * Updates the current node views based on the latest model data.
+   *
+   * For existing nodes, it updates the labels. For new nodes, it creates a new NodeView.
+   * For removed nodes, it schedules their visuals for removal.
+   *
+   * @param currentNodes the current map of node IDs to NodeViews
+   * @param updatedNodes the updated map of node IDs to Node models
+   * @return a tuple with:
+   *         - the updated map of NodeViews,
+   *         - a set of visual nodes to add to the scene,
+   *         - a set of visual nodes to remove from the scene
+   */
   def update(
               currentNodes: Map[String, NodeView],
               updatedNodes: Map[String, Node]
