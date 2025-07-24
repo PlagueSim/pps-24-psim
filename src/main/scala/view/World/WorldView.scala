@@ -38,7 +38,12 @@ class WorldView(worldController: WorldController) extends Pane with UpdatableVie
 
   private def redrawEdges(updatedEdges: Iterable[Edge]): Unit =
     val (newEdgeMap, toAdd, toRemove) =
-      EdgeUpdater.update(edgeViews, updatedEdges, nodeViews.view.mapValues(nv => () => nv.position()).toMap)
+      EdgeUpdater.update(
+        edgeViews,
+        updatedEdges,
+        nodeViews.view.mapValues(nv => LivePosition(nv.position)).toMap
+      )
+
 
     edgeViews = newEdgeMap
     children.removeAll(toRemove.toSeq*)

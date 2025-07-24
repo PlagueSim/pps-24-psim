@@ -63,5 +63,5 @@ class WorldRenderer(worldController: WorldController, pane: Pane):
     )
 
 
-  private def createEdgeLayer(edges: Iterable[Edge], nodePositions: Map[String, () => (Double, Double)]): EdgeLayer =
+  private def createEdgeLayer(edges: Iterable[Edge], nodePositions: Map[String, LivePosition]): EdgeLayer =
     EdgeLayer(edges, nodePositions)
