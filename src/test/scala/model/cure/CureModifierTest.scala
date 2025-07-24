@@ -15,27 +15,35 @@ class CureModifierTest extends AnyFlatSpec with Matchers:
     ModifierId(ModifierSource.Global, ModifierKind.ProgressModifier)
 
   "A CureModifier" should "correctly implement modifier types" in:
-    val multiplier  = Multiplier(nodeId, 2.0)
-    val additive    = Additive(mutationId, 0.05)
-    val progressMod = ProgressModifier(globalId, -0.1)
+    val multiplier  = CureModifier.multiplier(nodeId, 2.0).get
+    val additive    = CureModifier.additive(mutationId, 0.05).get
+    val progressMod = CureModifier.progressModifier(globalId, -0.1).get
 
     multiplier shouldBe a[PersistentModifier]
     additive shouldBe a[PersistentModifier]
     progressMod shouldBe a[OneTimeModifier]
 
   it should "apply multiplier correctly" in:
-    Multiplier(nodeId, 2.0)(0.1) shouldEqual 0.2
+    CureModifier.multiplier(nodeId, 2.0).get(0.1) shouldEqual 0.2
 
   it should "apply additive correctly and clamp values" in:
-    Additive(mutationId, 0.05)(0.1) shouldEqual 0.15 +- 0.00001
-    Additive(mutationId, 1.0)(0.5) shouldEqual 1.0
-    Additive(mutationId, -0.6)(0.5) shouldEqual 0.0
+    CureModifier.additive(mutationId, 0.05).get(0.1) shouldEqual 0.15 +- 0.00001
+    CureModifier.additive(mutationId, 1.0).get(0.5) shouldEqual 1.0
+    CureModifier.additive(mutationId, -0.6).get(0.5) shouldEqual 0.0
 
   it should "apply progress modifier correctly and clamp values" in:
-    ProgressModifier(globalId, 0.1)(0.3) shouldEqual 0.4 +- 0.00001
-    ProgressModifier(globalId, -0.2)(0.3) shouldEqual 0.1 +- 0.00001
-    ProgressModifier(globalId, 0.8)(0.5) shouldEqual 1.0 +- 0.00001
-    ProgressModifier(globalId, -1.0)(0.5) shouldEqual 0.0 +- 0.00001
+    CureModifier
+      .progressModifier(globalId, 0.1)
+      .get(0.3) shouldEqual 0.4 +- 0.00001
+    CureModifier
+      .progressModifier(globalId, -0.2)
+      .get(0.3) shouldEqual 0.1 +- 0.00001
+    CureModifier
+      .progressModifier(globalId, 0.8)
+      .get(0.5) shouldEqual 1.0 +- 0.00001
+    CureModifier
+      .progressModifier(globalId, -1.0)
+      .get(0.5) shouldEqual 0.0 +- 0.00001
 
   "ModifierId" should "implement proper equality" in:
     val id1 =

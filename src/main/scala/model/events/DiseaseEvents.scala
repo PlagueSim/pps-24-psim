@@ -114,7 +114,7 @@ object DiseaseEvents:
    * @param tr the [[Trait]] that slows down the [[Cure]]
    */
   case class CureSlowDown(tr: Trait) extends Event[Cure]:
-    private val mod: Additive = Additive(ModifierId(ModifierSource.Mutation(MutationId(tr.name)) ,ModifierKind.Additive), -tr.stats.cureSlowdown)
+    private val mod = CureModifier.additive(ModifierId(ModifierSource.Mutation(MutationId(tr.name)) ,ModifierKind.Additive), -tr.stats.cureSlowdown).get
 
     /**
      * @param state current [[SimulationState]] to be updated
@@ -130,7 +130,7 @@ object DiseaseEvents:
    */
   case class CurePushBack(tr: Trait) extends Event[Cure]:
     val mod: OneTimeModifier =
-      ProgressModifier(ModifierId(ModifierSource.Mutation(MutationId(tr.name)), ModifierKind.Additive), -tr.stats.cureReset)
+      CureModifier.progressModifier(ModifierId(ModifierSource.Mutation(MutationId(tr.name)), ModifierKind.Additive), -tr.stats.cureReset).get
 
     /**
      * @param state current [[SimulationState]] to be updated
