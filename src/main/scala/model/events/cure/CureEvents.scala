@@ -15,9 +15,10 @@ case class AdvanceCureEvent() extends Event[Cure]:
   override def modifyFunction(state: SimulationState): Cure =
     state.cure.advance()
 
-/** Event that advances the cure progress linearly based on infected nodes.
-  * Adds a small additive modifier for each node above the infection threshold.
-  * @param threshold The infection ratio above which a node contributes to cure progress.
+/** Event that advances the cure progress linearly based on infected nodes. Adds
+  * a small additive modifier for each node above the infection threshold.
+  * @param threshold
+  *   The infection ratio above which a node contributes to cure progress.
   */
 case class LinearInfectedThresholdEvent(threshold: Double = 0.5)
     extends Event[Cure]:
@@ -25,12 +26,14 @@ case class LinearInfectedThresholdEvent(threshold: Double = 0.5)
   private def nodeModifiers(state: SimulationState) =
     state.world.nodes.collect:
       case (nodeId, node)
-        if node.population > 0 && node.infected.toDouble / node.population > threshold =>
-          val modId = model.cure.ModifierId(
-            model.cure.ModifierSource.Node(model.cure.NodeId(nodeId)),
-            model.cure.ModifierKind.Additive
-          )
-          modId -> model.cure.CureModifier.additive(modId,0.1).getOrElse(
+          if node.population > 0 && node.infected.toDouble / node.population > threshold =>
+        val modId = model.cure.ModifierId(
+          model.cure.ModifierSource.Node(model.cure.NodeId(nodeId)),
+          model.cure.ModifierKind.Additive
+        )
+        modId -> model.cure.CureModifier
+          .additive(modId, 0.1)
+          .getOrElse(
             throw new IllegalArgumentException(
               s"Invalid modifier for node $nodeId with threshold $threshold"
             )
@@ -54,4 +57,4 @@ case class ProgressSubtractExampleEvent(progress: Double) extends Event[Cure]:
     val modifier = model.cure.CureModifier.progressModifier(modId, progress)
     modifier match
       case Some(mod) => state.cure.addModifier(mod)
-      case None => state.cure
+      case None      => state.cure

@@ -52,10 +52,12 @@ class CureEventTest extends AnyFlatSpec with Matchers:
 
   it should "not add duplicate modifiers" in {
     val nodes = Map("A" -> model.world.Node.Builder(100, 60).build())
-    val mod = CureModifier.additive(
-      ModifierId(ModifierSource.Node(NodeId("A")), ModifierKind.Additive),
-      0.1
-    ).get
+    val mod   = CureModifier
+      .additive(
+        ModifierId(ModifierSource.Node(NodeId("A")), ModifierKind.Additive),
+        0.1
+      )
+      .get
     val state = simulationState(
       nodes = nodes,
       cure = Cure().addModifier(mod)

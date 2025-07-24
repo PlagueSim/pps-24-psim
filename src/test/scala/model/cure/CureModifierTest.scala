@@ -32,10 +32,18 @@ class CureModifierTest extends AnyFlatSpec with Matchers:
     CureModifier.additive(mutationId, -0.6).get(0.5) shouldEqual 0.0
 
   it should "apply progress modifier correctly and clamp values" in:
-    CureModifier.progressModifier(globalId, 0.1).get(0.3) shouldEqual 0.4 +- 0.00001
-    CureModifier.progressModifier(globalId, -0.2).get(0.3) shouldEqual 0.1 +- 0.00001
-    CureModifier.progressModifier(globalId, 0.8).get(0.5) shouldEqual 1.0 +- 0.00001
-    CureModifier.progressModifier(globalId, -1.0).get(0.5) shouldEqual 0.0 +- 0.00001
+    CureModifier
+      .progressModifier(globalId, 0.1)
+      .get(0.3) shouldEqual 0.4 +- 0.00001
+    CureModifier
+      .progressModifier(globalId, -0.2)
+      .get(0.3) shouldEqual 0.1 +- 0.00001
+    CureModifier
+      .progressModifier(globalId, 0.8)
+      .get(0.5) shouldEqual 1.0 +- 0.00001
+    CureModifier
+      .progressModifier(globalId, -1.0)
+      .get(0.5) shouldEqual 0.0 +- 0.00001
 
   "ModifierId" should "implement proper equality" in:
     val id1 =
