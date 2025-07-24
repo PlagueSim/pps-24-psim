@@ -79,16 +79,18 @@ object DiseaseEvents:
       state.disease.addDnaPoints(pointsToAdd)
 
   /**
-   * The [[Event]] used to check and if the [[Disease]] will randomly evolve
+   * The [[Event]] used to check and if the [[Disease]] will randomly evolve a new [[Trait]]
+   *
+   * @param rng A function providing a random [[Double]]. Default [[Random.nextDouble]]
    */
-  case class Mutation() extends Event[Disease]:
+  case class Mutation(rng: () => Double = () => Random.nextDouble()) extends Event[Disease]:
     /**
      * @param state current [[SimulationState]] to be updated
      * @return a new instance of [[Disease]] with a randomly evolved [[Symptom]]
      *         or the old one
      */
     override def modifyFunction(state: SimulationState): Disease =
-      if state.disease.mutationChance >= Random.nextDouble() then
+      if state.disease.mutationChance >= rng() then
         val (maybeTr, disease) = state.disease.randomMutation()
         maybeTr.foreach(triggerCureEvents)
         disease
