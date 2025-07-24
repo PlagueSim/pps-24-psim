@@ -2,6 +2,7 @@ package view.world
 
 import controller.WorldController
 import javafx.scene.Node as FxNode
+import javafx.scene.shape.Line
 import model.core.SimulationState
 import model.world.{Edge, Node, World}
 import scalafx.scene.layout.Pane
@@ -38,8 +39,11 @@ class WorldRenderer(worldController: WorldController, pane: Pane):
     val toRemove = current -- updated
     val toAdd = updated -- current
 
-    pane.children.removeAll(toRemove.toSeq*)
-    pane.children.addAll(toAdd.toSeq*)
+    pane.children.removeAll(toRemove.toSeq *)
+
+    val (toAddEdges, toAddNodes) = toAdd.partition(_.isInstanceOf[Line])
+    pane.children.addAll((toAddEdges.toSeq ++ toAddNodes.toSeq) *)
+
 
   private def createNodeLayer(nodes: Map[String, Node]): NodeLayer =
     val layout = CircularLayout()
