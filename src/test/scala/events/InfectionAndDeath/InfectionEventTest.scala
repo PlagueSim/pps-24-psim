@@ -1,4 +1,4 @@
-package events
+package events.InfectionAndDeath
 
 import model.core.SimulationState
 import model.cure.Cure
