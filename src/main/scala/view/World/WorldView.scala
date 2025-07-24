@@ -9,6 +9,7 @@ import javafx.scene.shape.Line
 
 class WorldView(worldController: WorldController) extends Pane with UpdatableView:
 
+  val worldRenderer = new WorldRenderer(worldController, this)
   private val layout = new CircularLayout()
 
   private var nodeViews: Map[String, NodeView] = Map.empty
@@ -52,3 +53,4 @@ class WorldView(worldController: WorldController) extends Pane with UpdatableVie
   override def update(state: SimulationState): Unit =
     redrawNodes(state.world.nodes)
     redrawEdges(state.world.edges.values)
+    worldRenderer.update(state)
