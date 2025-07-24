@@ -23,6 +23,19 @@ sealed case class SimulationState private (
                                           )
 
 object SimulationState:
+  /** Creates a new SimulationState with the provided parameters.
+   *
+   * @param time
+   *   The initial time of the simulation.
+   * @param disease
+   *   The initial disease in the simulation.
+   * @param cure
+   *   The initial cure in the simulation.
+   * @param world
+   *   The initial world in the simulation.
+   * @return
+   *   A new SimulationState instance.
+   */
   def apply(
              time: Time,
              disease: Disease,
@@ -35,33 +48,42 @@ object SimulationState:
     new SimulationState(time, disease, cure, world, infectionLogic, deathLogic, reactions)
 
   def createStandardSimulationState(): SimulationState =
-    val STARTING_DAY = 0
-    val STARTING_YEAR = 2025
+    val STARTING_DAY: Int  = 0
+    val STARTING_YEAR: Int = 2025
 
-    val baseWorld = WorldFactory.mockWorld()
-    val edgeId = "A-H-Sea"
+    val node = Node.withPopulation(100).withInfected(1).build()
 
-    val closedWorld = baseWorld.modifyEdges(
-      baseWorld.edges.updated(edgeId, baseWorld.edges(edgeId).close)
+    val world = World(
+      Map("A" -> node, "B" -> node),
+      Map("A-B" -> Edge("A", "B", EdgeType.Land)),
+      Map(Static -> 0.5, RandomNeighbor -> 0.5)
     )
-
 
     SimulationState(
       BasicYear(Day(STARTING_DAY), Year(STARTING_YEAR)),
       Disease("StandardDisease", Set(pulmonaryEdema), 1),
       Cure(),
-      baseWorld,
+      world,
       StandardInfection,
       StandardDeath,
       StandardReactions
     )
 
   extension (state: SimulationState)
+    /** Replaces the current state with a new value based on its type.
+     *
+     * @param newValue
+     *   The new value to replace in the state.
+     * @return
+     *   A new SimulationState with the updated value.
+     */
     def replace[A](newValue: A): SimulationState = newValue match
       case newTime: Time                    => state.copy(time = newTime)
       case newDisease: Disease              => state.copy(disease = newDisease)
       case newCure: Cure                    => state.copy(cure = newCure)
       case newWorld: World                  => state.copy(world = newWorld)
-      case newInfection: PopulationStrategy => state.copy(infectionLogic = newInfection)
-      case newReactions: Reactions          => state.copy(reactions = newReactions)
-      case _                                => state
+      case newInfection: PopulationStrategy=>
+        state.copy(infectionLogic = newInfection)
+      case newReactions: Reactions =>
+        state.copy(reactions = newReactions)
+      case _ => state
