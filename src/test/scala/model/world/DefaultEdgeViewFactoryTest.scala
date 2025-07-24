@@ -9,9 +9,9 @@ import view.world.DefaultEdgeViewFactory
 class DefaultEdgeViewFactoryTest extends AnyFlatSpec with Matchers:
 
   private val edgeStyles = Map(
-    EdgeType.Land -> ((-1, -2), Color.Green),
-    EdgeType.Sea  -> ((0, 0), Color.Blue),
-    EdgeType.Air  -> ((5, 5), Color.Red)
+    EdgeType.Land -> ((-1.0, -2.0), Color.Green),
+    EdgeType.Sea  -> ((0.0, 0.0), Color.Blue),
+    EdgeType.Air  -> ((5.0, 5.0), Color.Red)
   )
 
   private val factory = new DefaultEdgeViewFactory(edgeStyles)
@@ -23,7 +23,7 @@ class DefaultEdgeViewFactoryTest extends AnyFlatSpec with Matchers:
       "B" -> (30.0, 40.0)
     )
 
-    val line = factory.createEdge(edge, positions).asInstanceOf[javafx.scene.shape.Line]
+    val line = factory.createEdge("A-B-L", edge, positions).getLine
 
     line.getStartX shouldBe 9.0
     line.getStartY shouldBe 18.0
@@ -38,7 +38,7 @@ class DefaultEdgeViewFactoryTest extends AnyFlatSpec with Matchers:
       "B" -> (100.0, 200.0)
     )
 
-    val line = factory.createEdge(edge, positions).asInstanceOf[javafx.scene.shape.Line]
+    val line = factory.createEdge("A-B-S", edge, positions).getLine
 
     line.getStartX shouldBe 0.0
     line.getStartY shouldBe 0.0
@@ -53,7 +53,7 @@ class DefaultEdgeViewFactoryTest extends AnyFlatSpec with Matchers:
       "B" -> (4.0, 9.0)
     )
 
-    val line = factory.createEdge(edge, positions).asInstanceOf[javafx.scene.shape.Line]
+    val line = factory.createEdge("A-B-A", edge, positions).getLine
 
     line.getStartX shouldBe 6.0
     line.getStartY shouldBe 6.0

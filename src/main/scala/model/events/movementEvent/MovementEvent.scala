@@ -65,7 +65,7 @@ case class MovementEvent() extends Event[Map[String, Node]]:
     val neighbors = s.world.neighbors
 
     val isEdgeOpen = (a: String, b: String) => s.world.edges.exists(e =>
-      (e.nodeA == a && e.nodeB == b || e.nodeA == b && e.nodeB == a) && !e.isClose
+      (e._2.nodeA == a && e._2.nodeB == b || e._2.nodeA == b && e._2.nodeB == a) && !e._2.isClose
     )
 
     val arrivals: Map[String, Int] = computeTotalArrivals(nodes, movements, neighbors,isEdgeOpen, rng)

@@ -1,7 +1,7 @@
 package dsl.builders
 
 import model.cure.Cure
-import model.infection.InfectionAndDeathPopulation.PopulationStrategy
+import model.infection.PopulationStrategy
 import model.plague.Disease
 import model.time.Time
 import model.world.World

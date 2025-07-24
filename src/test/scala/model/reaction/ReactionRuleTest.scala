@@ -1,12 +1,7 @@
 package model.reaction
 
 import model.core.SimulationState
-import model.cure.Cure
-import model.infection.InfectionAndDeathPopulation.Infection.Death.StandardDeath
-import model.infection.InfectionAndDeathPopulation.Infection.StandardInfection
-import model.plague.Disease
 import model.reaction.ReactionAction.CloseEdges
-import model.reaction.Reactions.StandardReactions
 import model.time.BasicYear
 import model.time.TimeTypes.*
 import model.world.{EdgeType, Node, Static, World}
@@ -17,7 +12,7 @@ class ReactionRuleTest extends AnyFlatSpec with Matchers:
   def testSimulationState: SimulationState =
     val defaultNode  = Node.Builder(100, 0, 0).build()
     val initialNodes = Map("A" -> defaultNode, "B" -> defaultNode)
-    val initialWorld = World(initialNodes, Set.empty, Map(Static -> 1.0))
+    val initialWorld = World(initialNodes, Map.empty, Map(Static -> 1.0))
     SimulationState(
       BasicYear(Day(0), Year(2023)),
       null,

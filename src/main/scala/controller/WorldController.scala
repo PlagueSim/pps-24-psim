@@ -8,14 +8,18 @@ class WorldController(initialWorld: World):
   private var nodePositions: Map[String, (Double, Double)] =
     world.nodes.keys.map(id => id -> (0.0, 0.0)).toMap
 
+  def getWorld: World =
+    world
   def getNodes: Map[String, Node] =
     world.nodes
 
-  def getEdges: Set[Edge] =
-    world.edges
+  def getEdges: Iterable[Edge] =
+    world.edges.values
 
   def getNodePositions: Map[String, (Double, Double)] =
     nodePositions
 
   def updateNodePosition(nodeId: String, x: Double, y: Double): Unit =
     nodePositions = nodePositions.updated(nodeId, (x, y))
+
+
