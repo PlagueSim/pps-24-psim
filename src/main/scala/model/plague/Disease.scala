@@ -55,7 +55,7 @@ case class Disease private(
    * @return A [[Double]] representing the [[Disease]] current mutation chance.
    */
   def mutationChance: Double =
-    traits.toList.map(_.stats.mutationChance).sum + traits.count(_.category == Symptom) * 0.005
+    traits.toList.map(_.stats.mutationChance).sum
 
   /**
    *
@@ -66,8 +66,8 @@ case class Disease private(
   /**
    *  computes the sum of the [[Disease]] stats
    *
-   * @param stats
-   * @return [[TraitStats]]
+   * @param stats the list of [[TraitStats]] to be summed together
+   * @return [[TraitStats]] the sum of all of the [[stats]] of this [[Disease]]
    */
   private def sum(stats: List[TraitStats]): TraitStats =
     stats.foldLeft(TraitStats())((prev, current) =>
@@ -186,13 +186,17 @@ case class Disease private(
    * Attempts a random mutation by evolving a random [[Trait]] from the set of available traits.
    * Only traits that are not yet evolved and can currently be evolved are considered.
    *
-   * @return a new [[Disease]] with the randomly evolved [[Trait]] if possible, otherwise this instance
+   * @return the evolved [[Trait]] if present
+   *         and a new [[Disease]] with the randomly evolved [[Trait]] if possible,
+   *         otherwise this instance
    */
-  def randomMutation(): Disease =
+  def randomMutation(): (Option[Trait], Disease) =
     val allTraits = Symptoms.allBasics
     allTraits.diff(traits.toList).filter(canEvolve) match
-      case Nil => this
-      case evolvable => copy(traits = traits + Random.shuffle(evolvable).head)
+      case Nil => (Option.empty, this)
+      case evolvable =>
+        val rndTr = Random.shuffle(evolvable).head
+        (Some(rndTr), copy(traits = traits + rndTr))
 
   /**
    * Returns a new [[Disease]] instance with the given number of DNA points added.
