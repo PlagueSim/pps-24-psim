@@ -9,7 +9,7 @@ import javafx.scene.shape.Line
 
 class WorldView(worldController: WorldController) extends Pane with UpdatableView:
 
-  val worldRenderer = new WorldRenderer(worldController, this)
+  private val worldRenderer = new WorldRenderer(worldController, this)
   private val layout = new CircularLayout()
 
   private var nodeViews: Map[String, NodeView] = Map.empty
@@ -36,7 +36,7 @@ class WorldView(worldController: WorldController) extends Pane with UpdatableVie
   nodeViews = nodeLayer.nodeViews
   edgeViews = edgeLayer.edgeLines
 
-  def redrawEdges(updatedEdges: Iterable[Edge]): Unit =
+  private def redrawEdges(updatedEdges: Iterable[Edge]): Unit =
     val (newEdgeMap, toAdd, toRemove) =
       EdgeUpdater.update(edgeViews, updatedEdges, nodeViews.view.mapValues(nv => () => nv.position()).toMap)
 
@@ -50,6 +50,14 @@ class WorldView(worldController: WorldController) extends Pane with UpdatableVie
     children.removeAll(toRemove.toSeq*)
     children.addAll(toAdd.toSeq*)
 
+  /**
+   * Updates the visual representation of the world using the given simulation state.
+   *
+   * This includes updating the node views, edge views, and delegating to the world renderer
+   * to refresh layout and visuals.
+   *
+   * @param state the current simulation state with updated world data
+   */
   override def update(state: SimulationState): Unit =
     redrawNodes(state.world.nodes)
     redrawEdges(state.world.edges.values)

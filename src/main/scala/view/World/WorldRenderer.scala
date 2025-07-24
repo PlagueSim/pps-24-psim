@@ -16,6 +16,14 @@ class WorldRenderer(worldController: WorldController, pane: Pane):
     (edgeLayer.edgeLines.values ++ nodeLayer.allVisuals).toSeq*
   )
 
+  /**
+   * Updates the visual representation of the world using the provided simulation state.
+   *
+   * This method updates the node and edge layers, recalculates positions,
+   * and efficiently updates the scene by reusing visuals where possible.
+   *
+   * @param state the current simulation state containing the latest world data
+   */
   def update(state: SimulationState): Unit =
     val newNodeLayer = createNodeLayer(state.world.nodes)
     nodeLayer.updateWith(newNodeLayer)
@@ -50,8 +58,8 @@ class WorldRenderer(worldController: WorldController, pane: Pane):
     val positionsMap = layout.computePositions(nodes.keySet.toSeq)
     NodeLayer.fromNodes(
       nodes,
-      layout = id => positionsMap(id),
-      onMoved = () => redraw()
+      id => positionsMap(id),
+      () => redraw()
     )
 
 

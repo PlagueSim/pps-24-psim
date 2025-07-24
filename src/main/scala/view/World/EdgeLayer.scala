@@ -1,9 +1,14 @@
 package view.world
 
 import model.world.{Edge, EdgeType}
+import model.world.EdgeExtensions.*
 import javafx.scene.shape.Line
 import scalafx.scene.paint.Color
 
+/*
+ * EdgeLayer manages the visual representation of edges in the simulation.
+ * It handles creation, storage, and updates of JavaFX Line objects.
+ */
 class EdgeLayer(
                  edges: Iterable[Edge],
                  nodePositions: Map[String, () => (Double, Double)]
@@ -11,17 +16,16 @@ class EdgeLayer(
 
   import EdgeLayer.*
 
-  private def edgeId(a: String, b: String): String =
-    if a < b then s"$a-$b" else s"$b-$a"
-
+  /* Map of edge IDs to their corresponding JavaFX Line visuals. */
   val edgeLines: Map[String, Line] = edges.map { edge =>
-    val id = edgeId(edge.nodeA, edge.nodeB)
+    val id = edge.edgeId
     id -> createEdgeLine(edge, nodePositions)
   }.toMap
 
+  /* Updates existing edges' visuals or creates new ones if needed. */
   def updateEdges(updatedEdges: Iterable[Edge]): Map[String, Line] =
     updatedEdges.map { edge =>
-      val id = edgeId(edge.nodeA, edge.nodeB)
+      val id = edge.edgeId
       val line = edgeLines.get(id) match
         case Some(existing) =>
           updateLine(existing, edge, nodePositions)
@@ -33,6 +37,7 @@ class EdgeLayer(
 
 object EdgeLayer:
 
+  /* Creates a new Line visual representing the given edge. */
   def createEdgeLine(edge: Edge, nodePositions: Map[String, () => (Double, Double)]): Line =
     val (startX, startY) = nodePositions(edge.nodeA)()
     val (endX, endY) = nodePositions(edge.nodeB)()
@@ -43,7 +48,7 @@ object EdgeLayer:
     line.setStroke(edgeColor(edge.typology, edge.isClose))
     line
 
-  def updateLine(line: Line, edge: Edge, nodePositions: Map[String, () => (Double, Double)]): Unit =
+  private def updateLine(line: Line, edge: Edge, nodePositions: Map[String, () => (Double, Double)]): Unit =
     val (startX, startY) = nodePositions(edge.nodeA)()
     val (endX, endY) = nodePositions(edge.nodeB)()
     line.setStartX(startX)
@@ -52,6 +57,7 @@ object EdgeLayer:
     line.setEndY(endY)
     line.setStroke(edgeColor(edge.typology, edge.isClose))
 
+  /*  Returns the color to use for an edge based on its type and state. */
   def edgeColor(edgeType: EdgeType, isClose: Boolean): Color =
     if isClose then Color.Gray
     else
