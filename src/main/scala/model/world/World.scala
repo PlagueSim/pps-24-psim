@@ -9,6 +9,8 @@ case class World private (
   def modifyEdges(newEdges: Map[String, Edge]): World = copy(edges = newEdges)
   def modifyMovements(newMovements: Map[MovementStrategy, Double]): World = copy(movements = newMovements)
 
+  def getEdges: Iterable[Edge] =
+    edges.values
   def neighbors(nodeId: String): Set[String] =
     edges.values.collect {
       case e if e.nodeA == nodeId => e.nodeB
