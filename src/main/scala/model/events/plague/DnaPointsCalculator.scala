@@ -31,16 +31,18 @@ object DnaPointsCalculator:
 
     (currentInfectedNodes -- prevInfectedNodes).size
 
+  private def assignDnaPoints(infected: Infected, deceased: Deceased, redBubbles: Int): Int =
+    //todo: refine the calculation
+    redBubbles * NewNodeDnaMul +
+      floor(sqrt(infected)).toInt / AffectedPopDnaRatio +
+      floor(sqrt(deceased)).toInt / AffectedPopDnaRatio
+
 
   def calculate(
                  prevNodes: World,
                  currentNodes: World
                ): Int =
     val (newInfectedPop, newDeceasedPop) = extractDiff(prevNodes, currentNodes)
-
     val redBubbles = newInfectedNodes(prevNodes, currentNodes)
 
-    //todo: refine the calculation
-    redBubbles * NewNodeDnaMul +
-      floor(sqrt(newInfectedPop)).toInt / AffectedPopDnaRatio +
-      floor(sqrt(newDeceasedPop)).toInt / AffectedPopDnaRatio
+    assignDnaPoints(newInfectedPop, newDeceasedPop, redBubbles)
