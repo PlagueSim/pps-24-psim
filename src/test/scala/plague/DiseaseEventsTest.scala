@@ -8,7 +8,7 @@ import model.plague.Symptoms.*
 import model.plague.Abilities.*
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import model.events.DiseaseEvents.*
+import model.events.plague.DiseaseEvents.*
 import model.time.BasicYear
 import model.time.TimeTypes.{Day, Year}
 

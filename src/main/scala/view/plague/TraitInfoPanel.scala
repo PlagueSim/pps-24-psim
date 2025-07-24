@@ -1,7 +1,7 @@
 package view.plague
 
 import model.core.SimulationState
-import model.events.DiseaseEvents.*
+import model.events.plague.DiseaseEvents.*
 import model.events.DiseaseEventBuffer
 import model.events.DiseaseEventBuffer.newEvent
 import scalafx.scene.layout.{BorderPane, VBox}
