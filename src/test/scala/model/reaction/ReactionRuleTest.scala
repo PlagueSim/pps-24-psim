@@ -12,7 +12,7 @@ class ReactionRuleTest extends AnyFlatSpec with Matchers:
   def testSimulationState: SimulationState =
     val defaultNode  = Node.Builder(100, 0, 0).build()
     val initialNodes = Map("A" -> defaultNode, "B" -> defaultNode)
-    val initialWorld = World(initialNodes, Set.empty, Map(Static -> 1.0))
+    val initialWorld = World(initialNodes, Map.empty, Map(Static -> 1.0))
     SimulationState(
       BasicYear(Day(0), Year(2023)),
       null,

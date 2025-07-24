@@ -15,7 +15,7 @@ class ReactionConditionTest extends AnyFlatSpec with Matchers:
     val initialNodes =
       Map("A" -> defaultNode, "B" -> defaultNode, "C" -> defaultNode)
     val initialWorld =
-      World(initialNodes, Set.empty, Map(model.world.Static -> 1.0))
+      World(initialNodes, Map.empty, Map(model.world.Static -> 1.0))
     SimulationState(
       BasicYear(Day(0), Year(2023)),
       null,

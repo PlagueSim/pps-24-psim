@@ -3,7 +3,5 @@ package view.world
 import model.world.*
 
 trait EdgeViewFactory:
-  def createEdge(
-                  edge: Edge,
-                  nodePositions: Map[String, (Double, Double)]
-                ): Any
+  def createEdge(id: String, edge: Edge, positions: Map[String, (Double, Double)]): EdgeView
+

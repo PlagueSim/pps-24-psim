@@ -22,7 +22,7 @@ class CureEventTest extends AnyFlatSpec with Matchers:
     time = BasicYear(Day(0), Year(2023)),
     disease = null,
     cure = cure,
-    world = World(nodes, Set.empty, Map(Static -> 1.0)),
+    world = World(nodes, Map.empty, Map(Static -> 1.0)),
     infectionLogic = null,
     deathLogic = null,
     reactions = null

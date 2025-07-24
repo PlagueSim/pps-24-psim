@@ -23,7 +23,7 @@ class InfectionEventTest extends AnyFlatSpec with Matchers:
 
     val world = World(
       nodes = Map("A" -> node, "B" -> node),
-      Set(Edge("A", "B", EdgeType.Land)),
+      Map("A-B" -> Edge("A", "B", EdgeType.Land)),
       Map(Static -> 1)
     )
 
