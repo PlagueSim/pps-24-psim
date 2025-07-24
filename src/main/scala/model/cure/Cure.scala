@@ -7,19 +7,25 @@ object Cure:
       baseSpeed: Double = 0.0,
       modifiers: CureModifiers = CureModifiers.empty
   ): Cure =
-    require(progress >= 0.0 && progress <= 1.0, "Progress must be between 0.0 and 1.0")
+    require(
+      progress >= 0.0 && progress <= 1.0,
+      "Progress must be between 0.0 and 1.0"
+    )
     require(baseSpeed >= 0.0, "Base speed must be non-negative")
     new Cure(progress, baseSpeed, modifiers)
 
   def builder: CureBuilder = new CureBuilder(0.0, 0.0, CureModifiers.empty)
 
   final class CureBuilder private[Cure] (
-    private val progress: Double,
-    private val baseSpeed: Double,
-    private val modifiers: CureModifiers
+      private val progress: Double,
+      private val baseSpeed: Double,
+      private val modifiers: CureModifiers
   ):
     def withProgress(progress: Double): CureBuilder =
-      require(progress >= 0.0 && progress <= 1.0, "Progress must be between 0.0 and 1.0")
+      require(
+        progress >= 0.0 && progress <= 1.0,
+        "Progress must be between 0.0 and 1.0"
+      )
       new CureBuilder(progress, baseSpeed, modifiers)
 
     def withBaseSpeed(baseSpeed: Double): CureBuilder =
@@ -40,7 +46,7 @@ object Cure:
   * @param modifiers
   *   Modifiers that can affect the cure's progress speed.
   */
-final case class Cure private(
+final case class Cure private (
     progress: Double = 0.0,
     baseSpeed: Double = 0.0,
     modifiers: CureModifiers = CureModifiers.empty
@@ -61,8 +67,13 @@ final case class Cure private(
 
   def addModifier(mod: CureModifier): Cure =
     mod match
-      case oneTime: OneTimeModifier if !modifiers.modifiers.contains(oneTime.id) =>
-        Cure(oneTime.apply(progress).min(1.0).max(0.0), baseSpeed, modifiers.add(oneTime))
+      case oneTime: OneTimeModifier
+          if !modifiers.modifiers.contains(oneTime.id) =>
+        Cure(
+          oneTime.apply(progress).min(1.0).max(0.0),
+          baseSpeed,
+          modifiers.add(oneTime)
+        )
       case persistent: PersistentModifier =>
         Cure(progress, baseSpeed, modifiers.add(persistent))
       case _ => this // Ignore if the modifier is already present
@@ -129,7 +140,7 @@ object CureModifiers:
     ): CureModifiersBuilder =
       CureModifier.multiplier(id, factor) match
         case Some(mod) => new CureModifiersBuilder(modifiers + (id -> mod))
-        case None => this
+        case None      => this
 
     def addAdditive(
         id: ModifierId,
@@ -137,7 +148,7 @@ object CureModifiers:
     ): CureModifiersBuilder =
       CureModifier.additive(id, amount) match
         case Some(mod) => new CureModifiersBuilder(modifiers + (id -> mod))
-        case None => this
+        case None      => this
 
     def addProgressModifier(
         id: ModifierId,
@@ -145,6 +156,6 @@ object CureModifiers:
     ): CureModifiersBuilder =
       CureModifier.progressModifier(id, amount) match
         case Some(mod) => new CureModifiersBuilder(modifiers + (id -> mod))
-        case None => this
+        case None      => this
 
     def build: CureModifiers = CureModifiers(modifiers)
