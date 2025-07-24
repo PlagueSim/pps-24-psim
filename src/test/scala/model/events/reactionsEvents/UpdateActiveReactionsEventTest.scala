@@ -39,9 +39,9 @@ class UpdateActiveReactionsEventTest extends AnyFlatSpec with Matchers:
       disease: model.plague.Disease = null,
       cure: model.cure.Cure = null,
       world: World = testWorld,
-      infectionLogic: model.infection.InfectionAndDeathPopulation.PopulationStrategy =
+      infectionLogic: model.infection.PopulationStrategy =
         null,
-      deathLogic: model.infection.InfectionAndDeathPopulation.PopulationStrategy =
+      deathLogic: model.infection.PopulationStrategy =
         null,
       reactions: Reactions = Reactions()
   ): SimulationState =
