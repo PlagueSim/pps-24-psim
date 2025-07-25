@@ -1,7 +1,7 @@
 package dsl
 
 import controller.ExecutionMode.ExecutionMode
-import dsl.builders.disease.{DiseaseBuilder, DiseaseBuilderProxy}
+import dsl.builders.disease.DiseaseBuilder
 import dsl.builders.{
   SetupBuilder,
   SimulationStateBuilder,
@@ -10,7 +10,7 @@ import dsl.builders.{
 import model.core.SimulationState
 import model.cure.Cure
 import model.infection.PopulationStrategy
-import model.plague.{Disease, Trait}
+import model.plague.Trait
 import model.reaction.Reactions
 import model.scheduler.Scheduler
 import model.time.Time
@@ -18,6 +18,8 @@ import model.world.World
 import view.updatables.UpdatableView
 
 object DSL:
+
+  export dsl.builders.disease.DiseaseDSL.*
 
   def setup(init: SetupBuilder ?=> Unit): Unit =
     given bulder: SetupBuilder = SetupBuilder()
@@ -32,15 +34,6 @@ object DSL:
       SimulationStateBuilderProxy(() => current, updated => current = updated)
     init
     sb.addSimulationState(stateBuilder.build())
-
-  def disease(init: DiseaseBuilder ?=> Unit)(using
-      ssb: SimulationStateBuilder
-  ): Unit =
-    var current: DiseaseBuilder          = DiseaseBuilder()
-    given diseaseBuilder: DiseaseBuilder =
-      DiseaseBuilderProxy(() => current, updated => current = updated)
-    init
-    ssb.withDisease(diseaseBuilder.build())
 
   def conditions(init: SetupBuilder ?=> SimulationState => Boolean)(using
       sb: SetupBuilder
@@ -96,18 +89,3 @@ object DSL:
       ssb: SimulationStateBuilder
   ): Unit =
     ssb.withReactions(init)
-
-  def diseaseName(init: DiseaseBuilder ?=> String)(using
-      db: DiseaseBuilder
-  ): Unit =
-    db.withName(init)
-
-  def diseaseTraits(init: DiseaseBuilder ?=> Set[Trait])(using
-      db: DiseaseBuilder
-  ): Unit =
-    db.withTraits(init)
-
-  def diseasePoints(init: DiseaseBuilder ?=> Int)(using
-      db: DiseaseBuilder
-  ): Unit =
-    db.withPoints(init)
