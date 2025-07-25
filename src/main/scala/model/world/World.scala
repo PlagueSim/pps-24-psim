@@ -5,18 +5,27 @@ case class World private (
                            edges: Map[String, Edge],
                            movements: Map[MovementStrategy, Double]
                          ):
+  /* Returns a new World instance with updated nodes */
   def modifyNodes(newNodes: Map[String, Node]): World = copy(nodes = newNodes)
+
+  /* Returns a new World instance with updated edges */
   def modifyEdges(newEdges: Map[String, Edge]): World = copy(edges = newEdges)
+
+  /* Returns a new World instance with updated movement strategies */
   def modifyMovements(newMovements: Map[MovementStrategy, Double]): World = copy(movements = newMovements)
 
+  /* Returns all edges in the world */
   def getEdges: Iterable[Edge] =
     edges.values
+
+  /* Returns the set of neighboring node IDs for the given node ID */
   def neighbors(nodeId: String): Set[String] =
     edges.values.collect {
       case e if e.nodeA == nodeId => e.nodeB
       case e if e.nodeB == nodeId => e.nodeA
     }.toSet
 
+  /* Returns true if there is at least one edge connecting the two given nodes */
   def areConnected(nodeA: String, nodeB: String): Boolean =
     edges.values.exists(e =>
       (e.nodeA == nodeA && e.nodeB == nodeB) ||
@@ -24,7 +33,7 @@ case class World private (
     )
 
 object World:
-
+  /* Creates a World instance after validating edges and movement strategies */
   def apply(
              nodes: Map[String, Node],
              edges: Map[String, Edge],
