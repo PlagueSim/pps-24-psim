@@ -1,7 +1,14 @@
 package model.events.cure
 
 import model.core.SimulationState
-import model.cure.{Cure, CureModifiers, ModifierId, ModifierKind, ModifierSource, NodeId}
+import model.cure.{
+  Cure,
+  CureModifiers,
+  ModifierId,
+  ModifierKind,
+  ModifierSource,
+  NodeId
+}
 import model.cure.CureModifiers.CureModifiersBuilder
 import model.cure.ModifierSource.Node
 import model.events.Event
@@ -10,7 +17,6 @@ import model.world.World
 
 case object GlobalCureResearchEvent extends Event[Cure]:
 
-  // Soglie configurabili
   private val SEVERITY_THRESHOLD  = 20
   private val INFECTION_THRESHOLD = 0.6
 
@@ -19,21 +25,16 @@ case object GlobalCureResearchEvent extends Event[Cure]:
       val world   = state.world
       val disease = state.disease
 
-      // Calcola il contributo di ogni nodo alla ricerca della cura globale
-      val contributions = world.nodes.keys.map:
-        nodeId =>
-        nodeId -> calculateCureContribution(nodeId, world)
-      .toMap
+      val contributions = world.nodes.keys
+        .map: nodeId =>
+          nodeId -> calculateCureContribution(nodeId, world)
+        .toMap
 
-      val builder = CureModifiers.builder
-      contributions.foreach:
-        case (nodeId, contribution) =>
-        builder.addAdditive(
-          ModifierId(Node(NodeId(nodeId)), ModifierKind.Additive),
-          contribution
-        )
-      val newModifiers = state.cure.modifiers.modifiers ++ builder.build.modifiers
-      
+      val newModifiers =
+        state.cure.modifiers.modifiers ++ contributionsToAdditive(
+          contributions
+        ).modifiers
+
       Cure.builder
         .withProgress(state.cure.progress)
         .withBaseSpeed(state.cure.baseSpeed)
@@ -41,6 +42,18 @@ case object GlobalCureResearchEvent extends Event[Cure]:
         .build
 
     state.cure
+
+  private def contributionsToAdditive(
+      contributions: Map[String, Double]
+  ): CureModifiers =
+    val builder = CureModifiers.builder
+    contributions.foreach:
+      case (nodeId, contribution) =>
+        builder.addAdditive(
+          ModifierId(Node(NodeId(nodeId)), ModifierKind.Additive),
+          contribution
+        )
+    builder.build
 
   private def totalPopulation(world: World): Double =
     world.nodes.values.map(_.population).sum
