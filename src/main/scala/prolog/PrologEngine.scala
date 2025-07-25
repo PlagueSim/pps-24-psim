@@ -16,7 +16,7 @@ object PrologEngine:
     goal =>
       new Iterable[Term]:
         override def iterator: Iterator[Term] = new Iterator[Term]:
-          var solution: SolveInfo       = engine.solve(goal);
+          var solution: SolveInfo       = engine.solve(goal)
           override def hasNext: Boolean =
             solution != null && (solution.isSuccess || solution.hasOpenAlternatives)
           override def next(): Term =

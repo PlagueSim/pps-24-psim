@@ -4,7 +4,7 @@ import alice.tuprolog.{Term, Var, Struct}
 import prolog.PrologEngine.*
 
 object TemperatureAdjuster:
-  
+
   trait TemperatureAdjuster:
     def adjustForTemperature(value: Double, temperature: Double): Double
 
