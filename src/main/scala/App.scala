@@ -23,7 +23,12 @@ object App extends JFXApp3:
         world:
           initialState.world
         disease:
-          initialState.disease
+          diseaseName:
+            "ciaoo"
+          diseaseTraits:
+            Set.empty
+          diseasePoints:
+            10
         cure:
           initialState.cure
         time:
