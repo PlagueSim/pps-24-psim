@@ -6,6 +6,8 @@ import model.cure.Cure
 import model.time.Time
 import model.infection.PopulationStrategy
 import model.core.SimulationState
+import model.reaction.Reactions
+import model.scheduler.Scheduler
 
 class SimulationStateBuilderProxy(get: () => SimulationStateBuilder,
                                   set: SimulationStateBuilder => Unit) extends SimulationStateBuilder:
@@ -31,6 +33,16 @@ class SimulationStateBuilderProxy(get: () => SimulationStateBuilder,
 
   override def withInfectionLogic(infectionLogic: PopulationStrategy): SimulationStateBuilder =
     val updated = get().withInfectionLogic(infectionLogic)
+    set(updated)
+    updated
+    
+  override def withDeathLogic(deathLogic: PopulationStrategy): SimulationStateBuilder =
+    val updated = get().withDeathLogic(deathLogic)
+    set(updated)
+    updated
+    
+  override def withReactions(reactions: Reactions): SimulationStateBuilder =
+    val updated = get().withReactions(reactions)
     set(updated)
     updated
   
