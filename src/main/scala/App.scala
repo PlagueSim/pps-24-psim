@@ -2,6 +2,7 @@ import controller.ExecutionMode.GuiFXMode
 import dsl.DSL.*
 import dsl.builders.{SetupBuilder, SimulationStateBuilder}
 import model.core.SimulationState
+import model.scheduler.CustomScheduler
 import scalafx.application.JFXApp3
 import scalafx.scene.Scene
 import scalafx.stage.Screen
@@ -35,6 +36,8 @@ object App extends JFXApp3:
           initialState.reactions
       conditions: (s: SimulationState) =>
         s.time.day.value < 50
+      scheduler:
+        CustomScheduler(500)
       bindings:
         mainView
       runMode:
