@@ -4,19 +4,24 @@ import model.core.{SimulationEngine, SimulationState}
 import view.updatables.UpdatableView
 import controller.ExecutionMode.{ExecutionMode, GuiFXMode}
 import model.scheduler.{FixedStandardRateScheduler, Scheduler}
+import view.MainView
 
 import scala.annotation.tailrec
 
 class SetupBuilder:
   private var _simulationState = SimulationState.createStandardSimulationState()
   private var _conditionsBuilder: SimulationState => Boolean = s => s.time.day.value < 20
-  private var _view: UpdatableView = null
+  private var _view: UpdatableView = MainView()
   private var _runMode: ExecutionMode = GuiFXMode
-  private val _scheduleMode: Scheduler = FixedStandardRateScheduler
+  private var _scheduleMode: Scheduler = FixedStandardRateScheduler
   private val _engine = SimulationEngine
 
   def addSimulationState(state: SimulationState): SetupBuilder = 
     _simulationState = state
+    this
+    
+  def addScheduler(scheduler: Scheduler): SetupBuilder =
+    _scheduleMode = scheduler
     this
     
   def addConditions(conditions: SimulationState => Boolean): SetupBuilder =
