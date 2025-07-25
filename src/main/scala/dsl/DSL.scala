@@ -10,13 +10,13 @@ import model.core.SimulationState
 import model.cure.Cure
 import model.infection.PopulationStrategy
 import model.plague.Disease
+import model.reaction.Reactions
+import model.scheduler.Scheduler
 import model.time.Time
 import model.world.World
 import view.updatables.UpdatableView
 
 object DSL:
-
-  // trait PsimApplication:
 
   def setup(init: SetupBuilder ?=> Unit): Unit =
     given bulder: SetupBuilder = SetupBuilder()
@@ -36,6 +36,11 @@ object DSL:
       sb: SetupBuilder
   ): Unit =
     sb.addConditions(init)
+
+  def scheduler(init: SetupBuilder ?=> Scheduler)(using
+      sb: SetupBuilder
+  ): Unit =
+    sb.addScheduler(init)
 
   def bindings(init: SetupBuilder ?=> UpdatableView)(using
       sb: SetupBuilder
@@ -71,13 +76,13 @@ object DSL:
       ssb: SimulationStateBuilder
   ): Unit =
     ssb.withInfectionLogic(init)
-    
+
   def deathLogic(init: SimulationStateBuilder ?=> PopulationStrategy)(using
       ssb: SimulationStateBuilder
   ): Unit =
     ssb.withDeathLogic(init)
-    
-  def reactions(init: SimulationStateBuilder ?=> model.reaction.Reactions)(using
+
+  def reactions(init: SimulationStateBuilder ?=> Reactions)(using
       ssb: SimulationStateBuilder
   ): Unit =
     ssb.withReactions(init)
