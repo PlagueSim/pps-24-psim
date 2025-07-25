@@ -6,6 +6,7 @@ import model.plague.Disease
 import model.time.Time
 import model.world.World
 import model.core.SimulationState
+import model.scheduler.Scheduler
 
 case class SimulationStateBuilder(
     time: Time = SimulationState.createStandardSimulationState().time,
@@ -17,7 +18,7 @@ case class SimulationStateBuilder(
     deathLogic: PopulationStrategy =
       SimulationState.createStandardSimulationState().deathLogic,
     reactions: model.reaction.Reactions =
-        SimulationState.createStandardSimulationState().reactions
+      SimulationState.createStandardSimulationState().reactions,
 ):
   def withWorld(world: World): SimulationStateBuilder =
     copy(world = world)
@@ -38,9 +39,19 @@ case class SimulationStateBuilder(
 
   def withDeathLogic(deathLogic: PopulationStrategy): SimulationStateBuilder =
     copy(deathLogic = deathLogic)
-    
-  def withReactions(reactions: model.reaction.Reactions): SimulationStateBuilder =
+
+  def withReactions(
+      reactions: model.reaction.Reactions
+  ): SimulationStateBuilder =
     copy(reactions = reactions)
 
   def build(): SimulationState =
-    SimulationState(time, disease, cure, world, infectionLogic, deathLogic, reactions)
+    SimulationState(
+      time,
+      disease,
+      cure,
+      world,
+      infectionLogic,
+      deathLogic,
+      reactions
+    )
