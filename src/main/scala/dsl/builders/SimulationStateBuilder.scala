@@ -1,12 +1,11 @@
 package dsl.builders
 
+import model.core.SimulationState
 import model.cure.Cure
 import model.infection.PopulationStrategy
 import model.plague.Disease
 import model.time.Time
 import model.world.World
-import model.core.SimulationState
-import model.scheduler.Scheduler
 
 case class SimulationStateBuilder(
     time: Time = SimulationState.createStandardSimulationState().time,

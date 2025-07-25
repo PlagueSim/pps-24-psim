@@ -1,13 +1,12 @@
 package dsl.builders
 
-import model.world.World
-import model.plague.Disease
-import model.cure.Cure
-import model.time.Time
-import model.infection.PopulationStrategy
 import model.core.SimulationState
+import model.cure.Cure
+import model.infection.PopulationStrategy
+import model.plague.Disease
 import model.reaction.Reactions
-import model.scheduler.Scheduler
+import model.time.Time
+import model.world.World
 
 class SimulationStateBuilderProxy(get: () => SimulationStateBuilder,
                                   set: SimulationStateBuilder => Unit) extends SimulationStateBuilder:
