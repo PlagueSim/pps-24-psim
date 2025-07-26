@@ -13,7 +13,7 @@ case class MovementEvent() extends Event[Map[String, Node]]:
     val neighbors = s.world.neighbors
     val isEdgeOpen = s.world.isEdgeOpen
 
-    val arrivals = ArrivalAggregator.compute(nodes, movements, neighbors, isEdgeOpen, rng)
+    val arrivals = ArrivalAggregator.computeArrivalsPerNode(nodes, movements, neighbors, isEdgeOpen, rng)
 
     MovementValidator.validateDestinations(arrivals.keySet.diff(nodes.keySet))
 
