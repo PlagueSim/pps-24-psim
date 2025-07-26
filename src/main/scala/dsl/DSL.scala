@@ -8,7 +8,6 @@ import dsl.builders.{
   SimulationStateBuilderProxy
 }
 import model.core.SimulationState
-import model.cure.Cure
 import model.infection.PopulationStrategy
 import model.plague.Trait
 import model.reaction.Reactions
@@ -20,6 +19,7 @@ import view.updatables.UpdatableView
 object DSL:
 
   export dsl.builders.disease.DiseaseDSL.*
+  export dsl.builders.cure.CureDSL.*
 
   def setup(init: SetupBuilder ?=> Unit): Unit =
     given bulder: SetupBuilder = SetupBuilder()
