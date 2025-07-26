@@ -1,6 +1,7 @@
 import controller.ExecutionMode.GuiFXMode
 import dsl.DSL.*
 import dsl.builders.{SetupBuilder, SimulationStateBuilder}
+import model.cure.CureModifiers
 import model.core.SimulationState
 import model.scheduler.CustomScheduler
 import scalafx.application.JFXApp3
@@ -30,7 +31,12 @@ object App extends JFXApp3:
           diseasePoints:
             10
         cure:
-          initialState.cure
+          cureProgress:
+            0.0
+          cureBaseSpeed:
+            1.0
+          cureModifiers:
+            CureModifiers.empty
         time:
           initialState.time
         infectionLogic:
