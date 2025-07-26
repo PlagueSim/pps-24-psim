@@ -12,10 +12,9 @@ class RevertExpiredEventTest extends AnyFlatSpec with Matchers:
   def testWorld: World =
     val nodeA = Node.withPopulation(10).build()
     val nodeB = Node.withPopulation(10).build()
-    val edge  = Edge("A", "B", EdgeType.Land)
     World(
       Map("A" -> nodeA, "B" -> nodeB),
-      Set(edge),
+      Map("A-B" -> Edge("A", "B", EdgeType.Land)),
       Map(Static -> 1.0)
     )
 
@@ -44,7 +43,7 @@ class RevertExpiredEventTest extends AnyFlatSpec with Matchers:
     )
     val event         = RevertExpiredEvent()
     val revertedWorld = event.modifyFunction(state)
-    revertedWorld.edges.forall(!_.isClose) shouldBe true
+    revertedWorld.edges.forall(!_._2.isClose) shouldBe true
 
   it should "not revert non expired reactions" in:
     val world       = testWorld
@@ -63,7 +62,7 @@ class RevertExpiredEventTest extends AnyFlatSpec with Matchers:
     val event         = RevertExpiredEvent()
     val revertedWorld = event.modifyFunction(state)
     // Should not revert, edge should remain closed
-    revertedWorld.edges.forall(_.isClose) shouldBe true
+    revertedWorld.edges.forall(_._2.isClose) shouldBe true
 
   it should "do nothing if there are no active reactions" in:
     val world = testWorld

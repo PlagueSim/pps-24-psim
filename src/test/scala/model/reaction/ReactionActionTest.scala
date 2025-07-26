@@ -3,17 +3,17 @@ package model.reaction
 import model.world.{World, Node, Edge, EdgeType, MovementStrategy, Static}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+import model.world.EdgeExtensions.*
 
 class ReactionActionTest extends AnyFlatSpec with Matchers:
 
   def testWorld: World =
     val nodeA = Node.withPopulation(10).build()
     val nodeB = Node.withPopulation(10).build()
-    val edge1 = Edge("A", "B", EdgeType.Land)
-    val edge2 = Edge("A", "B", EdgeType.Sea)
+    val edges = Map("A-B-L" -> Edge("A", "B", EdgeType.Land), "A-B-S" -> Edge("A", "B", EdgeType.Sea))
     World(
       Map("A" -> nodeA, "B" -> nodeB),
-      Set(edge1, edge2),
+      edges,
       Map(Static -> 1.0)
     )
 
@@ -56,7 +56,7 @@ class ReactionActionTest extends AnyFlatSpec with Matchers:
     updatedWorld.edges.count(_.isClose) shouldBe 0
 
   it should "not close already closed edges again" in:
-    val world = testWorld.modifyEdges(testWorld.edges.map(_.close).toSet)
+    val world = testWorld.modifyEdges(testWorld.edges.map(_.close))
     val action = ReactionAction.CloseEdges(EdgeType.Land, "A")
     val updatedWorld = action.apply(world)
     updatedWorld.edges.count(_.isClose) shouldBe world.edges.size

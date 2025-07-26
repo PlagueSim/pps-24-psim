@@ -1,9 +1,7 @@
 package model.core
 
 import model.cure.Cure
-import model.infection.InfectionAndDeathPopulation.Infection.Death.StandardDeath
-import model.infection.InfectionAndDeathPopulation.PopulationStrategy
-import model.infection.InfectionAndDeathPopulation.Infection.StandardInfection
+import model.infection.InfectionAndDeathPopulation.*
 import model.plague.Disease
 import model.plague.Symptoms.pulmonaryEdema
 import model.reaction.Reactions
@@ -13,38 +11,38 @@ import model.time.{BasicYear, Time}
 import model.world.*
 
 sealed case class SimulationState private (
-    time: Time,
-    disease: Disease,
-    cure: Cure,
-    world: World,
-    infectionLogic: PopulationStrategy,
-    deathLogic: PopulationStrategy,
-    reactions: Reactions
-)
+                                            time: Time,
+                                            disease: Disease,
+                                            cure: Cure,
+                                            world: World,
+                                            infectionLogic: PopulationStrategy,
+                                            deathLogic: PopulationStrategy,
+                                            reactions: Reactions
+                                          )
 
 object SimulationState:
   /** Creates a new SimulationState with the provided parameters.
-    *
-    * @param time
-    *   The initial time of the simulation.
-    * @param disease
-    *   The initial disease in the simulation.
-    * @param cure
-    *   The initial cure in the simulation.
-    * @param world
-    *   The initial world in the simulation.
-    * @return
-    *   A new SimulationState instance.
-    */
+   *
+   * @param time
+   *   The initial time of the simulation.
+   * @param disease
+   *   The initial disease in the simulation.
+   * @param cure
+   *   The initial cure in the simulation.
+   * @param world
+   *   The initial world in the simulation.
+   * @return
+   *   A new SimulationState instance.
+   */
   def apply(
-      time: Time,
-      disease: Disease,
-      cure: Cure,
-      world: World,
-      infectionLogic: PopulationStrategy,
-      deathLogic: PopulationStrategy,
-      reactions: Reactions
-  ): SimulationState =
+             time: Time,
+             disease: Disease,
+             cure: Cure,
+             world: World,
+             infectionLogic: PopulationStrategy,
+             deathLogic: PopulationStrategy,
+             reactions: Reactions
+           ): SimulationState =
     new SimulationState(time, disease, cure, world, infectionLogic, deathLogic, reactions)
 
   def createStandardSimulationState(): SimulationState =
@@ -54,8 +52,8 @@ object SimulationState:
     val node = Node.withPopulation(100).withInfected(1).build()
 
     val world = World(
-      nodes = Map("A" -> node, "B" -> node),
-      Set(Edge("A", "B", EdgeType.Land)),
+      Map("A" -> node, "B" -> node),
+      Map("A-B" -> Edge("A", "B", EdgeType.Land)),
       Map(Static -> 0.5, RandomNeighbor -> 0.5)
     )
 
@@ -71,12 +69,12 @@ object SimulationState:
 
   extension (state: SimulationState)
     /** Replaces the current state with a new value based on its type.
-      *
-      * @param newValue
-      *   The new value to replace in the state.
-      * @return
-      *   A new SimulationState with the updated value.
-      */
+     *
+     * @param newValue
+     *   The new value to replace in the state.
+     * @return
+     *   A new SimulationState with the updated value.
+     */
     def replace[A](newValue: A): SimulationState = newValue match
       case newTime: Time                    => state.copy(time = newTime)
       case newDisease: Disease              => state.copy(disease = newDisease)

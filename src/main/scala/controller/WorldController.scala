@@ -1,21 +1,33 @@
+// src/controller/WorldController.scala
 package controller
 
 import model.world.{Edge, Node, World}
+import view.world.View
+import view.event.*
 
-class WorldController(initialWorld: World):
-  private val world = initialWorld
+class WorldController(private val world: World, private val view: View):
 
-  private var nodePositions: Map[String, (Double, Double)] =
-    world.nodes.keys.map(id => id -> (0.0, 0.0)).toMap
+  def handle(event: ViewEvent): Unit = event match
+    case AddNode(id, data) =>
+      view.render(world.addNode(id, data))
 
-  def getNodes: Map[String, Node] =
-    world.nodes
+    case RemoveNode(id) =>
+      view.render(world.removeNode(id))
 
-  def getEdges: Set[Edge] =
-    world.edges
+    case MovePeople(from, to, amount) =>
+      view.render(world.movePeople(from, to, amount))
 
-  def getNodePositions: Map[String, (Double, Double)] =
-    nodePositions
+    case AddEdge(from, to, typology) =>
+        view.render(world.addEdge(from, to, typology))
 
-  def updateNodePosition(nodeId: String, x: Double, y: Double): Unit =
-    nodePositions = nodePositions.updated(nodeId, (x, y))
+    case RemoveEdge(from, to, typology) =>
+        view.render(world.removeEdge(from, to, typology))
+    
+    case StartWorldSimulation => 
+      view.render(world)
+    
+    case PauseWorldSimulation => ???
+    
+    case UpdateNodePosition(_, _) => ???
+    
+    case UpdateNodeLabels(_, _) => ???

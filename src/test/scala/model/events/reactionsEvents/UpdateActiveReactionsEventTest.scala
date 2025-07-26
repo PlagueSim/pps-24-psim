@@ -12,10 +12,9 @@ class UpdateActiveReactionsEventTest extends AnyFlatSpec with Matchers:
   def testWorld: World =
     val nodeA = Node.withPopulation(10).build()
     val nodeB = Node.withPopulation(10).build()
-    val edge  = Edge("A", "B", EdgeType.Land)
     World(
       Map("A" -> nodeA, "B" -> nodeB),
-      Set(edge),
+      Map("A-B" -> Edge("A", "B", EdgeType.Land)),
       Map(Static -> 1.0)
     )
 
@@ -40,9 +39,9 @@ class UpdateActiveReactionsEventTest extends AnyFlatSpec with Matchers:
       disease: model.plague.Disease = null,
       cure: model.cure.Cure = null,
       world: World = testWorld,
-      infectionLogic: model.infection.InfectionAndDeathPopulation.PopulationStrategy =
+      infectionLogic: model.infection.PopulationStrategy =
         null,
-      deathLogic: model.infection.InfectionAndDeathPopulation.PopulationStrategy =
+      deathLogic: model.infection.PopulationStrategy =
         null,
       reactions: Reactions = Reactions()
   ): SimulationState =
