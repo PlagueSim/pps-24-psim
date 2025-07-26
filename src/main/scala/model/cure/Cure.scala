@@ -157,5 +157,8 @@ object CureModifiers:
       CureModifier.progressModifier(id, amount) match
         case Some(mod) => new CureModifiersBuilder(modifiers + (id -> mod))
         case None      => this
+        
+    def withModifiers(modifiers: Map[ModifierId, CureModifier]): CureModifiersBuilder =
+      new CureModifiersBuilder(this.modifiers ++ modifiers)
 
     def build: CureModifiers = CureModifiers(modifiers)

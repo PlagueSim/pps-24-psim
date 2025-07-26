@@ -17,9 +17,8 @@ class EdgeLayer(
   import EdgeLayer.*
 
   /* Map of edge IDs to their corresponding JavaFX Line visuals. */
-  val edgeLines: Map[String, Line] = edges.map { edge =>
-    val id = edge.edgeId
-    id -> createEdgeLine(edge, nodePositions)
+  val edgeLines: Map[String, Line] = edges.flatMap { edge =>
+    createEdgeLineSafe(edge, nodePositions).map(edge.edgeId -> _)
   }.toMap
 
   /* Updates existing edges' visuals or creates new ones if needed. */
@@ -31,22 +30,23 @@ class EdgeLayer(
           updateLine(existing, edge, nodePositions)
           existing
         case None =>
-          createEdgeLine(edge, nodePositions)
+          createEdgeLineSafe(edge, nodePositions).getOrElse(new Line())
       id -> line
     }.toMap
 
 object EdgeLayer:
 
-  /* Creates a new Line visual representing the given edge. */
-  def createEdgeLine(edge: Edge, nodePositions: Map[String, LivePosition]): Line =
-    val (startX, startY) = nodePositions(edge.nodeA).get()
-    val (endX, endY) = nodePositions(edge.nodeB).get()
-    val line = new Line(
-      startX, startY,
-      endX, endY
-    )
-    line.setStroke(edgeColor(edge.typology, edge.isClose))
-    line
+  def createEdgeLineSafe(edge: Edge, nodePositions: Map[String, LivePosition]): Option[Line] =
+    for
+      start <- nodePositions.get(edge.nodeA)
+      end <- nodePositions.get(edge.nodeB)
+    yield
+      val (startX, startY) = start.get()
+      val (endX, endY) = end.get()
+      val line = new Line(startX, startY, endX, endY)
+      line.setStroke(edgeColor(edge.typology, edge.isClose))
+      line
+
 
   private def updateLine(line: Line, edge: Edge, nodePositions: Map[String, LivePosition]): Unit =
     val (startX, startY) = nodePositions(edge.nodeA).get()
