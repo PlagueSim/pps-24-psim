@@ -11,7 +11,7 @@ import model.cure.{
   NodeId
 }
 import model.plague.{Disease, Symptoms, Trait}
-import model.world.{Node, RandomNeighbor, Static, World}
+import model.world.{Node, LocalPercentageMovement, Static, World}
 import model.time.TimeTypes.{Day, Year}
 import model.time.BasicYear
 import org.scalatest.flatspec.AnyFlatSpec
