@@ -5,8 +5,8 @@ import model.world.{Node => ModelNode}
 
 sealed trait ViewEvent
 
-case object StartSimulation extends ViewEvent
-case object PauseSimulation extends ViewEvent
+case object StartWorldSimulation extends ViewEvent
+case object PauseWorldSimulation extends ViewEvent
 
 case class MovePeople(from: String, to: String, amount: Int) extends ViewEvent
 

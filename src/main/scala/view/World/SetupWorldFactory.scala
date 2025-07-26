@@ -4,7 +4,7 @@ package view.world
 import model.world.World
 import model.world.WorldFactory
 import controller.WorldController
-import view.event.StartSimulation
+import view.event.StartWorldSimulation
 
 case class SetupWorldFactory(worldView: VisualView, initialWorld: World, controller: WorldController)
 
@@ -15,7 +15,7 @@ object SetupWorldFactory:
     val controller = WorldController(world, view)
 
     view.setEventHandler(controller.handle)
-    view.handleEvent(StartSimulation)
+    view.handleEvent(StartWorldSimulation)
     SetupWorldFactory(view, world, controller)
 
   def initializeWorldConsole(): SetupWorldFactory =
@@ -24,7 +24,7 @@ object SetupWorldFactory:
     val controller = WorldController(world, view)
 
     view.setEventHandler(controller.handle)
-    view.handleEvent(StartSimulation)
+    view.handleEvent(StartWorldSimulation)
     SetupWorldFactory(view, world, controller)
 
 
