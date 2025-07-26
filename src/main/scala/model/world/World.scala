@@ -43,6 +43,18 @@ object World:
     validateMovements(movements)
     new World(nodes, edges, movements)
 
+  def applyMovements(
+                      world: World,
+                      movements: List[(String, String)]
+                    ): World =
+    val updatedNodes = movements.foldLeft(world.nodes):
+      case (acc, (from, to)) =>
+      acc
+        .updated(from, acc(from).decreasePopulation(1))
+        .updated(to, acc(to).increasePopulation(1))
+
+    world.copy(nodes = updatedNodes)
+
 
   private def validateEdges(nodes: Map[String, Node], edges: Map[String, Edge]): Unit =
     edgesMustConnectExistingNodes(nodes, edges)
