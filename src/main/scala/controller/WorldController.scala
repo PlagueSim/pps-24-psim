@@ -8,11 +8,11 @@ import view.event.*
 class WorldController(private var world: World, private val view: View):
 
   def handle(event: ViewEvent): Unit = event match
-    case StartSimulation =>
+    case StartWorldSimulation =>
       println("Simulation started.")
       view.render(world)
 
-    case PauseSimulation =>
+    case PauseWorldSimulation =>
       println("Simulation paused.")
 
     case MovePeople(from, to, amount) =>
