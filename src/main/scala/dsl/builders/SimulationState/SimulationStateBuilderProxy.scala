@@ -1,4 +1,4 @@
-package dsl.builders
+package dsl.builders.SimulationState
 
 import model.core.SimulationState
 import model.cure.Cure

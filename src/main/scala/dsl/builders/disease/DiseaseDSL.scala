@@ -1,6 +1,6 @@
 package dsl.builders.disease
 
-import dsl.builders.SimulationStateBuilder
+import dsl.builders.SimulationState.SimulationStateBuilder
 import model.plague.Trait
 
 object DiseaseDSL:

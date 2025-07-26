@@ -1,8 +1,10 @@
 package dsl.builders.cure
 
+import dsl.builders.SimulationState.SimulationStateBuilder
+
 object CureDSL:
   def cure(init: CureBuilder ?=> Unit)(using
-      ssb: dsl.builders.SimulationStateBuilder
+      ssb: SimulationStateBuilder
   ): Unit =
     var current: CureBuilder       = CureBuilder()
     given cureBuilder: CureBuilder =
