@@ -21,7 +21,7 @@ class MovementEventTest extends AnyFlatSpec with Matchers:
 
     val movements: Map[MovementStrategy, Double] = Map(
       Static -> 0.5,
-      RandomNeighbor -> 0.5
+      LocalPercentageMovement -> 0.5
     )
 
     val worldBefore = World(nodes, edges, movements)

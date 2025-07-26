@@ -1,6 +1,6 @@
 package model.events.movementEvent
 
-import model.world.{MovementStrategy, Node, RandomNeighbor, RandomWorld, Static, World}
+import model.world.{MovementStrategy, Node, LocalPercentageMovement, GlobalRandomMovement, Static, World}
 import model.core.SimulationState
 import model.events.Event
 
@@ -24,11 +24,11 @@ case class MovementEvent() extends Event[Map[String, Node]]:
     val allMovements = strategyToCounts.flatMap {
       case (strategy, param) if strategy != Static =>
         strategy match
-          case RandomWorld =>
+          case GlobalRandomMovement =>
             MovementStrategyLogic.compute(strategy, nodes, param, neighbors, isEdgeOpen, rng)
 
-          case RandomNeighbor =>
-            val percent = movements(RandomNeighbor)
+          case LocalPercentageMovement =>
+            val percent = movements(LocalPercentageMovement)
             MovementStrategyLogic.compute(strategy, nodes, percent, neighbors, isEdgeOpen, rng)
 
           case _ => Nil

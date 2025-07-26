@@ -1,6 +1,6 @@
 package model.events.movementEvent
 
-import model.world.{MovementStrategy, Node, RandomNeighbor, RandomWorld, Static}
+import model.world.{MovementStrategy, Node, LocalPercentageMovement, GlobalRandomMovement, Static}
 
 object MovementStrategyLogic:
 
@@ -13,9 +13,9 @@ object MovementStrategyLogic:
                rng: scala.util.Random
              ): List[(String, String)] = strategy match
     case Static => Nil
-    case RandomWorld =>
+    case GlobalRandomMovement =>
       val peopleToMove = param.toInt
       RandomWorldLogic.compute(nodes, peopleToMove, neighbors, isEdgeOpen, rng)
-    case RandomNeighbor =>
+    case LocalPercentageMovement =>
       val percent = param
       RandomNeighborLogic.compute(nodes, percent, neighbors, isEdgeOpen, rng)

@@ -54,7 +54,7 @@ object SimulationState:
     val world = World(
       Map("A" -> node, "B" -> node),
       Map("A-B" -> Edge("A", "B", EdgeType.Land)),
-      Map(Static -> 0.3, RandomWorld -> 0.4, RandomNeighbor -> 0.3)
+      Map(Static -> 0.3, GlobalRandomMovement -> 0.4, LocalPercentageMovement -> 0.3)
     )
 
     SimulationState(
