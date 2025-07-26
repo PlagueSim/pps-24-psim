@@ -33,7 +33,7 @@ class WorldTest extends AnyFlatSpec with Matchers:
 
     val invalidMovements: Map[MovementStrategy, Double] = Map(
       Static -> 0.6,
-      RandomNeighbor -> 0.3
+      LocalPercentageMovement -> 0.3
     )
     an[IllegalArgumentException] shouldBe thrownBy {
       World(nodes, edges, invalidMovements)
@@ -41,7 +41,7 @@ class WorldTest extends AnyFlatSpec with Matchers:
 
     val negativeMovements: Map[MovementStrategy, Double] = Map(
       Static -> 0.5,
-      RandomNeighbor -> -0.5
+      LocalPercentageMovement -> -0.5
     )
     an[IllegalArgumentException] shouldBe thrownBy {
       World(nodes, edges, negativeMovements)
@@ -59,7 +59,7 @@ class WorldTest extends AnyFlatSpec with Matchers:
     val edges = Map("A-B" -> Edge("A", "B", EdgeType.Land))
     val movements: Map[MovementStrategy, Double] =Map(
       Static -> 0.7,
-      RandomNeighbor -> 0.3
+      LocalPercentageMovement -> 0.3
     )
 
     val world = World(nodes, edges, movements)

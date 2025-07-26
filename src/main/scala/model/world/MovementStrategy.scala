@@ -9,4 +9,6 @@ sealed trait MovementStrategy
 
 case object Static extends MovementStrategy
 
-case object RandomNeighbor extends MovementStrategy
+case object LocalPercentageMovement extends MovementStrategy
+
+case object GlobalRandomMovement extends MovementStrategy

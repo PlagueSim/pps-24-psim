@@ -43,6 +43,18 @@ object World:
     validateMovements(movements)
     new World(nodes, edges, movements)
 
+  def applyMovements(
+                      world: World,
+                      movements: List[(String, String)]
+                    ): World =
+    val updatedNodes = movements.foldLeft(world.nodes):
+      case (acc, (from, to)) =>
+      acc
+        .updated(from, acc(from).decreasePopulation(1))
+        .updated(to, acc(to).increasePopulation(1))
+
+    world.copy(nodes = updatedNodes)
+
 
   private def validateEdges(nodes: Map[String, Node], edges: Map[String, Edge]): Unit =
     edgesMustConnectExistingNodes(nodes, edges)
@@ -85,12 +97,12 @@ object World:
   extension (world: World)
     def addNode(id: String, data: Node): World =
       world.modifyNodes(world.nodes + (id -> data))
-  
+
     def removeNode(id: String): World =
       val updatedEdges = world.edges.filterNot { case (_, edge) => edge.connects(id) }
       val updatedNodes = world.nodes - id
       world.modifyNodes(updatedNodes).modifyEdges(updatedEdges)
-  
+
     def movePeople(from: String, to: String, amount: Int): World =
       (for
         fromNode <- world.nodes.get(from)
@@ -100,12 +112,17 @@ object World:
         val toUpdated = toNode.increasePopulation(amount)
         world.modifyNodes(world.nodes.updated(from, fromUpdated).updated(to, toUpdated))
         ).getOrElse(world)
-  
+
     def addEdge(from: String, to: String, typology: EdgeType): World =
       val key = s"${from}_${to}_${typology.toString}"
       if world.edges.contains(key) then world
       else world.modifyEdges(world.edges + (key -> Edge(from, to, typology)))
-  
+
     def removeEdge(from: String, to: String, typology: EdgeType): World =
       val key = s"${from}_${to}_${typology.toString}"
       world.modifyEdges(world.edges - key)
+
+    def isEdgeOpen(a: String, b: String): Boolean =
+      world.edges.values.exists(e =>
+        ((e.nodeA == a && e.nodeB == b) || (e.nodeA == b && e.nodeB == a)) && !e.isClose
+      )
