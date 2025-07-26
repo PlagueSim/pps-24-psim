@@ -167,7 +167,7 @@ case class Disease private(
    * Attempts to remove a previously evolved [[Trait]] from the disease.
    *
    * A [[Trait]] can be removed only if:
-   *  - it exists in the [[Disease]]
+   *  - it exists in the [[Disease]]                               diseaseSeverity: Int,  
    *  - the removal should not leave any other [[Trait]] isolated
    *
    * Two DNA points are refunded when the [[Trait]] is removed.
