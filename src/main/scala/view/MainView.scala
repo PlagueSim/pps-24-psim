@@ -1,5 +1,6 @@
 package view
 
+import model.world.WorldFactory
 import controller.ViewController
 import model.core.SimulationState
 import scalafx.geometry.Insets
@@ -14,7 +15,7 @@ import view.world.{SetupWorldFactory, WorldView}
 
 class MainView extends BorderPane with UpdatableView:
   private val controller = ViewController(this)
-  private val setup = SetupWorldFactory.initializeWorldGui()
+  private val setup = SetupWorldFactory.initializeWorldGui(WorldFactory.mockWorld())
   private val mapView = setup.worldView
   private val mapPane: Node = mapView.root
   private val plgPane = PlagueView()
@@ -52,7 +53,7 @@ class MainView extends BorderPane with UpdatableView:
     plgPane.update(newState)
     datePane.update(newState)
     progressBar.update(newState)
-    mapView.render(newState.world)
+    mapView.update(newState)
     infectionRecap.update(newState)
 end MainView
 
