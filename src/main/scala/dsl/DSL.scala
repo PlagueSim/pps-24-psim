@@ -22,9 +22,9 @@ object DSL:
   export dsl.builders.cure.CureDSL.*
 
   def setup(init: SetupBuilder ?=> Unit): Unit =
-    given bulder: SetupBuilder = SetupBuilder()
+    given builder: SetupBuilder = SetupBuilder()
     init
-    bulder.build()
+    builder.build()
 
   def simulationState(init: SimulationStateBuilder ?=> Unit)(using
       sb: SetupBuilder
