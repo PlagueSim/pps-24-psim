@@ -1,25 +1,20 @@
 package dsl
 
 import controller.ExecutionMode.ExecutionMode
-import dsl.builders.disease.DiseaseBuilder
-import dsl.builders.{
-  SetupBuilder,
+import dsl.builders.SetupBuilder
+import dsl.builders.SimulationState.{
   SimulationStateBuilder,
   SimulationStateBuilderProxy
 }
 import model.core.SimulationState
-import model.infection.PopulationStrategy
-import model.plague.Trait
-import model.reaction.Reactions
 import model.scheduler.Scheduler
-import model.time.Time
-import model.world.World
 import view.updatables.UpdatableView
 
 object DSL:
 
   export dsl.builders.disease.DiseaseDSL.*
   export dsl.builders.cure.CureDSL.*
+  export dsl.builders.SimulationState.SimStateDSL.*
 
   def setup(init: SetupBuilder ?=> Unit): Unit =
     given builder: SetupBuilder = SetupBuilder()
@@ -54,38 +49,3 @@ object DSL:
       sb: SetupBuilder
   ): Unit =
     sb.addRun(init)
-
-  def world(init: SimulationStateBuilder ?=> World)(using
-      ssb: SimulationStateBuilder
-  ): Unit =
-    ssb.withWorld(init)
-
-//  def cure(init: SimulationStateBuilder ?=> Cure)(using
-//      ssb: SimulationStateBuilder
-//  ): Unit =
-//    ssb.withCure(init)
-
-//  def disease(init: SimulationStateBuilder ?=> Disease)(using
-//      ssb: SimulationStateBuilder
-//  ): Unit =
-//    ssb.withDisease(init)
-
-  def time(init: SimulationStateBuilder ?=> Time)(using
-      ssb: SimulationStateBuilder
-  ): Unit =
-    ssb.withTime(init)
-
-  def infectionLogic(init: SimulationStateBuilder ?=> PopulationStrategy)(using
-      ssb: SimulationStateBuilder
-  ): Unit =
-    ssb.withInfectionLogic(init)
-
-  def deathLogic(init: SimulationStateBuilder ?=> PopulationStrategy)(using
-      ssb: SimulationStateBuilder
-  ): Unit =
-    ssb.withDeathLogic(init)
-
-  def reactions(init: SimulationStateBuilder ?=> Reactions)(using
-      ssb: SimulationStateBuilder
-  ): Unit =
-    ssb.withReactions(init)
