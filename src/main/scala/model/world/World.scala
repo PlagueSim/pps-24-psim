@@ -43,6 +43,7 @@ object World:
     validateMovements(movements)
     new World(nodes, edges, movements)
 
+
   private def validateEdges(nodes: Map[String, Node], edges: Map[String, Edge]): Unit =
     edgesMustConnectExistingNodes(nodes, edges)
     twoNodesCannotBeConnectedByMultipleEdgesOfSameTypology(edges)
@@ -80,3 +81,31 @@ object World:
       total >= 0.999 && total <= 1.001,
       s"Movement percentages must sum to 1.0 (got $total)"
     )
+
+  extension (world: World)
+    def addNode(id: String, data: Node): World =
+      world.modifyNodes(world.nodes + (id -> data))
+  
+    def removeNode(id: String): World =
+      val updatedEdges = world.edges.filterNot { case (_, edge) => edge.connects(id) }
+      val updatedNodes = world.nodes - id
+      world.modifyNodes(updatedNodes).modifyEdges(updatedEdges)
+  
+    def movePeople(from: String, to: String, amount: Int): World =
+      (for
+        fromNode <- world.nodes.get(from)
+        toNode <- world.nodes.get(to)
+      yield
+        val fromUpdated = fromNode.decreasePopulation(amount)
+        val toUpdated = toNode.increasePopulation(amount)
+        world.modifyNodes(world.nodes.updated(from, fromUpdated).updated(to, toUpdated))
+        ).getOrElse(world)
+  
+    def addEdge(from: String, to: String, typology: EdgeType): World =
+      val key = s"${from}_${to}_${typology.toString}"
+      if world.edges.contains(key) then world
+      else world.modifyEdges(world.edges + (key -> Edge(from, to, typology)))
+  
+    def removeEdge(from: String, to: String, typology: EdgeType): World =
+      val key = s"${from}_${to}_${typology.toString}"
+      world.modifyEdges(world.edges - key)
