@@ -40,7 +40,7 @@ class GlobalCureResearchEventTest extends AnyFlatSpec with Matchers:
       cure = cure,
       world = World(
         nodes = nodes,
-        edges = Set.empty,
+        edges = Map.empty,
         movements = Map(Static -> 1)
       ),
       infectionLogic = null,
