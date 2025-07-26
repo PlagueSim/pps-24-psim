@@ -36,11 +36,16 @@ object EdgeUpdater:
           existing.setStroke(EdgeLayer.edgeColor(edge.typology, edge.isClose))
           toRemove.remove(existing)
           existing
-        case None =>
-          val newLine = EdgeLayer.createEdgeLine(edge, nodePositions)
-          toAdd += newLine
-          newLine
 
-      updatedMap(id) = line
+        case None =>
+          EdgeLayer.createEdgeLineSafe(edge, nodePositions) match
+            case Some(newLine) =>
+              toAdd += newLine
+              newLine
+            case None =>
+              null
+
+      if line != null then updatedMap(id) = line
+
 
     (updatedMap.toMap, toAdd.toSet, toRemove.toSet)
