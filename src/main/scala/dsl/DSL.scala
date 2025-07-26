@@ -60,10 +60,10 @@ object DSL:
   ): Unit =
     ssb.withWorld(init)
 
-  def cure(init: SimulationStateBuilder ?=> Cure)(using
-      ssb: SimulationStateBuilder
-  ): Unit =
-    ssb.withCure(init)
+//  def cure(init: SimulationStateBuilder ?=> Cure)(using
+//      ssb: SimulationStateBuilder
+//  ): Unit =
+//    ssb.withCure(init)
 
 //  def disease(init: SimulationStateBuilder ?=> Disease)(using
 //      ssb: SimulationStateBuilder
