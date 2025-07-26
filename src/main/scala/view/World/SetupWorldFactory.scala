@@ -9,18 +9,18 @@ import view.event.StartWorldSimulation
 case class SetupWorldFactory(worldView: VisualView, initialWorld: World, controller: WorldController)
 
 object SetupWorldFactory:
-  def initializeWorldGui(): SetupWorldFactory =
+  def initializeWorldGui(worldInput: World): SetupWorldFactory =
     val view: VisualView = new WorldView()
-    val world = WorldFactory.mockWorld()
+    val world = worldInput
     val controller = WorldController(world, view)
 
     view.setEventHandler(controller.handle)
     view.handleEvent(StartWorldSimulation)
     SetupWorldFactory(view, world, controller)
 
-  def initializeWorldConsole(): SetupWorldFactory =
+  def initializeWorldConsole(worldInput: World): SetupWorldFactory =
     val view: VisualView = new ConsoleView()
-    val world = WorldFactory.mockWorld()
+    val world = worldInput
     val controller = WorldController(world, view)
 
     view.setEventHandler(controller.handle)

@@ -1,9 +1,10 @@
 // src/view/console/ConsoleView.scala
 package view.world
 
+import model.core.SimulationState
 import model.world.World
 import scalafx.scene.control.Label
-import view.event.ViewEvent
+import view.event.{StartWorldSimulation, ViewEvent}
 
 class ConsoleView extends VisualView:
 
@@ -26,3 +27,6 @@ class ConsoleView extends VisualView:
     eventHandler = handler
 
   override def root = new Label("Console mode – no visual UI available.")
+
+  override def update(newState: SimulationState): Unit =
+    render(newState.world)
