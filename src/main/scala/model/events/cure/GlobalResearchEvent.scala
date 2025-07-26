@@ -43,37 +43,17 @@ case object GlobalCureResearchEvent extends Event[Cure]:
 
     state.cure
 
-  private def contributionsToAdditive(
-      contributions: Map[String, Double]
-  ): CureModifiers =
-    val builder = CureModifiers.builder
-    contributions.foreach:
-      case (nodeId, contribution) =>
-        builder.addAdditive(
-          ModifierId(Node(NodeId(nodeId)), ModifierKind.Additive),
-          contribution
-        )
-    builder.build
+  private def contributionsToAdditive(contributions: Map[String, Double]): CureModifiers =
+    contributions.foldLeft(CureModifiers.builder):
+      case (builder, (nodeId, contribution)) =>
+      builder.addAdditive(ModifierId(Node(NodeId(nodeId)), ModifierKind.Additive), contribution)
+    .build
 
   private def totalPopulation(world: World): Double =
     world.nodes.values.map(_.population).sum
 
   private def nodeInfectedRatio(nodeId: String, world: World): Double =
-    world.nodes.get(nodeId) match
-      case Some(node) => node.infected / node.population.toDouble
-      case None       => 0.0
+    world.nodes.get(nodeId).map(node => node.infected / node.population.toDouble).getOrElse(0.0)
 
-  /** Calculates the contribution of a node to the global cure research based on
-    * its infected population and the total population of the world.
-    *
-    * @param nodeId
-    *   The identifier of the node.
-    * @param world
-    *   The current state of the world.
-    * @return
-    *   The contribution of the node to the global cure research.
-    */
   private def calculateCureContribution(nodeId: String, world: World): Double =
-    world.nodes.get(nodeId) match
-      case Some(node) => node.infected / totalPopulation(world)
-      case None       => 0.0
+    world.nodes.get(nodeId).map(node => node.infected / totalPopulation(world)).getOrElse(0.0)
