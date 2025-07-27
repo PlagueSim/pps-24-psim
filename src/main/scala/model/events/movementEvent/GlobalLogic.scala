@@ -11,7 +11,6 @@ object GlobalLogic extends MovementLogic:
                         percent: Double,
                         rng: scala.util.Random
   ): List[(String, String, Int)] =
-    println(s"Computing global logic")
     val edgeProbabilityMap: Map[EdgeType, Double] = Map(
       EdgeType.Land -> 0.3,
       EdgeType.Sea -> 0.2,
