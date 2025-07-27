@@ -78,3 +78,6 @@ object Node:
     /* Decreases the population count by the given value, but never below zero. */
     def decreasePopulation(count: Int): Node =
       node.copy(population = (node.population - count).max(0))
+
+    def livingPopulation: Int =
+      node.population - node.died

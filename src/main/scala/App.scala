@@ -8,9 +8,11 @@ import scalafx.application.JFXApp3
 import scalafx.scene.Scene
 import scalafx.stage.Screen
 import view.MainView
+import view.showStartPopup
 
 object App extends JFXApp3:
   override def start(): Unit =
+    showStartPopup()
     val X = Screen.primary.bounds.width
     val Y = Screen.primary.bounds.height
 
