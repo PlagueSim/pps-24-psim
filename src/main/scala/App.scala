@@ -27,7 +27,7 @@ object App extends JFXApp3:
           initialState.world
         disease:
           diseaseName:
-            "ciaoo"
+            "Diesease X"
           diseaseTraits:
             Set.empty
           diseasePoints:
