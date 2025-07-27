@@ -2,7 +2,7 @@ package model.events.movementEvent
 
 import model.world.Node
 
-object RandomNeighborLogic:
+object LocalPercentageLogic:
 
   def compute(
                nodes: Map[String, Node],

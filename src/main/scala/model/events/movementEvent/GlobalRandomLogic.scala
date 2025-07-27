@@ -2,7 +2,7 @@ package model.events.movementEvent
 
 import model.world.Node
 
-object RandomWorldLogic:
+object GlobalRandomLogic extends GlobalMovementLogic:
 
   def compute(
                nodes: Map[String, Node],
