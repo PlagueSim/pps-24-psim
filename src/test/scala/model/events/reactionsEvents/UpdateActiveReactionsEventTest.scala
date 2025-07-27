@@ -19,16 +19,11 @@ class UpdateActiveReactionsEventTest extends AnyFlatSpec with Matchers:
     )
 
   trait ConditionFactory {
-    def apply(result: Boolean): ReactionCondition = new ReactionCondition {
-      override def isSatisfied(
-          state: SimulationState,
-          nodeId: String
-      ): Boolean = result
-    }
+    def apply(result: Boolean): ReactionCondition = (state: SimulationState, nodeId: String) => result
   }
   object ConditionFactory extends ConditionFactory
 
-  def ruleWithCondition(result: Boolean) =
+  def ruleWithCondition(result: Boolean): ReactionRule =
     ReactionRule(
       ConditionFactory(result),
       nodeId => ReactionAction.CloseEdges(EdgeType.Land, nodeId)
