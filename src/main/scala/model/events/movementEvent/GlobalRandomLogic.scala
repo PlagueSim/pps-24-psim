@@ -46,7 +46,7 @@ object GlobalRandomLogic extends MovementLogic:
     val openDestinations = neighbors(from).filter(isEdgeOpen(from, _)).toVector
 
     if openDestinations.isEmpty then List.empty
-    else List.fill(count) {
+    else
       val to = openDestinations(rng.nextInt(openDestinations.size))
-      (from, to, count)
-    }
+      List((from, to, count))
+
