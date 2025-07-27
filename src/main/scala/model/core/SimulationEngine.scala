@@ -31,6 +31,14 @@ object SimulationEngine:
     */
   def executeEvent[A](event: Event[A]): Simulation[A] = event.execute()
 
+    /** Runs a standard simulation step, executing a series of predefined events
+      * in the correct order.
+      *
+      * @param state
+      *   The current simulation state.
+      * @return
+      *   The updated simulation state after executing the standard simulation step.
+      */
   def runStandardSimulation(state: SimulationState): SimulationState =
     val tick = for
       _     <- executeEvent(DiseaseEventBuffer)

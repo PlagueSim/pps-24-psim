@@ -31,6 +31,12 @@ object SimulationState:
    *   The initial cure in the simulation.
    * @param world
    *   The initial world in the simulation.
+   *   @param infectionLogic
+   *   The logic for infection in the simulation.
+   *   @param deathLogic
+   *   The logic for death in the simulation.
+   *   @param reactions
+   *   The reactions in the simulation.
    * @return
    *   A new SimulationState instance.
    */
