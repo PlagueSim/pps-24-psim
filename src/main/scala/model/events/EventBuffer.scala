@@ -11,7 +11,7 @@ import model.plague.Disease
  * @tparam A
  *   The type of result produced when the event is executed.
  */
-private case class EventBuffer[A](eventType: SimulationState => A) extends Event[A]:
+sealed trait EventBuffer[A](eventType: SimulationState => A) extends Event[A]:
   private var eventList: List[Event[A]] = List.empty
 
   /**

@@ -19,11 +19,9 @@ class TraitInfoPanel(tr: Trait) extends BorderPane with UpdatableView:
 
   private val evolveButton = StdButton("Evolve"):
     newEvent(Evolution(tr))
-    println(s"Evolved: ${tr.name}")
 
   private val involveButton = StdButton("Involve"):
     newEvent(Involution(tr))
-    println(s"Involved: ${tr.name}")
 
   private def statLabel(name: String, value: Double): Option[Label] = value match
     case v if v != 0.0 => Some(Label(s"$name: ${"%.2f".format(value)}"))

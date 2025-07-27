@@ -12,7 +12,7 @@ class CureModifiersTest extends AnyFlatSpec with Matchers:
   val globalId: ModifierId =
     ModifierId(ModifierSource.Global, ModifierKind.ProgressModifier)
 
-  val multiplier  = CureModifier.multiplier(nodeId, 2.0).get
+  val multiplier = CureModifier.multiplier(nodeId, 2.0).get
   val additive    = CureModifier.additive(mutationId, 0.03).get
   val progressMod = CureModifier.progressModifier(globalId, -0.15).get
 

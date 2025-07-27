@@ -1,14 +1,14 @@
-package model.plague
+package model.plague.db
 
+import model.plague.Trait
 import model.plague.TraitCategory.Transmission
 import model.plague.TraitDsl.*
-
-import placehoderTypes.*
+import model.plague.placehoderTypes.*
 
 /**
  * An object containing all basic Transmission values
  */
-object Transmissions:
+object Transmissions extends TraitContainer:
 
   final val bird1: Trait = define("Bird 1", Transmission)
     .cost(12)
