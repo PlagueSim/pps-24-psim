@@ -17,20 +17,15 @@ case class MovementEvent() extends Event[Map[String, Node]]:
 
     println(totalPopulation)
 
-    val totalToMove = (totalPopulation * 1.0).toInt
 
-    val strategyToCounts = assignMoversToStrategies(totalToMove, movements)
-
-    val allMovements = strategyToCounts.flatMap {
-      case (strategy, param) =>
-        val percent = movements(LocalPercentageMovement)
-        MovementStrategyLogic.compute(strategy, nodes, percent, neighbors, isEdgeOpen, rng)
-      case _ => Nil
+    val (finalNodes, allMovements) = movements.toList.foldLeft((nodes, List.empty[(String, String)])) {
+      case ((currentNodes, accMoves), (strategy, param)) =>
+        val moves = MovementStrategyLogic.compute(strategy, currentNodes, param, neighbors, isEdgeOpen, rng)
+        val updatedNodes = World.applyMovements(s.world.modifyNodes(currentNodes), moves).nodes
+        (updatedNodes, accMoves ++ moves)
     }
-
-
-    World.applyMovements(s.world, allMovements).nodes
-
+    
+    finalNodes
 
 
 
@@ -51,9 +46,3 @@ case class MovementEvent() extends Event[Map[String, Node]]:
     }
 
     adjustedAssignments.filter(_._2 > 0)
-
-    //val arrivals = ArrivalAggregator.computeArrivalsPerNode(nodes, movements, neighbors, isEdgeOpen, rng)
-
-    //MovementValidator.validateDestinations(arrivals.keySet.diff(nodes.keySet))
-
-    //NodePopulationUpdater.updateAll(nodes, arrivals, movements)
