@@ -49,10 +49,19 @@ object World:
                     ): World =
     val updatedNodes = movements.foldLeft(world.nodes):
       case (acc, (from, to)) =>
-      acc
-        .updated(from, acc(from).decreasePopulation(1))
-        .updated(to, acc(to).increasePopulation(1))
 
+        val rng = new scala.util.Random()
+        if rng.nextDouble() < acc(from).infectedPercentage() then
+          println(s"infected B" + acc(to).infected)
+          acc
+            .updated(from, acc(from).decreaseInfection(1))
+            .updated(to, acc(to).increaseInfection(1))
+            .updated(from, acc(from).decreasePopulation(1))
+            .updated(to, acc(to).increasePopulation(1))
+        else
+          acc
+            .updated(from, acc(from).decreasePopulation(1))
+            .updated(to, acc(to).increasePopulation(1))
     world.copy(nodes = updatedNodes)
 
 

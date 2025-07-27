@@ -14,7 +14,8 @@ case class MovementEvent() extends Event[Map[String, Node]]:
     val isEdgeOpen = s.world.isEdgeOpen
 
     computeAllMovements(nodes, movements, neighbors, isEdgeOpen, rng, s.world)._1
-  
+
+
 
   private def computeAllMovements(
                                    initialNodes: Map[String, Node],

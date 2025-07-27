@@ -11,7 +11,7 @@ object InfectionTypes:
       canApply = n => n.infected > 0 && n.population - n.infected > 0,
       param = _.infectivity,
       affected = node => node.population - node.infected,
-      change = (node, infected) => node.applyInfection(infected),
+      change = (node, infected) => node.increaseInfection(infected),
       applyFunction = (healthy, prob) => (healthy * prob.value).toInt
     )
 
@@ -22,7 +22,7 @@ object InfectionTypes:
       canApply = n => n.infected > 0 && n.population - n.infected > 0,
       param = _.infectivity,
       affected = node => node.population - node.infected,
-      change = (node, infected) => node.applyInfection(infected),
+      change = (node, infected) => node.increaseInfection(infected),
       adjust =
         p => Probability.fromPercentage(adjuster.adjustForTemperature(p, temp)),
       applyFunction = (healthy, prob) => (healthy * prob.value).toInt
@@ -33,7 +33,7 @@ object InfectionTypes:
       canApply = n => n.infected > 0 && n.population - n.infected > 0,
       param = _.infectivity,
       affected = node => node.population - node.infected,
-      change = (node, infected) => node.applyInfection(infected),
+      change = (node, infected) => node.increaseInfection(infected),
       applyFunction = (healthy, prob) =>
         (1 to healthy).count(_ => Random.nextDouble() < prob.value)
     )
@@ -45,7 +45,7 @@ object InfectionTypes:
       canApply = n => n.infected > 0 && n.population - n.infected > 0,
       param = _.infectivity,
       affected = node => node.population - node.infected,
-      change = (node, infected) => node.applyInfection(infected),
+      change = (node, infected) => node.increaseInfection(infected),
       adjust =
         p => Probability.fromPercentage(adjuster.adjustForTemperature(p, temp)),
       applyFunction = (healthy, prob) =>
