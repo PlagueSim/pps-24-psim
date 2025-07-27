@@ -209,7 +209,7 @@ object Symptoms extends TraitContainer:
     .cureReset(0.1)
     .build()
 
-  final val systematicInfection: Trait = define("Systemic Infection", Symptom)
+  final val systematicInfection: Trait = define("Systematic Infection", Symptom)
     .infectivity(6.0)
     .severity(7.0)
     .lethality(6.0)
