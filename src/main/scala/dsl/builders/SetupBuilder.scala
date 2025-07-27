@@ -1,18 +1,18 @@
 package dsl.builders
 
+import controller.ExecutionMode.{ExecutionMode, TerminalMode}
 import model.core.{SimulationEngine, SimulationState}
-import view.updatables.UpdatableView
-import controller.ExecutionMode.{ExecutionMode, GuiFXMode}
 import model.scheduler.{FixedStandardRateScheduler, Scheduler}
-import view.MainView
+import view.ConsoleSimulationView
+import view.updatables.UpdatableView
 
 import scala.annotation.tailrec
 
 class SetupBuilder:
   private var _simulationState = SimulationState.createStandardSimulationState()
   private var _conditionsBuilder: SimulationState => Boolean = s => s.time.day.value < 20
-  private var _view: UpdatableView = MainView()
-  private var _runMode: ExecutionMode = GuiFXMode
+  private var _view: UpdatableView = ConsoleSimulationView()
+  private var _runMode: ExecutionMode = TerminalMode
   private var _scheduleMode: Scheduler = FixedStandardRateScheduler
   private val _engine = SimulationEngine
 
