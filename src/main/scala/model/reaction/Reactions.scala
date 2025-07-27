@@ -28,7 +28,7 @@ final case class Reactions(
     activeReactions.filterNot(_.isActive(currentDay))
     
   def remove(set: Set[ActiveReaction]): Reactions =
-    this.copy(activeReactions = activeReactions.filterNot(set.contains))
+    this.copy(activeReactions = activeReactions.diff(set))
     
 object Reactions:
   val StandardReactions: Reactions =
