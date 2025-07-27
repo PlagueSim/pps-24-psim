@@ -1,13 +1,11 @@
 package model.events.movementEvent
 
-import model.world.Node
+import model.world.{Node, World}
 
 object StaticLogic extends MovementLogic:
   override def compute(
-                        nodes: Map[String, Node],
-                        param: Double,
-                        neighbors: String => Set[String],
-                        isEdgeOpen: (String, String) => Boolean,
+                        world: World,
+                        percent: Double,
                         rng: scala.util.Random
                       ): List[(String, String, Int)] = Nil
 

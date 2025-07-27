@@ -1,11 +1,9 @@
 package model.events.movementEvent
-import model.world.Node
+import model.world.{Edge, Node, World}
 
 trait MovementLogic:
   def compute(
-               nodes: Map[String, Node],
+               world: World,
                percent: Double,
-               neighbors: String => Set[String],
-               isEdgeOpen: (String, String) => Boolean,
                rng: scala.util.Random
              ): List[(String, String, Int)]

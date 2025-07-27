@@ -1,19 +1,17 @@
 package model.events.movementEvent
 
-import model.world.Node
+import model.world.{Edge, Node, World}
 
 object LocalPercentageLogic extends MovementLogic:
 
   def compute(
-               nodes: Map[String, Node],
+               world: World,
                percent: Double,
-               neighbors: String => Set[String],
-               isEdgeOpen: (String, String) => Boolean,
                rng: scala.util.Random
              ): List[(String, String, Int)] =
-    nodes.toList
-      .filter(canMove(_, neighbors, isEdgeOpen))
-      .flatMap(generateMovements(_, percent, neighbors, isEdgeOpen, rng))
+    world.nodes.toList
+      .filter(canMove(_, world.neighbors, world.isEdgeOpen))
+      .flatMap(generateMovements(_, percent, world.neighbors, world.isEdgeOpen, rng))
 
   private def canMove(
                        entry: (String, Node),

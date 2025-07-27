@@ -1,24 +1,22 @@
 package model.events.movementEvent
 
-import model.world.Node
+import model.world.{Edge, Node, World}
 
 object GlobalRandomLogic extends MovementLogic:
 
   def compute(
-               nodes: Map[String, Node],
+               world: World,
                percent: Double,
-               neighbors: String => Set[String],
-               isEdgeOpen: (String, String) => Boolean,
                rng: scala.util.Random
              ): List[(String, String, Int)] =
-    val totalPopulation = nodes.values.map(_.population).sum
+    val totalPopulation = world.nodes.values.map(_.population).sum
     val peopleToMove = (totalPopulation * percent).toInt
     if peopleToMove == 0 then return List.empty
-    val eligibleSources = nodes.filter(_._2.population > 0).keys.toVector
-    val assigned = assignPeopleToSources(nodes, eligibleSources, peopleToMove, rng)
+    val eligibleSources = world.nodes.filter(_._2.population > 0).keys.toVector
+    val assigned = assignPeopleToSources(world.nodes, eligibleSources, peopleToMove, rng)
     assigned.toList
-      .filter((from, _) => neighbors(from).exists(isEdgeOpen(from, _)))
-      .flatMap(generateMovesFromSource(_, neighbors, isEdgeOpen, rng))
+      .filter((from, _) => world.neighbors(from).exists(world.isEdgeOpen(from, _)))
+      .flatMap(generateMovesFromSource(_, world.neighbors, world.isEdgeOpen, rng))
 
   private def assignPeopleToSources(
                                      nodes: Map[String, Node],

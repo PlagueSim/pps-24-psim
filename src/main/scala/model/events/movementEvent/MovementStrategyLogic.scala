@@ -1,16 +1,14 @@
 package model.events.movementEvent
 
-import model.world.{MovementStrategy, GlobalLogicStrategy,LocalPercentageMovementStrategy, Node, LocalPercentageMovement, GlobalRandomMovement, Static}
+import model.world.{Edge, GlobalLogicStrategy, GlobalRandomMovement, LocalPercentageMovement, LocalPercentageMovementStrategy, MovementStrategy, Node, Static, World}
 object MovementStrategyLogic:
 
   def compute(
+               world: World,
                strategy: MovementStrategy,
-               nodes: Map[String, Node],
-               param: Double,
-               neighbors: String => Set[String],
-               isEdgeOpen: (String, String) => Boolean,
+               percentage: Double,
                rng: scala.util.Random
              ): List[(String, String, Int)] =
     
     MovementStrategyDispatcher.logicFor(strategy)
-      .compute(nodes, param, neighbors, isEdgeOpen, rng)
+      .compute(world, percentage, rng)
