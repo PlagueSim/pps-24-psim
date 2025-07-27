@@ -6,18 +6,19 @@ import scalafx.application.JFXApp3
 import scalafx.scene.Scene
 import scalafx.stage.Screen
 import view.MainView
-import view.showStartPopup
+import view.intro.showStartPopup
 
 object App extends JFXApp3:
   override def start(): Unit =
-    showStartPopup()
     val X = Screen.primary.bounds.width
     val Y = Screen.primary.bounds.height
 
     val mainView = MainView()
 
-    val initialState: SimulationState =
+    val preSelectionState =
       SimulationState.createStandardSimulationState()
+
+    val initialState: SimulationState = showStartPopup(preSelectionState)
 
     setup:
       simulationState:
@@ -36,7 +37,7 @@ object App extends JFXApp3:
         reactions:
           initialState.reactions
       conditions: (s: SimulationState) =>
-        s.time.day.value < 50
+        s.time.day.value < 500
       bindings:
         mainView
       runMode:
