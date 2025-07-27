@@ -13,11 +13,11 @@ case class MovementEvent() extends Event[Map[String, Node]]:
     val neighbors = s.world.neighbors
     val isEdgeOpen = s.world.isEdgeOpen
 
-    val totalLivingPopulation = nodes.values.map(_.livingPopulation).sum
+    val totalPopulation = nodes.values.map(_.population).sum
 
-    println(totalLivingPopulation)
+    println(totalPopulation)
 
-    val totalToMove = (totalLivingPopulation * 1.0).toInt
+    val totalToMove = (totalPopulation * 1.0).toInt
 
     val strategyToCounts = assignMoversToStrategies(totalToMove, movements)
 
