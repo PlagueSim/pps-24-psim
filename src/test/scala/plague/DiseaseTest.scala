@@ -1,6 +1,7 @@
 package plague
-import model.plague.{Disease, Symptoms, Trait}
-import model.plague.Symptoms.*
+import model.plague.{Disease, Trait}
+import model.plague.db.Symptoms.*
+import model.plague.db.Symptoms
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 

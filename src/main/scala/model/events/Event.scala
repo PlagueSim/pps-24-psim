@@ -22,8 +22,6 @@ trait Event[A]:
       _ <- State.set(updatedState)
     yield newFieldValue
 
+  /** The function that modifies the simulation state.
+   */
   def modifyFunction(state: SimulationState): A
-
-case class AdvanceDayEvent() extends Event[Time]:
-  override def modifyFunction(s: SimulationState): Time = s.time + 1
-

@@ -53,8 +53,3 @@ object TemperatureAdjuster:
       val solutions = prologQuery(goal)
       println(solutions.head.asInstanceOf[Struct].getArg(5).toString.toDouble)
       solutions.head.asInstanceOf[Struct].getArg(5).toString.toDouble
-//      temp match
-//        case low if temp < idealMin => value * (1 - (idealMin - temp) * penalty)
-//        case high if temp > idealMax =>
-//          value * (1 - (temp - idealMax) * penalty)
-//        case _ => value

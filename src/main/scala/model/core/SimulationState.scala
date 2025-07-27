@@ -3,7 +3,7 @@ package model.core
 import model.cure.Cure
 import model.infection.InfectionAndDeathPopulation.*
 import model.plague.Disease
-import model.plague.Symptoms.pulmonaryEdema
+import model.plague.db.Symptoms.pulmonaryEdema
 import model.reaction.Reactions
 import model.reaction.Reactions.StandardReactions
 import model.time.TimeTypes.{Day, Year}
@@ -31,6 +31,12 @@ object SimulationState:
    *   The initial cure in the simulation.
    * @param world
    *   The initial world in the simulation.
+   *   @param infectionLogic
+   *   The logic for infection in the simulation.
+   *   @param deathLogic
+   *   The logic for death in the simulation.
+   *   @param reactions
+   *   The reactions in the simulation.
    * @return
    *   A new SimulationState instance.
    */
