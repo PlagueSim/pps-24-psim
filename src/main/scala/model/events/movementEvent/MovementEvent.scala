@@ -22,17 +22,9 @@ case class MovementEvent() extends Event[Map[String, Node]]:
     val strategyToCounts = assignMoversToStrategies(totalToMove, movements)
 
     val allMovements = strategyToCounts.flatMap {
-      case (strategy, param) if strategy != Static =>
-        strategy match
-          case GlobalRandomMovement =>
-            MovementStrategyLogic.compute(strategy, nodes, param, neighbors, isEdgeOpen, rng)
-
-          case LocalPercentageMovement =>
-            val percent = movements(LocalPercentageMovement)
-            MovementStrategyLogic.compute(strategy, nodes, percent, neighbors, isEdgeOpen, rng)
-
-          case _ => Nil
-
+      case (strategy, param) =>
+        val percent = movements(LocalPercentageMovement)
+        MovementStrategyLogic.compute(strategy, nodes, percent, neighbors, isEdgeOpen, rng)
       case _ => Nil
     }
 
