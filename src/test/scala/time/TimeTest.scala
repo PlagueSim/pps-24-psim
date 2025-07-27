@@ -6,7 +6,7 @@ import model.time.*
 import model.time.TimeTypes.*
 
 class TimeTest extends AnyFlatSpec with Matchers:
-  
+
   private val VALID_DAY = 364
   private val INVALID_DAY_NEG = -1
   private val INVALID_DAY_OVER = 365

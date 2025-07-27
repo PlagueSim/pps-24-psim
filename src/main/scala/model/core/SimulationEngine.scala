@@ -1,14 +1,17 @@
 package model.core
 
 import cats.data.State
-import cats.syntax.all.*
 import model.cure.Cure
-import model.events.plague.DiseaseEvents.*
 import model.events.cure.AdvanceCureEvent
 import model.events.movementEvent.MovementEvent
-import model.events.reactionsEvents.{ApplyReactionsEvent, RevertExpiredEvent, UpdateActiveReactionsEvent}
-import model.events.{AdvanceDayEvent, ChangeNodesInWorldEvent, CureEventBuffer, DeathEvent, DiseaseEventBuffer, Event, EventBuffer, InfectionEvent}
-import model.time.TimeTypes.*
+import model.events.plague.DiseaseEvents.*
+import model.events.reactionsEvents.{
+  ApplyReactionsEvent,
+  RevertExpiredEvent,
+  UpdateActiveReactionsEvent
+}
+import model.events.time.AdvanceDayEvent
+import model.events.*
 import model.world.World
 
 /** Provides the core simulation logic based on the State monad.
