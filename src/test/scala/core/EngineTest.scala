@@ -6,6 +6,7 @@ import model.world.{MovementStrategy, Static, World}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import model.events.*
+import model.events.time.AdvanceDayEvent
 import model.plague.Disease
 import model.time.Time
 import model.time.BasicYear
