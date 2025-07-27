@@ -9,8 +9,6 @@ import scalafx.scene.text.TextAlignment.*
 
 def showStartPopup(): Unit =
   val popupStage = new Stage:
-    initStyle(StageStyle.Utility)
-    initModality(Modality.ApplicationModal)
     title = "Welcome"
 
   val startButton = StdButton("Start"):
