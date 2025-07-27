@@ -5,7 +5,7 @@ import model.cure.Cure
 import model.events.InfectionEvent
 import model.infection.InfectionAndDeathPopulation.*
 import model.plague.Disease
-import model.plague.Symptoms.*
+import model.plague.db.Symptoms.*
 import model.reaction.Reactions.StandardReactions
 import model.time.BasicYear
 import model.time.TimeTypes.{Day, Year}

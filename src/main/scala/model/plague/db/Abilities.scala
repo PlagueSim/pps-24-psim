@@ -1,6 +1,7 @@
-package model.plague
+package model.plague.db
 
 import model.plague
+import model.plague.Trait
 import model.plague.TraitCategory.Ability
 import model.plague.TraitDsl.*
 import model.plague.placehoderTypes.{Cold, Hot, Rich}
@@ -8,7 +9,7 @@ import model.plague.placehoderTypes.{Cold, Hot, Rich}
 /**
  * An object containing all basic Ability values
  */
-object Abilities:
+object Abilities extends TraitContainer:
 
   final val coldResistance1: Trait = define("Cold Resistance 1", Ability)
     .cost(7)

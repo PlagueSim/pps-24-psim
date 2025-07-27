@@ -2,7 +2,7 @@ package view.plague
 
 import controller.ViewController
 import model.core.SimulationState
-import model.plague.{Abilities, Symptoms, Transmissions}
+import model.plague.db.*
 import scalafx.geometry.Insets
 import scalafx.scene.control.{Label, TextField}
 import scalafx.scene.layout.{BorderPane, HBox, Priority, VBox}
