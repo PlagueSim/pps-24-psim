@@ -1,6 +1,6 @@
 import controller.ExecutionMode.GuiFXMode
 import dsl.DSL.*
-import dsl.builders.{SetupBuilder, SimulationStateBuilder}
+import dsl.builders.SetupBuilder
 import model.cure.CureModifiers
 import model.core.SimulationState
 import model.scheduler.CustomScheduler
