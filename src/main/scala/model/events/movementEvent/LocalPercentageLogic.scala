@@ -2,7 +2,7 @@ package model.events.movementEvent
 
 import model.world.Node
 
-object LocalPercentageLogic:
+object LocalPercentageLogic extends MovementLogic:
 
   def compute(
                nodes: Map[String, Node],

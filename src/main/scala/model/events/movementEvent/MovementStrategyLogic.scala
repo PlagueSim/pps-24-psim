@@ -1,7 +1,6 @@
 package model.events.movementEvent
 
 import model.world.{MovementStrategy, GlobalLogicStrategy,LocalPercentageMovementStrategy, Node, LocalPercentageMovement, GlobalRandomMovement, Static}
-
 object MovementStrategyLogic:
 
   def compute(
@@ -11,11 +10,7 @@ object MovementStrategyLogic:
                neighbors: String => Set[String],
                isEdgeOpen: (String, String) => Boolean,
                rng: scala.util.Random
-             ): List[(String, String)] = strategy match
-    case Static => Nil
-    case s: GlobalLogicStrategy =>
-      val count = param.toInt
-      GlobalRandomLogic.compute(nodes, count, neighbors, isEdgeOpen, rng)
-    case s: LocalPercentageMovementStrategy =>
-      val percent = param
-      LocalPercentageLogic.compute(nodes, percent, neighbors, isEdgeOpen, rng)
+             ): List[(String, String)] =
+    
+    MovementStrategyDispatcher.logicFor(strategy)
+      .compute(nodes, param, neighbors, isEdgeOpen, rng)
