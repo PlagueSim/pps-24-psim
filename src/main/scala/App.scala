@@ -1,7 +1,9 @@
 import controller.ExecutionMode.GuiFXMode
 import dsl.DSL.*
-import dsl.builders.{SetupBuilder, SimulationStateBuilder}
+import dsl.builders.SetupBuilder
+import model.cure.CureModifiers
 import model.core.SimulationState
+import model.scheduler.CustomScheduler
 import scalafx.application.JFXApp3
 import scalafx.scene.Scene
 import scalafx.stage.Screen
@@ -24,9 +26,19 @@ object App extends JFXApp3:
         world:
           initialState.world
         disease:
-          initialState.disease
+          diseaseName:
+            "Diesease X"
+          diseaseTraits:
+            Set.empty
+          diseasePoints:
+            10
         cure:
-          initialState.cure
+          cureProgress:
+            0.0
+          cureBaseSpeed:
+            1.0
+          cureModifiers:
+            CureModifiers.empty
         time:
           initialState.time
         infectionLogic:
@@ -37,6 +49,8 @@ object App extends JFXApp3:
           initialState.reactions
       conditions: (s: SimulationState) =>
         s.time.day.value < 50
+      scheduler:
+        CustomScheduler(500)
       bindings:
         mainView
       runMode:
