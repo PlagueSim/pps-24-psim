@@ -37,7 +37,19 @@ def showStartPopup(state: SimulationState): SimulationState =
       selectedNode = Option(selectionModel().getSelectedItem)
       startButton.disable = selectedNode.isEmpty
 
-  val intro = new Label():
+  val intro = introLabel()
+
+  popupStage.scene = new Scene:
+    root = new VBox:
+      spacing = 15
+      alignment = Pos.Center
+      padding = Insets(20)
+      children = Seq(intro, nodeListView, startButton)
+  popupStage.showAndWait()
+  updatedState
+
+private def introLabel(): Label =
+  new Label():
     text = "Welcome to Plague-Sim, a minimalistic simulation game\n" +
       "about spreading a disease in to the world!\n" +
       "We know it's pretty macabre but De gustibus non est disputandum!\n" +
@@ -50,12 +62,3 @@ def showStartPopup(state: SimulationState): SimulationState =
       "Now choose where you want to begin your infection, focus on transmission first and good luck!"
     wrapText = true
     textAlignment = Center
-
-  popupStage.scene = new Scene:
-    root = new VBox:
-      spacing = 15
-      alignment = Pos.Center
-      padding = Insets(20)
-      children = Seq(intro, nodeListView, startButton)
-  popupStage.showAndWait()
-  updatedState
