@@ -13,47 +13,22 @@ case class MovementEvent() extends Event[Map[String, Node]]:
     val neighbors = s.world.neighbors
     val isEdgeOpen = s.world.isEdgeOpen
 
-    val totalPopulation = nodes.values.map(_.population).sum
+    computeAllMovements(nodes, movements, neighbors, isEdgeOpen, rng, s.world)._1
+  
 
-    println(totalPopulation)
+  private def computeAllMovements(
+                                   initialNodes: Map[String, Node],
+                                   movements: Map[MovementStrategy, Double],
+                                   neighbors: String => Set[String],
+                                   isEdgeOpen: (String, String) => Boolean,
+                                   rng: scala.util.Random,
+                                   world: World
+                                 ): (Map[String, Node], List[(String, String)]) = {
 
-    val totalToMove = (totalPopulation * 1.0).toInt
-
-    val strategyToCounts = assignMoversToStrategies(totalToMove, movements)
-
-    val allMovements = strategyToCounts.flatMap {
-      case (strategy, param) =>
-        val percent = movements(LocalPercentageMovement)
-        MovementStrategyLogic.compute(strategy, nodes, percent, neighbors, isEdgeOpen, rng)
-      case _ => Nil
+    movements.toList.foldLeft((initialNodes, List.empty[(String, String)])) {
+      case ((currentNodes, collectedMoves), (strategy, percent)) =>
+        val moves = MovementStrategyLogic.compute(strategy, currentNodes, percent, neighbors, isEdgeOpen, rng)
+        val updatedNodes = World.applyMovements(world.modifyNodes(currentNodes), moves).nodes
+        (updatedNodes, collectedMoves ++ moves)
     }
-
-
-    World.applyMovements(s.world, allMovements).nodes
-
-
-
-
-  private def assignMoversToStrategies(
-                                              totalToMove: Int,
-                                              movements: Map[MovementStrategy, Double]
-                                            ): List[(MovementStrategy, Int)] =
-    val initialAssignments = movements.toList.map { case (strategy, percent) =>
-      strategy -> (percent * totalToMove).toInt
-    }
-
-    val assignedTotal = initialAssignments.map(_._2).sum
-    val missing = totalToMove - assignedTotal
-
-    val adjustedAssignments = initialAssignments.zipWithIndex.map {
-      case ((strategy, count), idx) if idx < missing => strategy -> (count + 1)
-      case ((strategy, count), _) => strategy -> count
-    }
-
-    adjustedAssignments.filter(_._2 > 0)
-
-    //val arrivals = ArrivalAggregator.computeArrivalsPerNode(nodes, movements, neighbors, isEdgeOpen, rng)
-
-    //MovementValidator.validateDestinations(arrivals.keySet.diff(nodes.keySet))
-
-    //NodePopulationUpdater.updateAll(nodes, arrivals, movements)
+  }
