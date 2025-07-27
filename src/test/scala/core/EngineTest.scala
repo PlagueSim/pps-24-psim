@@ -48,12 +48,28 @@ class EngineTest extends AnyFlatSpec with Matchers:
     yield s2
     nextState.run(simState).value._2.day.value shouldEqual 2
 
-  "The simulation engine" should "be able to run a standard simulation" in:
-    SimulationEngine.runSim()
+  val newState: SimulationState = SimulationEngine.runStandardSimulation(state)
 
-  it should "print the correct end day" in:
-    val stream = new java.io.ByteArrayOutputStream()
-    Console.withOut(stream) {
-      SimulationEngine.runSim()
-    }
-    stream.toString should include("Simulation ended on day: 6")
+  "The simulation engine" should "be able to run a standard simulation and correctly advance the date" in:
+    newState.time.day.value shouldEqual 1
+
+  it should "start infecting from the first tick" in:
+    newState.world.nodes.values.map(x => x.infected).sum should be > 1
+
+  it should "have 5 (1 initial + 4 just infected) infected per nodes after the first tick" in:
+    newState.world.nodes.values.foreach(x => x.infected shouldEqual 5)
+
+  it should "have in total 10 infected after the first tick" in:
+    newState.world.nodes.values.map(x => x.infected).sum shouldEqual 10
+
+  it should "not advance the cure instantly" in:
+    newState.cure.progress shouldEqual 0
+
+  it should "not have any active reactions after the first tick" in:
+    newState.reactions.activeReactions shouldBe empty
+
+  it should "have the standard disease, and not mutated one" in:
+    newState.disease shouldEqual state.disease
+
+  it should "not have any deaths" in:
+    newState.world.nodes.values.map(x => x.died).sum shouldEqual 0

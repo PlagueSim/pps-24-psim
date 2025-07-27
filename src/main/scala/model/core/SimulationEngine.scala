@@ -31,37 +31,6 @@ object SimulationEngine:
     */
   def executeEvent[A](event: Event[A]): Simulation[A] = event.execute()
 
-  /** Executes a sequence of events in order, returning the results as a list.
-    *
-    * @param events
-    *   The list of events to execute.
-    * @tparam A
-    *   The result type of each event.
-    * @return
-    *   A simulation that applies all events and returns a list of their
-    *   results.
-    */
-  def executeListOfEvents[A](
-      events: List[Event[A]]
-  ): Simulation[List[A]] = // da rivedere
-    events.traverse(executeEvent)
-
-  /** Runs a standard simulation scenario for demonstration. It executes several
-    * AdvanceDay events and prints the final simulation day.
-    */
-  def runSim(): Unit =
-    val listOfEvents =
-      List(AdvanceDayEvent(), AdvanceDayEvent(), AdvanceDayEvent())
-
-    val initialState = SimulationState.createStandardSimulationState()
-    val endSim       = simulationLoop().runS(initialState).value.time.day.value
-    println(s"Simulation ended on day: $endSim")
-
-  private def simulationLoop(): Simulation[Unit] = for
-    time <- executeEvent(AdvanceDayEvent())
-    _    <- if time.day.value < 6 then simulationLoop() else State.pure(())
-  yield ()
-
   def runStandardSimulation(state: SimulationState): SimulationState =
     val tick = for
       _     <- executeEvent(DiseaseEventBuffer)
@@ -69,13 +38,13 @@ object SimulationEngine:
       _     <- executeEvent(RevertExpiredEvent())
       _     <- executeEvent(UpdateActiveReactionsEvent())
       _     <- executeEvent(ApplyReactionsEvent())
-      moves <- executeEvent(MovementEvent())
-      _     <- executeEvent(ChangeNodesInWorldEvent(moves))
       x     <- executeEvent(InfectionEvent())
       _     <- executeEvent(DnaPointsAddition(x))
       _     <- executeEvent(ChangeNodesInWorldEvent(x))
       y     <- executeEvent(DeathEvent())
       _     <- executeEvent(ChangeNodesInWorldEvent(y))
+      moves <- executeEvent(MovementEvent())
+      _     <- executeEvent(ChangeNodesInWorldEvent(moves))
       _     <- executeEvent(AdvanceCureEvent())
       _     <- executeEvent(Mutation())
       _     <- executeEvent(AdvanceDayEvent())
