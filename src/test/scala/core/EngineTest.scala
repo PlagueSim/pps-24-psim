@@ -1,16 +1,12 @@
 package core
 
 import model.core.{SimulationEngine, SimulationState}
-import model.cure.Cure
-import model.world.{MovementStrategy, Static, World}
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
 import model.events.*
 import model.events.time.AdvanceDayEvent
-import model.plague.Disease
 import model.time.Time
-import model.time.BasicYear
 import model.time.TimeTypes.*
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 class EngineTest extends AnyFlatSpec with Matchers:
 
