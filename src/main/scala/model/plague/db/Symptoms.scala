@@ -1,14 +1,14 @@
-package model.plague
+package model.plague.db
 
+import model.plague.Trait
 import model.plague.TraitCategory.Symptom
 import model.plague.TraitDsl.*
-
-import placehoderTypes.*
+import model.plague.placehoderTypes.*
 
 /**
  * An object containing all basic Symptom values
  */
-object Symptoms:
+object Symptoms extends TraitContainer:
 
   final val nausea: Trait = define("Nausea", Symptom)
     .infectivity(1.0)
