@@ -55,7 +55,7 @@ object SimulationState:
     val STARTING_DAY: Int  = 0
     val STARTING_YEAR: Int = 2025
 
-    val node1 = Node.withPopulation(100).withInfected(1).build()
+    val node1 = Node.withPopulation(1000000).withInfected(1).build()
     val node2 = Node.withPopulation(100).withInfected(0).build()
 
     val world = World(

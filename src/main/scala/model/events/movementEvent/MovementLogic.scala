@@ -8,4 +8,4 @@ trait MovementLogic:
                neighbors: String => Set[String],
                isEdgeOpen: (String, String) => Boolean,
                rng: scala.util.Random
-             ): List[(String, String)]
+             ): List[(String, String, Int)]

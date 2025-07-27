@@ -45,10 +45,10 @@ object World:
 
   def applyMovements(
                       world: World,
-                      movements: List[(String, String)]
+                      movements: List[(String, String, Int)]
                     ): World =
     val updatedNodes = movements.foldLeft(world.nodes):
-      case (acc, (from, to)) =>
+      case (acc, (from, to, number)) =>
 
         val rng = new scala.util.Random()
         if rng.nextDouble() < acc(from).infectedPercentage() then

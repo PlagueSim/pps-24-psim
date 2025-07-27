@@ -24,9 +24,9 @@ case class MovementEvent() extends Event[Map[String, Node]]:
                                    isEdgeOpen: (String, String) => Boolean,
                                    rng: scala.util.Random,
                                    world: World
-                                 ): (Map[String, Node], List[(String, String)]) = {
+                                 ): (Map[String, Node], List[(String, String, Int)]) = {
 
-    movements.toList.foldLeft((initialNodes, List.empty[(String, String)])) {
+    movements.toList.foldLeft((initialNodes, List.empty[(String, String, Int)])) {
       case ((currentNodes, collectedMoves), (strategy, percent)) =>
         val moves = MovementStrategyLogic.compute(strategy, currentNodes, percent, neighbors, isEdgeOpen, rng)
         val updatedNodes = World.applyMovements(world.modifyNodes(currentNodes), moves).nodes

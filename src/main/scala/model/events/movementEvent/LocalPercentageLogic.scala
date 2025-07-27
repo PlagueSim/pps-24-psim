@@ -10,7 +10,7 @@ object LocalPercentageLogic extends MovementLogic:
                neighbors: String => Set[String],
                isEdgeOpen: (String, String) => Boolean,
                rng: scala.util.Random
-             ): List[(String, String)] =
+             ): List[(String, String, Int)] =
     nodes.toList
       .filter(canMove(_, neighbors, isEdgeOpen))
       .flatMap(generateMovements(_, percent, neighbors, isEdgeOpen, rng))
@@ -29,11 +29,9 @@ object LocalPercentageLogic extends MovementLogic:
                                  neighbors: String => Set[String],
                                  isEdgeOpen: (String, String) => Boolean,
                                  rng: scala.util.Random
-                               ): List[(String, String)] =
+                               ): List[(String, String, Int)] =
     val (from, node) = entry
     val openNeighbors = neighbors(from).filter(isEdgeOpen(from, _)).toVector
     val toMove = (node.population * percent).toInt.min(node.population)
-    (1 to toMove).map { _ =>
-      val to = openNeighbors(rng.nextInt(openNeighbors.size))
-      (from, to)
-    }.toList
+    val to = openNeighbors(rng.nextInt(openNeighbors.size))
+    List((from, to, toMove))

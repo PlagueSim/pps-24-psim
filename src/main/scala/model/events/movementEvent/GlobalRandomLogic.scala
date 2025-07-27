@@ -10,7 +10,7 @@ object GlobalRandomLogic extends MovementLogic:
                neighbors: String => Set[String],
                isEdgeOpen: (String, String) => Boolean,
                rng: scala.util.Random
-             ): List[(String, String)] =
+             ): List[(String, String, Int)] =
     val totalPopulation = nodes.values.map(_.population).sum
     val peopleToMove = (totalPopulation * percent).toInt
     if peopleToMove == 0 then return List.empty
@@ -41,12 +41,12 @@ object GlobalRandomLogic extends MovementLogic:
                                        neighbors: String => Set[String],
                                        isEdgeOpen: (String, String) => Boolean,
                                        rng: scala.util.Random
-                                     ): List[(String, String)] =
+                                     ): List[(String, String, Int)] =
     val (from, count) = entry
     val openDestinations = neighbors(from).filter(isEdgeOpen(from, _)).toVector
 
     if openDestinations.isEmpty then List.empty
     else List.fill(count) {
       val to = openDestinations(rng.nextInt(openDestinations.size))
-      (from, to)
+      (from, to, count)
     }
