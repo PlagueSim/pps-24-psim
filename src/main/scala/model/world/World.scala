@@ -1,4 +1,5 @@
 package model.world
+import org.apache.commons.math3.distribution.HypergeometricDistribution
 
 case class World private (
                            nodes: Map[String, Node],
@@ -49,9 +50,15 @@ object World:
                     ): World =
     val updatedNodes = movements.foldLeft(world.nodes):
       case (acc, (from, to, num)) =>
+        val hgd = new HypergeometricDistribution(
+          acc(from).population,
+          acc(from).infected,
+          num
+        )
+        val infected = hgd.sample()
         acc
-          .updated(from, acc(from).decreasePopulation(num))
-          .updated(to, acc(to).increasePopulation(num))
+          .updated(from, acc(from).decreasePopulation(num).decreaseInfection(infected))
+          .updated(to, acc(to).increasePopulation(num).increaseInfection(infected))
 
     world.copy(nodes = updatedNodes)
 
