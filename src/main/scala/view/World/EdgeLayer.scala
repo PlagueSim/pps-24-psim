@@ -43,7 +43,8 @@ object EdgeLayer:
     yield
       val (startX, startY) = start.get()
       val (endX, endY) = end.get()
-      val line = new Line(startX, startY, endX, endY)
+      val offset = edgeOffset(edge.typology)
+      val line = createOffsetLine(startX, startY, endX, endY, offset)
       line.setStroke(edgeColor(edge.typology, edge.isClose))
       line
 
@@ -51,11 +52,16 @@ object EdgeLayer:
   private def updateLine(line: Line, edge: Edge, nodePositions: Map[String, LivePosition]): Unit =
     val (startX, startY) = nodePositions(edge.nodeA).get()
     val (endX, endY) = nodePositions(edge.nodeB).get()
-    line.setStartX(startX)
-    line.setStartY(startY)
-    line.setEndX(endX)
-    line.setEndY(endY)
+    val offset = edgeOffset(edge.typology)
+
+    val updated = createOffsetLine(startX, startY, endX, endY, offset)
+
+    line.setStartX(updated.getStartX)
+    line.setStartY(updated.getStartY)
+    line.setEndX(updated.getEndX)
+    line.setEndY(updated.getEndY)
     line.setStroke(edgeColor(edge.typology, edge.isClose))
+
 
   /*  Returns the color to use for an edge based on its type and state. */
   def edgeColor(edgeType: EdgeType, isClose: Boolean): Color =
@@ -65,3 +71,21 @@ object EdgeLayer:
         case EdgeType.Land => Color.Green
         case EdgeType.Sea  => Color.Blue
         case EdgeType.Air  => Color.Red
+
+  private def createOffsetLine(startX: Double, startY: Double, endX: Double, endY: Double, offset: Double): Line =
+    val dx = endX - startX
+    val dy = endY - startY
+    val length = math.hypot(dx, dy).max(0.001)
+
+    val normX = -dy / length
+    val normY = dx / length
+
+    val offsetX = normX * offset
+    val offsetY = normY * offset
+
+    new Line(startX + offsetX, startY + offsetY, endX + offsetX, endY + offsetY)
+
+  def edgeOffset(edgeType: EdgeType): Double = edgeType match
+    case EdgeType.Land => 0
+    case EdgeType.Sea  => 6.0
+    case EdgeType.Air  => -6.0
