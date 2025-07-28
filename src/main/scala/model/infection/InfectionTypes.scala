@@ -3,15 +3,17 @@ package model.infection
 import model.infection.Probability.Probability
 import model.infection.TemperatureAdjuster.TemperatureAdjuster
 import model.world.Node
-
-import scala.util.Random
+import org.apache.commons.math3.distribution.{
+  BinomialDistribution,
+  HypergeometricDistribution
+}
 
 /** Object containing all the infection types */
 object InfectionTypes:
-  
+
   private val STANDARD_CAN_APPLY: Node => Boolean =
     n => n.infected > 0 && n.population - n.infected > 0
-  
+
   val StandardInfection: PopulationEffect =
     PopulationEffectBuilder.apply(
       canApply = STANDARD_CAN_APPLY,
@@ -41,7 +43,8 @@ object InfectionTypes:
       parameterExtractor = _.infectivity,
       populationSelector = node => node.population - node.infected,
       changeCalculator = (healthy, prob) =>
-        (1 to healthy).count(_ => Random.nextDouble() < prob.value),
+        val binomial = new BinomialDistribution(healthy, prob.value)
+        binomial.sample(),
       changeApplier = (node, infected) => node.increaseInfection(infected)
     )
 
@@ -56,6 +59,26 @@ object InfectionTypes:
       parameterAdjuster =
         p => Probability.fromPercentage(adjuster.adjustForTemperature(p, temp)),
       changeCalculator = (healthy, prob) =>
-        (1 to healthy).count(_ => Random.nextDouble() < prob.value),
+        val binomial = new BinomialDistribution(healthy, prob.value)
+        binomial.sample(),
+      changeApplier = (node, infected) => node.increaseInfection(infected)
+    )
+
+  /** Advanced probabilistic infection logic that allows for a variable number of affected individuals */
+  def AdvancedProbabilistic(affectable: Int): PopulationEffect =
+    PopulationEffectBuilder.apply(
+      canApply = STANDARD_CAN_APPLY,
+      parameterExtractor = _.infectivity,
+      populationSelector = node => {
+        val totalAffected = Math.multiplyExact(node.infected, affectable)
+        val hyp = new HypergeometricDistribution(
+          node.population,
+          node.population - node.infected,
+          totalAffected
+        )
+        hyp.sample()
+      },
+      changeCalculator = (healthy, prob) =>
+        new BinomialDistribution(healthy, prob.value).sample(),
       changeApplier = (node, infected) => node.increaseInfection(infected)
     )
