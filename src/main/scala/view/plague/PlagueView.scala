@@ -4,9 +4,9 @@ import controller.ViewController
 import model.core.SimulationState
 import model.plague.db.*
 import scalafx.geometry.Insets
-import scalafx.scene.control.{Label, TextField}
-import scalafx.scene.layout.{BorderPane, HBox, Priority, VBox}
-import scalafx.scene.text.{Font, Text}
+import scalafx.scene.control.Label
+import scalafx.scene.layout.{BorderPane, HBox, VBox}
+import scalafx.scene.text.Font
 import view.StdButton
 import view.updatables.UpdatableView
 
