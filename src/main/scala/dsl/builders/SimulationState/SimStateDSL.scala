@@ -1,44 +1,47 @@
 package dsl.builders.SimulationState
 
-import model.infection.PopulationStrategy
+import model.infection.PopulationEffect
 import model.reaction.Reactions
 import model.time.Time
 import model.world.World
 
+/**
+ * Provides a DSL for configuring the components of a SimulationState.
+ */
 object SimStateDSL:
-//  def world(init: SimulationStateBuilder ?=> World)(using
-//                                                    ssb: SimulationStateBuilder
-//  ): Unit =
-//    ssb.withWorld(init)
-
-  //  def cure(init: SimulationStateBuilder ?=> Cure)(using
-  //      ssb: SimulationStateBuilder
-  //  ): Unit =
-  //    ssb.withCure(init)
-
-  //  def disease(init: SimulationStateBuilder ?=> Disease)(using
-  //      ssb: SimulationStateBuilder
-  //  ): Unit =
-  //    ssb.withDisease(init)
-
+  
+  /**
+   * Sets the initial time for the simulation state.
+   */
   def time(init: SimulationStateBuilder ?=> Time)(using
                                                   ssb: SimulationStateBuilder
   ): Unit =
     ssb.withTime(init)
 
-  def infectionLogic(init: SimulationStateBuilder ?=> PopulationStrategy)(using
-                                                                          ssb: SimulationStateBuilder
+  /**
+   * Sets the infection logic for the simulation state.
+   */
+  def infectionLogic(init: SimulationStateBuilder ?=> PopulationEffect)(using
+                                                                        ssb: SimulationStateBuilder
   ): Unit =
     ssb.withInfectionLogic(init)
 
-  def deathLogic(init: SimulationStateBuilder ?=> PopulationStrategy)(using
-                                                                      ssb: SimulationStateBuilder
+  /**
+   * Sets the death logic for the simulation state.
+   * @param init A block of code that returns a `PopulationEffect` for death.
+   * @param ssb The `SimulationStateBuilder` to which the death logic will be added.
+   */
+  def deathLogic(init: SimulationStateBuilder ?=> PopulationEffect)(using
+                                                                    ssb: SimulationStateBuilder
   ): Unit =
     ssb.withDeathLogic(init)
 
+  /**
+   * Sets the reactions for the simulation state.
+   * @param init A block of code that returns a `Reactions` instance.
+   * @param ssb The `SimulationStateBuilder` to which the reactions will be added.
+   */
   def reactions(init: SimulationStateBuilder ?=> Reactions)(using
                                                             ssb: SimulationStateBuilder
   ): Unit =
     ssb.withReactions(init)
-
-

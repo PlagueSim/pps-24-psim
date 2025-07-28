@@ -5,13 +5,10 @@ import model.cure.Cure
 import model.events.cure.AdvanceCureEvent
 import model.events.movementEvent.MovementEvent
 import model.events.plague.DiseaseEvents.*
-import model.events.reactionsEvents.{
-  ApplyReactionsEvent,
-  RevertExpiredEvent,
-  UpdateActiveReactionsEvent
-}
+import model.events.reactionsEvents.{ApplyReactionsEvent, RevertExpiredEvent, UpdateActiveReactionsEvent}
 import model.events.time.AdvanceDayEvent
 import model.events.*
+import model.events.infectionAndDeath.{DeathEvent, InfectionEvent}
 import model.world.World
 
 /** Provides the core simulation logic based on the State monad.

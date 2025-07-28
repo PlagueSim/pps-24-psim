@@ -43,7 +43,7 @@ import view.ConsoleSimulationView
       s.time.day.value < 50
     scheduler:
       CustomScheduler(500)
-    bindings:
+    binding:
       ConsoleSimulationView()
     runMode:
       TerminalMode

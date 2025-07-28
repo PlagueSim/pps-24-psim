@@ -6,9 +6,6 @@ import model.core.SimulationState
 import model.time.Time
 
 /** Represents a stateful event in the simulation.
-  *
-  * @tparam A
-  *   The type of result produced when the event is executed.
   */
 trait Event[A]:
   /** Returns a stateful computation that modifies the simulation state and

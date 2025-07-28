@@ -1,7 +1,7 @@
 package dsl
 
 import controller.ExecutionMode.ExecutionMode
-import dsl.builders.SetupBuilder
+import dsl.builders.SetupBuilderAndRunner
 import dsl.builders.SimulationState.{
   SimulationStateBuilder,
   SimulationStateBuilderProxy
@@ -10,6 +10,9 @@ import model.core.SimulationState
 import model.scheduler.Scheduler
 import view.updatables.UpdatableView
 
+/**
+ * Provides a Domain-Specific Language (DSL) for creating and configuring simulations.
+ */
 object DSL:
 
   export dsl.builders.disease.DiseaseDSL.*
@@ -22,13 +25,19 @@ object DSL:
     worldMovements
   }
 
-  def setup(init: SetupBuilder ?=> Unit): Unit =
-    given builder: SetupBuilder = SetupBuilder()
+  /**
+   * Sets up and runs the simulation. This is the main entry point of the DSL.
+   */
+  def setup(init: SetupBuilderAndRunner ?=> Unit): Unit =
+    given builder: SetupBuilderAndRunner = SetupBuilderAndRunner()
     init
-    builder.build()
+    builder.run()
 
+  /**
+   * Defines a single state of the simulation.
+   */
   def simulationState(init: SimulationStateBuilder ?=> Unit)(using
-      sb: SetupBuilder
+      sb: SetupBuilderAndRunner
   ): Unit =
     var current: SimulationStateBuilder        = SimulationStateBuilder()
     given stateBuilder: SimulationStateBuilder =
@@ -36,22 +45,34 @@ object DSL:
     init
     sb.addSimulationState(stateBuilder.build())
 
-  def conditions(init: SetupBuilder ?=> SimulationState => Boolean)(using
-      sb: SetupBuilder
+  /**
+   * Defines a condition that must be met for the simulation to continue.
+   */
+  def conditions(init: SetupBuilderAndRunner ?=> SimulationState => Boolean)(using
+                                                                             sb: SetupBuilderAndRunner
   ): Unit =
     sb.addConditions(init)
 
-  def scheduler(init: SetupBuilder ?=> Scheduler)(using
-      sb: SetupBuilder
+  /**
+   * Defines a scheduler for the simulation, which controls the timing of events.
+   */
+  def scheduler(init: SetupBuilderAndRunner ?=> Scheduler)(using
+                                                           sb: SetupBuilderAndRunner
   ): Unit =
     sb.addScheduler(init)
 
-  def bindings(init: SetupBuilder ?=> UpdatableView)(using
-      sb: SetupBuilder
+  /**
+   * Binds the view to the simulation.
+   */
+  def binding(init: SetupBuilderAndRunner ?=> UpdatableView)(using
+                                                             sb: SetupBuilderAndRunner
   ): Unit =
     sb.setView(init)
 
-  def runMode(init: SetupBuilder ?=> ExecutionMode)(using
-      sb: SetupBuilder
+  /**
+   * Defines the execution mode of the simulation, which determines how the simulation runs.
+   */
+  def runMode(init: SetupBuilderAndRunner ?=> ExecutionMode)(using
+                                                             sb: SetupBuilderAndRunner
   ): Unit =
     sb.addRun(init)

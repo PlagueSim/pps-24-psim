@@ -2,7 +2,7 @@ package events.InfectionAndDeath
 
 import model.core.SimulationState
 import model.cure.Cure
-import model.events.InfectionEvent
+import model.events.infectionAndDeath.InfectionEvent
 import model.infection.InfectionAndDeathPopulation.*
 import model.plague.Disease
 import model.plague.db.Symptoms.*

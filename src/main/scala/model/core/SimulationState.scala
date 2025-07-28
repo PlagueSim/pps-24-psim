@@ -10,13 +10,14 @@ import model.time.TimeTypes.{Day, Year}
 import model.time.{BasicYear, Time}
 import model.world.*
 
+/** Represent the Simulation State */
 sealed case class SimulationState private (
                                             time: Time,
                                             disease: Disease,
                                             cure: Cure,
                                             world: World,
-                                            infectionLogic: PopulationStrategy,
-                                            deathLogic: PopulationStrategy,
+                                            infectionLogic: PopulationEffect,
+                                            deathLogic: PopulationEffect,
                                             reactions: Reactions
                                           )
 
@@ -45,12 +46,14 @@ object SimulationState:
              disease: Disease,
              cure: Cure,
              world: World,
-             infectionLogic: PopulationStrategy,
-             deathLogic: PopulationStrategy,
+             infectionLogic: PopulationEffect,
+             deathLogic: PopulationEffect,
              reactions: Reactions
            ): SimulationState =
     new SimulationState(time, disease, cure, world, infectionLogic, deathLogic, reactions)
 
+  /** Creates a standard simulation state with predefined values.
+   */
   def createStandardSimulationState(): SimulationState =
     val STARTING_DAY: Int  = 0
     val STARTING_YEAR: Int = 2025
@@ -86,7 +89,7 @@ object SimulationState:
       case newDisease: Disease              => state.copy(disease = newDisease)
       case newCure: Cure                    => state.copy(cure = newCure)
       case newWorld: World                  => state.copy(world = newWorld)
-      case newInfection: PopulationStrategy=>
+      case newInfection: PopulationEffect=>
         state.copy(infectionLogic = newInfection)
       case newReactions: Reactions =>
         state.copy(reactions = newReactions)

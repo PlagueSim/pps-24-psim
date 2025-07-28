@@ -1,6 +1,6 @@
 import controller.ExecutionMode.GuiFXMode
 import dsl.DSL.*
-import dsl.builders.SetupBuilder
+import dsl.builders.SetupBuilderAndRunner
 import model.core.SimulationState
 import model.cure.CureModifiers
 import model.scheduler.CustomScheduler
@@ -58,7 +58,7 @@ object App extends JFXApp3:
         s.time.day.value < 500
       scheduler:
         CustomScheduler(500)
-      bindings:
+      binding:
         mainView
       runMode:
         GuiFXMode

@@ -1,24 +1,29 @@
 package model.infection
 
-import scala.util.Random
+import model.world.Node
+import org.apache.commons.math3.distribution.BinomialDistribution
 
+/** Object containing all the different types of death logics */
 object DeathTypes:
+  
+  private val STANDARD_CAN_APPLY: Node => Boolean = _.infected > 0
 
-  val StandardDeath: PopulationStrategy =
-    PopulationStrategyBuilder.apply(
-      canApply = _.infected > 0,
-      param = _.lethality,
-      affected = _.infected,
-      change = (node, deaths) => node.updateDied(deaths),
-      applyFunction = (infected, prob) => (infected * prob.value).toInt
+  val StandardDeath: PopulationEffect =
+    PopulationEffectBuilder.apply(
+      canApply = STANDARD_CAN_APPLY,
+      parameterExtractor = _.lethality,
+      populationSelector = _.infected,
+      changeCalculator = (infected, prob) => (infected * prob.value).toInt,
+      changeApplier = (node, deaths) => node.updateDied(deaths)
     )
 
-  val ProbabilisticDeath: PopulationStrategy =
-    PopulationStrategyBuilder.apply(
-      canApply = _.infected > 0,
-      param = _.lethality,
-      affected = _.infected,
-      change = (node, deaths) => node.updateDied(deaths),
-      applyFunction = (infected, prob) =>
-        (1 to infected).count(_ => Random.nextDouble() < prob.value)
+  val ProbabilisticDeath: PopulationEffect =
+    PopulationEffectBuilder.apply(
+      canApply = STANDARD_CAN_APPLY,
+      parameterExtractor = _.lethality,
+      populationSelector = _.infected,
+      changeCalculator = (infected, prob) =>
+        val binomial = new BinomialDistribution(infected, prob.value)
+        binomial.sample(),
+      changeApplier = (node, deaths) => node.updateDied(deaths)
     )

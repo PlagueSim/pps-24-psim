@@ -8,7 +8,11 @@ import view.updatables.UpdatableView
 
 import scala.annotation.tailrec
 
-class SetupBuilder:
+/**
+ * A builder class for setting up and running a simulation.
+ * It collects all the necessary parts and then starts the simulation.
+ */
+class SetupBuilderAndRunner:
   private var _simulationState = SimulationState.createStandardSimulationState()
   private var _conditionsBuilder: SimulationState => Boolean = s => s.time.day.value < 20
   private var _view: UpdatableView = ConsoleSimulationView()
@@ -16,27 +20,45 @@ class SetupBuilder:
   private var _scheduleMode: Scheduler = FixedStandardRateScheduler
   private val _engine = SimulationEngine
 
-  def addSimulationState(state: SimulationState): SetupBuilder = 
+  /**
+   * Adds a simulation state to the builder.
+   */
+  def addSimulationState(state: SimulationState): SetupBuilderAndRunner =
     _simulationState = state
     this
-    
-  def addScheduler(scheduler: Scheduler): SetupBuilder =
+
+  /**
+   * Adds a scheduler to the simulation.
+   */
+  def addScheduler(scheduler: Scheduler): SetupBuilderAndRunner =
     _scheduleMode = scheduler
     this
-    
-  def addConditions(conditions: SimulationState => Boolean): SetupBuilder =
+
+  /**
+   * Adds a condition that must be met for the simulation to continue.
+   */
+  def addConditions(conditions: SimulationState => Boolean): SetupBuilderAndRunner =
     _conditionsBuilder = conditions
     this
-    
-  def setView(bindings: UpdatableView): SetupBuilder =
+
+  /**
+   * Sets the view for the simulation.
+   */
+  def setView(bindings: UpdatableView): SetupBuilderAndRunner =
     _view = bindings
     this
-  
-  def addRun(run: ExecutionMode): SetupBuilder =
+
+  /**
+   * Sets the execution mode for the simulation.
+   */
+  def addRun(run: ExecutionMode): SetupBuilderAndRunner =
     _runMode = run
     this
-    
-  def build(): Unit =
+
+  /**
+   * Runs the simulation with the configured settings.
+   */
+  def run(): Unit =
     _runMode.execute {
       _runMode.runLater(() => _view.update(_simulationState))
       loop(_simulationState, _runMode.runLater)
