@@ -1,53 +1,74 @@
 package view.world
 
-import controller.WorldController
 import model.core.SimulationState
+import model.world.{Edge, Node, World}
 import scalafx.scene.layout.Pane
+import view.event.ViewEvent
 import view.updatables.UpdatableView
-import javafx.scene.Node as FxNode
+import javafx.scene.shape.Line
+import scalafx.scene.Node as NodeVisual
 
-class WorldView(
-                 worldController: WorldController,
-                 layout: GraphLayout,
-                 nodeFactory: NodeViewFactory,
-                 edgeFactory: EdgeViewFactory
-               ) extends Pane with UpdatableView:
+class WorldView extends Pane with UpdatableView with VisualView:
 
-  private val nodeViews: Seq[NodeView] = buildNodeViews()
-  private val nodeViewMap: Map[String, NodeView] = nodeViews.map(n => n.id -> n).toMap
-  renderInitialView()
+  private var eventHandler: ViewEvent => Unit = _ => ()
+  private var nodeViews: Map[String, NodeView] = Map.empty
+  private var edgeViews: Map[String, Line] = Map.empty
 
-  private def buildNodeViews(): Seq[NodeView] =
-    val positions = layout.computePositions(worldController.getNodes.keys.toSeq)
-    for (id, pos) <- positions.toSeq yield
-      nodeFactory.createNode(id, worldController.getNodes(id), pos)
+  private val layout: CircularLayout = CircularLayout()
+  private var worldRenderer: Option[WorldRenderer] = None
+  private var currentWorld: Option[World] = None
 
-  private def renderInitialView(): Unit =
-    children ++= toJavaFXNodes(nodeViews.flatMap(_.visuals))
-    redrawEdges()
+  override def setEventHandler(handler: ViewEvent => Unit): Unit =
+    this.eventHandler = handler
 
-  private def toJavaFXNodes(visuals: Seq[Any]): Seq[FxNode] =
-    visuals.collect {
-      case fx: FxNode => fx
-    }
+  override def render(world: World): Unit =
+    this.currentWorld = Some(world)
+    this.worldRenderer = Some(new WorldRenderer(world, this))
 
-  private def currentEdges(): Seq[FxNode] =
-    val livePositions = nodeViews.map(n => n.id -> n.position()).toMap
-    val visuals = worldController.getEdges.toSeq.map: 
-      edge => edgeFactory.createEdge(edge, livePositions)
-    
-    toJavaFXNodes(visuals)
+    val positionsMap = layout.computePositions(world.nodes.keySet.toSeq)
 
-  def redrawEdges(): Unit =
-    children --= children.collect { case line: javafx.scene.shape.Line => line }
-    children.prependAll(currentEdges())
+    val nodeLayer = NodeLayer.fromNodes(
+      nodes = world.nodes,
+      layout = id => positionsMap(id),
+      onMoved = () => redrawEdges(world.edges.values)
+    )
+
+    val edgeLayer = EdgeLayer(
+      edges = world.edges.values,
+      nodePositions = nodeLayer.positions
+    )
+
+    nodeViews = nodeLayer.nodeViews
+    edgeViews = edgeLayer.edgeLines
+
+    children.setAll(edgeLayer.edgeLines.values.toSeq ++ nodeLayer.allVisuals: _*)
+
+  private def redrawEdges(updatedEdges: Iterable[Edge]): Unit =
+    val (newEdgeMap, toAdd, toRemove) =
+      EdgeUpdater.update(
+        edgeViews,
+        updatedEdges,
+        nodeViews.view.mapValues(nv => LivePosition(nv.position)).toMap
+      )
+    edgeViews = newEdgeMap
+    children.removeAll(toRemove.toSeq*)
+    children.addAll(toAdd.toSeq*)
+
+  private def redrawNodes(updatedNodes: Map[String, Node]): Unit =
+    val (newNodeMap, toAdd, toRemove) = NodeUpdater.update(nodeViews, updatedNodes)
+    nodeViews = newNodeMap
+    children.removeAll(toRemove.toSeq*)
+    children.addAll(toAdd.toSeq*)
+
+  private def update(world: World): Unit =
+    redrawNodes(world.nodes)
+    redrawEdges(world.edges.values)
+    worldRenderer.foreach(_.update(world))
 
   override def update(newState: SimulationState): Unit =
-    newState.world.nodes.foreach { case (id, node) =>
-      nodeViewMap.get(id).foreach { view =>
-        view.labels("id").text = s"Node: $id"
-        view.labels("pop").text = s"Pop: ${node.population}"
-        view.labels("inf").text = s"Infected: ${node.infected}"
-        view.labels("died").text = s"Died: ${node.died}"
-      }
-    }
+    update(newState.world)
+
+  override def handleEvent(event: ViewEvent): Unit =
+    eventHandler(event)
+
+  override def root: NodeVisual = this

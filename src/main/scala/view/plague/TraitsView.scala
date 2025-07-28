@@ -1,12 +1,17 @@
 package view.plague
 
 import model.core.SimulationState
-import model.plague.{Symptoms, Trait}
+import model.plague.Trait
 import scalafx.geometry.Insets
 import scalafx.scene.layout.BorderPane
 import scalafx.Includes.jfxReadOnlyObjectProperty2sfx
 import view.updatables.UpdatableView
 
+/**
+ * General interface for showing everything related to the Traits
+ *
+ * @param allTraits The traits that will be shown
+ */
 class TraitsView(allTraits: Seq[Trait]) extends BorderPane with UpdatableView:
 
   private val traitList: TraitList = TraitList(allTraits)

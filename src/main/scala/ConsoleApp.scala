@@ -1,6 +1,8 @@
 import controller.ExecutionMode.TerminalMode
 import dsl.DSL.*
 import model.core.SimulationState
+import model.cure.CureModifiers
+import model.scheduler.CustomScheduler
 import view.ConsoleSimulationView
 
 @main def runConsole(): Unit =
@@ -9,20 +11,39 @@ import view.ConsoleSimulationView
   setup:
     simulationState:
       world:
-        initialState.world
+        worldNodes:
+          initialState.world.nodes
+        worldEdges:
+          initialState.world.edges
+        worldMovements:
+          initialState.world.movements
       disease:
-        initialState.disease
+        diseaseName:
+          "Diesease X"
+        diseaseTraits:
+          Set.empty
+        diseasePoints:
+          10
       cure:
-        initialState.cure
+        cureProgress:
+          0.0
+        cureBaseSpeed:
+          1.0
+        cureModifiers:
+          CureModifiers.empty
       time:
         initialState.time
       infectionLogic:
         initialState.infectionLogic
       deathLogic:
         initialState.deathLogic
+      reactions:
+        initialState.reactions
     conditions: (s: SimulationState) =>
       s.time.day.value < 50
-    bindings:
+    scheduler:
+      CustomScheduler(500)
+    binding:
       ConsoleSimulationView()
     runMode:
       TerminalMode

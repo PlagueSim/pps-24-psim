@@ -1,6 +1,6 @@
 package plague
 
-import model.plague.Symptoms
+import model.plague.db.Symptoms
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 

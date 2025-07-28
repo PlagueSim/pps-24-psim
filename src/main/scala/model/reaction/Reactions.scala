@@ -28,14 +28,17 @@ final case class Reactions(
     activeReactions.filterNot(_.isActive(currentDay))
     
   def remove(set: Set[ActiveReaction]): Reactions =
-    this.copy(activeReactions = activeReactions.filterNot(set.contains))
+    this.copy(activeReactions = activeReactions.diff(set))
     
 object Reactions:
   val StandardReactions: Reactions =
     Reactions(
       rules = List(
         ReactionRule(
-          condition = InfectedCondition(0.5),
+          condition = InfSeverityCondition(
+            infectedThreshold = 0.3,
+            severityThreshold = 3
+          ),
           actionFactory = nodeId => CloseEdges(EdgeType.Land, nodeId)
         )
       )

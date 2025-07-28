@@ -6,9 +6,6 @@ import model.core.SimulationState
 import model.time.Time
 
 /** Represents a stateful event in the simulation.
-  *
-  * @tparam A
-  *   The type of result produced when the event is executed.
   */
 trait Event[A]:
   /** Returns a stateful computation that modifies the simulation state and
@@ -22,8 +19,6 @@ trait Event[A]:
       _ <- State.set(updatedState)
     yield newFieldValue
 
+  /** The function that modifies the simulation state.
+   */
   def modifyFunction(state: SimulationState): A
-
-case class AdvanceDayEvent() extends Event[Time]:
-  override def modifyFunction(s: SimulationState): Time = s.time + 1
-

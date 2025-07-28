@@ -2,14 +2,18 @@ package view.plague
 
 import controller.ViewController
 import model.core.SimulationState
-import model.plague.{Abilities, Symptoms, Transmissions}
+import model.plague.db.*
 import scalafx.geometry.Insets
-import scalafx.scene.control.{Label, TextField}
-import scalafx.scene.layout.{BorderPane, HBox, Priority, VBox}
-import scalafx.scene.text.{Font, Text}
+import scalafx.scene.control.Label
+import scalafx.scene.layout.{BorderPane, HBox, VBox}
+import scalafx.scene.text.Font
 import view.StdButton
 import view.updatables.UpdatableView
 
+/**
+ * The page containing the [[Disease]] information that gives the
+ * possibility to the player to modify the [[Disease]]
+ */
 class PlagueView extends BorderPane with UpdatableView:
   private val controller = ViewController(this)
 
@@ -24,6 +28,7 @@ class PlagueView extends BorderPane with UpdatableView:
   private val infectivityLabel = Label("")
   private val severityLabel = Label("")
   private val lethalityLabel = Label("")
+  private val effectivenessBox = new VBox()
 
 
   private val plagueInfos = new BorderPane():
@@ -32,7 +37,8 @@ class PlagueView extends BorderPane with UpdatableView:
       children = Seq(
         infectivityLabel,
         severityLabel,
-        lethalityLabel
+        lethalityLabel,
+        effectivenessBox
       )
 
 
@@ -62,7 +68,7 @@ class PlagueView extends BorderPane with UpdatableView:
     infectivityLabel.text = f"Infectivity: ${diseaseStats.infectivity}%.2f"
     severityLabel.text = f"Severity: ${diseaseStats.severity}%.2f"
     lethalityLabel.text = f"Lethality: ${diseaseStats.lethality}%.2f"
-    // effectivenessLabels(diseaseStats.effectiveness)
+    effectivenessBox.children.setAll(effectivenessLabels(diseaseStats.effectiveness).map(_.delegate)*)
 
     symptoms.update(newState)
     transmissions.update(newState)

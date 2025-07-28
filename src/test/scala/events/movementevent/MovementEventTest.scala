@@ -17,11 +17,11 @@ class MovementEventTest extends AnyFlatSpec with Matchers:
       "B" -> nodeB
     )
 
-    val edges = Set(Edge("A", "B", EdgeType.Land))
+    val edges = Map("A-B" -> Edge("A", "B", EdgeType.Land))
 
     val movements: Map[MovementStrategy, Double] = Map(
       Static -> 0.5,
-      RandomNeighbor -> 0.5
+      LocalPercentageMovement -> 0.5
     )
 
     val worldBefore = World(nodes, edges, movements)

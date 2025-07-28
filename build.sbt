@@ -6,6 +6,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "pps-24-psim"
   )
+libraryDependencies += "org.apache.commons" % "commons-math3" % "3.6.1"
 
 libraryDependencies += "org.scalafx" %% "scalafx" % "22.0.0-R33"
 
@@ -26,3 +27,4 @@ libraryDependencies ++= {
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % Test
 libraryDependencies += "org.typelevel" %% "cats-core" % "2.13.0"
 libraryDependencies += "org.typelevel" %% "cats-effect" % "3.6.1"
+libraryDependencies += "it.unibo.alice.tuprolog" % "tuprolog" % "3.3.0"

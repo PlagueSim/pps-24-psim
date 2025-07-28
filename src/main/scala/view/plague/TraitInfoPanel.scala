@@ -1,7 +1,7 @@
 package view.plague
 
 import model.core.SimulationState
-import model.events.DiseaseEvents.*
+import model.events.plague.DiseaseEvents.*
 import model.events.DiseaseEventBuffer
 import model.events.DiseaseEventBuffer.newEvent
 import scalafx.scene.layout.{BorderPane, VBox}
@@ -12,6 +12,11 @@ import scalafx.scene.text.Font
 import view.StdButton
 import view.updatables.UpdatableView
 
+/**
+ * The panel that shows The selected [[Trait]] information
+ *
+ * @param tr The [[Trait]] selected
+ */
 class TraitInfoPanel(tr: Trait) extends BorderPane with UpdatableView:
   private val nameLabel = new Label(s"${tr.name}"):
     font = Font(18)
@@ -19,11 +24,9 @@ class TraitInfoPanel(tr: Trait) extends BorderPane with UpdatableView:
 
   private val evolveButton = StdButton("Evolve"):
     newEvent(Evolution(tr))
-    println(s"Evolved: ${tr.name}")
 
   private val involveButton = StdButton("Involve"):
     newEvent(Involution(tr))
-    println(s"Involved: ${tr.name}")
 
   private def statLabel(name: String, value: Double): Option[Label] = value match
     case v if v != 0.0 => Some(Label(s"$name: ${"%.2f".format(value)}"))

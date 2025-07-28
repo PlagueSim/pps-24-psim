@@ -12,24 +12,18 @@ class UpdateActiveReactionsEventTest extends AnyFlatSpec with Matchers:
   def testWorld: World =
     val nodeA = Node.withPopulation(10).build()
     val nodeB = Node.withPopulation(10).build()
-    val edge  = Edge("A", "B", EdgeType.Land)
     World(
       Map("A" -> nodeA, "B" -> nodeB),
-      Set(edge),
+      Map("A-B" -> Edge("A", "B", EdgeType.Land)),
       Map(Static -> 1.0)
     )
 
   trait ConditionFactory {
-    def apply(result: Boolean): ReactionCondition = new ReactionCondition {
-      override def isSatisfied(
-          state: SimulationState,
-          nodeId: String
-      ): Boolean = result
-    }
+    def apply(result: Boolean): ReactionCondition = (state: SimulationState, nodeId: String) => result
   }
   object ConditionFactory extends ConditionFactory
 
-  def ruleWithCondition(result: Boolean) =
+  def ruleWithCondition(result: Boolean): ReactionRule =
     ReactionRule(
       ConditionFactory(result),
       nodeId => ReactionAction.CloseEdges(EdgeType.Land, nodeId)
@@ -40,9 +34,9 @@ class UpdateActiveReactionsEventTest extends AnyFlatSpec with Matchers:
       disease: model.plague.Disease = null,
       cure: model.cure.Cure = null,
       world: World = testWorld,
-      infectionLogic: model.infection.InfectionAndDeathPopulation.PopulationStrategy =
+      infectionLogic: model.infection.PopulationEffect =
         null,
-      deathLogic: model.infection.InfectionAndDeathPopulation.PopulationStrategy =
+      deathLogic: model.infection.PopulationEffect =
         null,
       reactions: Reactions = Reactions()
   ): SimulationState =

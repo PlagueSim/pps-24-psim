@@ -35,7 +35,7 @@ class NodeTest extends AnyFlatSpec with Matchers:
 
   "applyInfection" should "increase infected without exceeding population" in:
     val node = Node.withPopulation(100).withInfected(60).build()
-    val infected = node.applyInfection(50)
+    val infected = node.increaseInfection(50)
     infected.infected shouldBe 100
 
   "heal" should "reduce infected by given count" in:
