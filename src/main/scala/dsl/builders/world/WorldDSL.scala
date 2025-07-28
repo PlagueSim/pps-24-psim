@@ -1,7 +1,6 @@
 package dsl.builders.world
 
 import dsl.builders.SimulationState.SimulationStateBuilder
-import model.world.World
 
 object WorldDSL:
   def world(init: WorldBuilder ?=> Unit)
