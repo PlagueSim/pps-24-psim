@@ -8,7 +8,7 @@ case class BasicYear(day: Day, year: Year) extends Time:
   private val DAYS_IN_YEAR = 365
   
   override def +(days: Int): Time =
-    require(days >= 0, "Days must be non-negative")
+    require(days > 0, "Days must be positive")
     val totalDays = day.value + days
     val newYearValue = year.value + totalDays / DAYS_IN_YEAR
     val newDayValue = totalDays % DAYS_IN_YEAR
