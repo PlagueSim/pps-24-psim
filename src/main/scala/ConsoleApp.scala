@@ -11,13 +11,12 @@ import view.ConsoleSimulationView
   setup:
     simulationState:
       world:
-        world:
-          worldNodes:
-            initialState.world.nodes
-          worldEdges:
-            initialState.world.edges
-          worldMovements:
-            initialState.world.movements
+        worldNodes:
+          initialState.world.nodes
+        worldEdges:
+          initialState.world.edges
+        worldMovements:
+          initialState.world.movements
       disease:
         diseaseName:
           "Diesease X"
