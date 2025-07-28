@@ -55,12 +55,12 @@ object SimulationState:
     val STARTING_DAY: Int  = 0
     val STARTING_YEAR: Int = 2025
 
-    val node = Node.withPopulation(100).withInfected(0).build()
+    val node = Node.withPopulation(100).withInfected(1).build()
 
     val world = World(
       Map("A" -> node, "B" -> node),
       Map("A-B" -> Edge("A", "B", EdgeType.Land)),
-      Map(GlobalLogicMovement -> 1)
+      Map(GlobalLogicMovement -> 1.0)
     )
 
     SimulationState(
