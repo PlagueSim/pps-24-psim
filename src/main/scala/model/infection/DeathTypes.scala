@@ -2,23 +2,24 @@ package model.infection
 
 import scala.util.Random
 
+/** Object containing all the different types of death logics */
 object DeathTypes:
 
-  val StandardDeath: PopulationStrategy =
-    PopulationStrategyBuilder.apply(
+  val StandardDeath: PopulationEffect =
+    PopulationEffectBuilder.apply(
       canApply = _.infected > 0,
-      param = _.lethality,
-      affected = _.infected,
-      change = (node, deaths) => node.updateDied(deaths),
-      applyFunction = (infected, prob) => (infected * prob.value).toInt
+      parameterExtractor = _.lethality,
+      populationSelector = _.infected,
+      changeCalculator = (infected, prob) => (infected * prob.value).toInt,
+      changeApplier = (node, deaths) => node.updateDied(deaths)
     )
 
-  val ProbabilisticDeath: PopulationStrategy =
-    PopulationStrategyBuilder.apply(
+  val ProbabilisticDeath: PopulationEffect =
+    PopulationEffectBuilder.apply(
       canApply = _.infected > 0,
-      param = _.lethality,
-      affected = _.infected,
-      change = (node, deaths) => node.updateDied(deaths),
-      applyFunction = (infected, prob) =>
-        (1 to infected).count(_ => Random.nextDouble() < prob.value)
+      parameterExtractor = _.lethality,
+      populationSelector = _.infected,
+      changeCalculator = (infected, prob) =>
+        (1 to infected).count(_ => Random.nextDouble() < prob.value),
+      changeApplier = (node, deaths) => node.updateDied(deaths)
     )

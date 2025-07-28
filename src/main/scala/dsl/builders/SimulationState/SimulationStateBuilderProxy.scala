@@ -2,7 +2,7 @@ package dsl.builders.SimulationState
 
 import model.core.SimulationState
 import model.cure.Cure
-import model.infection.PopulationStrategy
+import model.infection.PopulationEffect
 import model.plague.Disease
 import model.reaction.Reactions
 import model.time.Time
@@ -30,12 +30,12 @@ class SimulationStateBuilderProxy(get: () => SimulationStateBuilder,
     set(updated)
     updated
 
-  override def withInfectionLogic(infectionLogic: PopulationStrategy): SimulationStateBuilder =
+  override def withInfectionLogic(infectionLogic: PopulationEffect): SimulationStateBuilder =
     val updated = get().withInfectionLogic(infectionLogic)
     set(updated)
     updated
     
-  override def withDeathLogic(deathLogic: PopulationStrategy): SimulationStateBuilder =
+  override def withDeathLogic(deathLogic: PopulationEffect): SimulationStateBuilder =
     val updated = get().withDeathLogic(deathLogic)
     set(updated)
     updated

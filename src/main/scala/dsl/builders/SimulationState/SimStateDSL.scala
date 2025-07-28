@@ -1,6 +1,6 @@
 package dsl.builders.SimulationState
 
-import model.infection.PopulationStrategy
+import model.infection.PopulationEffect
 import model.reaction.Reactions
 import model.time.Time
 import model.world.World
@@ -26,13 +26,13 @@ object SimStateDSL:
   ): Unit =
     ssb.withTime(init)
 
-  def infectionLogic(init: SimulationStateBuilder ?=> PopulationStrategy)(using
-                                                                          ssb: SimulationStateBuilder
+  def infectionLogic(init: SimulationStateBuilder ?=> PopulationEffect)(using
+                                                                        ssb: SimulationStateBuilder
   ): Unit =
     ssb.withInfectionLogic(init)
 
-  def deathLogic(init: SimulationStateBuilder ?=> PopulationStrategy)(using
-                                                                      ssb: SimulationStateBuilder
+  def deathLogic(init: SimulationStateBuilder ?=> PopulationEffect)(using
+                                                                    ssb: SimulationStateBuilder
   ): Unit =
     ssb.withDeathLogic(init)
 

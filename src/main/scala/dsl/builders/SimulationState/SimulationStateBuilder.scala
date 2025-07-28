@@ -2,7 +2,7 @@ package dsl.builders.SimulationState
 
 import model.core.SimulationState
 import model.cure.Cure
-import model.infection.PopulationStrategy
+import model.infection.PopulationEffect
 import model.plague.Disease
 import model.time.Time
 import model.world.World
@@ -12,9 +12,9 @@ case class SimulationStateBuilder(
     disease: Disease = SimulationState.createStandardSimulationState().disease,
     cure: Cure = SimulationState.createStandardSimulationState().cure,
     world: World = SimulationState.createStandardSimulationState().world,
-    infectionLogic: PopulationStrategy =
+    infectionLogic: PopulationEffect =
       SimulationState.createStandardSimulationState().infectionLogic,
-    deathLogic: PopulationStrategy =
+    deathLogic: PopulationEffect =
       SimulationState.createStandardSimulationState().deathLogic,
     reactions: model.reaction.Reactions =
       SimulationState.createStandardSimulationState().reactions,
@@ -32,11 +32,11 @@ case class SimulationStateBuilder(
     copy(time = time)
 
   def withInfectionLogic(
-      infectionLogic: PopulationStrategy
+      infectionLogic: PopulationEffect
   ): SimulationStateBuilder =
     copy(infectionLogic = infectionLogic)
 
-  def withDeathLogic(deathLogic: PopulationStrategy): SimulationStateBuilder =
+  def withDeathLogic(deathLogic: PopulationEffect): SimulationStateBuilder =
     copy(deathLogic = deathLogic)
 
   def withReactions(
