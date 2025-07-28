@@ -5,7 +5,7 @@ import model.world.Node
 import model.plague.Disease
 
 /**
- * Factory object for creating instances of [[PopulationEffect]] c
+ * Factory object for creating instances of [[PopulationEffect]].
  * This object provides a flexible way to construct population effects by composing functions.
  */
 private[infection] object PopulationEffectBuilder:
