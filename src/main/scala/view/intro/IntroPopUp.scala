@@ -30,7 +30,7 @@ def showStartPopup(state: SimulationState): SimulationState =
   val startButton = StdButton("Start"):
     selectedNode.foreach(node =>
       val (key, n) = node
-      val updatedNodes = state.world.nodes.updated(key, n.applyInfection(1))
+      val updatedNodes = state.world.nodes.updated(key, n.increaseInfection(1))
       val updatedWorld = state.world.modifyNodes(updatedNodes)
       updatedState = state.replace(updatedWorld)
     )
