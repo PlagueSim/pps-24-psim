@@ -9,23 +9,16 @@ case class MovementEvent() extends Event[Map[String, Node]]:
   override def modifyFunction(s: SimulationState): Map[String, Node] =
     val rng = new scala.util.Random()
     val nodes = s.world.nodes
-    val movements = s.world.movements
-    val neighbors = s.world.neighbors
-    val isEdgeOpen = s.world.isEdgeOpen
 
-    computeAllMovements(rng, s.world)._1
-
+    computeAllMovements(rng, s.world)
 
 
   private def computeAllMovements(
                                    rng: scala.util.Random,
                                    world: World
-                                 ): (Map[String, Node], List[(String, String, Int)]) = {
-
-    world.movements.toList.foldLeft((world.nodes, List.empty[(String, String, Int)])) {
-      case ((currentNodes, collectedMoves), (strategy, percent)) =>
-        val moves = MovementStrategyLogic.compute(world, strategy,percent, rng)
-        val updatedNodes = World.applyMovements(world.modifyNodes(currentNodes), moves).nodes
-        (updatedNodes, collectedMoves ++ moves)
+                                 ): Map[String, Node] =
+    world.movements.toList.foldLeft(world.nodes) {
+      case (currentNodes, (strategy, percent)) =>
+        val moves = MovementStrategyLogic.compute(world.modifyNodes(currentNodes), strategy, percent, rng)
+        World.applyMovements(world.modifyNodes(currentNodes), moves).nodes
     }
-  }
