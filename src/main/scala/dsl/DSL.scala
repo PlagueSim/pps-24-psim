@@ -1,7 +1,7 @@
 package dsl
 
 import controller.ExecutionMode.ExecutionMode
-import dsl.builders.SetupBuilder
+import dsl.builders.SetupBuilderAndRunner
 import dsl.builders.SimulationState.{
   SimulationStateBuilder,
   SimulationStateBuilderProxy
@@ -22,13 +22,13 @@ object DSL:
     worldMovements
   }
 
-  def setup(init: SetupBuilder ?=> Unit): Unit =
-    given builder: SetupBuilder = SetupBuilder()
+  def setup(init: SetupBuilderAndRunner ?=> Unit): Unit =
+    given builder: SetupBuilderAndRunner = SetupBuilderAndRunner()
     init
-    builder.build()
+    builder.run()
 
   def simulationState(init: SimulationStateBuilder ?=> Unit)(using
-      sb: SetupBuilder
+      sb: SetupBuilderAndRunner
   ): Unit =
     var current: SimulationStateBuilder        = SimulationStateBuilder()
     given stateBuilder: SimulationStateBuilder =
@@ -36,22 +36,22 @@ object DSL:
     init
     sb.addSimulationState(stateBuilder.build())
 
-  def conditions(init: SetupBuilder ?=> SimulationState => Boolean)(using
-      sb: SetupBuilder
+  def conditions(init: SetupBuilderAndRunner ?=> SimulationState => Boolean)(using
+                                                                             sb: SetupBuilderAndRunner
   ): Unit =
     sb.addConditions(init)
 
-  def scheduler(init: SetupBuilder ?=> Scheduler)(using
-      sb: SetupBuilder
+  def scheduler(init: SetupBuilderAndRunner ?=> Scheduler)(using
+                                                           sb: SetupBuilderAndRunner
   ): Unit =
     sb.addScheduler(init)
 
-  def bindings(init: SetupBuilder ?=> UpdatableView)(using
-      sb: SetupBuilder
+  def bindings(init: SetupBuilderAndRunner ?=> UpdatableView)(using
+                                                              sb: SetupBuilderAndRunner
   ): Unit =
     sb.setView(init)
 
-  def runMode(init: SetupBuilder ?=> ExecutionMode)(using
-      sb: SetupBuilder
+  def runMode(init: SetupBuilderAndRunner ?=> ExecutionMode)(using
+                                                             sb: SetupBuilderAndRunner
   ): Unit =
     sb.addRun(init)

@@ -8,7 +8,7 @@ import view.updatables.UpdatableView
 
 import scala.annotation.tailrec
 
-class SetupBuilder:
+class SetupBuilderAndRunner:
   private var _simulationState = SimulationState.createStandardSimulationState()
   private var _conditionsBuilder: SimulationState => Boolean = s => s.time.day.value < 20
   private var _view: UpdatableView = ConsoleSimulationView()
@@ -16,27 +16,27 @@ class SetupBuilder:
   private var _scheduleMode: Scheduler = FixedStandardRateScheduler
   private val _engine = SimulationEngine
 
-  def addSimulationState(state: SimulationState): SetupBuilder = 
+  def addSimulationState(state: SimulationState): SetupBuilderAndRunner = 
     _simulationState = state
     this
     
-  def addScheduler(scheduler: Scheduler): SetupBuilder =
+  def addScheduler(scheduler: Scheduler): SetupBuilderAndRunner =
     _scheduleMode = scheduler
     this
     
-  def addConditions(conditions: SimulationState => Boolean): SetupBuilder =
+  def addConditions(conditions: SimulationState => Boolean): SetupBuilderAndRunner =
     _conditionsBuilder = conditions
     this
     
-  def setView(bindings: UpdatableView): SetupBuilder =
+  def setView(bindings: UpdatableView): SetupBuilderAndRunner =
     _view = bindings
     this
   
-  def addRun(run: ExecutionMode): SetupBuilder =
+  def addRun(run: ExecutionMode): SetupBuilderAndRunner =
     _runMode = run
     this
     
-  def build(): Unit =
+  def run(): Unit =
     _runMode.execute {
       _runMode.runLater(() => _view.update(_simulationState))
       loop(_simulationState, _runMode.runLater)
