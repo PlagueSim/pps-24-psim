@@ -2,7 +2,9 @@ package view
 
 import scalafx.scene.control.Button
 
-//might be moved to a factory
+/**
+ * A simple standardized button
+ */
 object StdButton:
   def apply(txt: String)(e: => Unit): Button = new Button:
     text = txt
