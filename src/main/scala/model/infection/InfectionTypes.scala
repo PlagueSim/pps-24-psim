@@ -70,7 +70,13 @@ object InfectionTypes:
       canApply = STANDARD_CAN_APPLY,
       parameterExtractor = _.infectivity,
       populationSelector = node => {
-        val totalAffected = Math.multiplyExact(node.infected, affectable)
+        val totalAffected = try {
+          Math.multiplyExact(node.infected, affectable)
+        } catch {
+          case e: ArithmeticException =>
+            println(s"Overflow occurred while calculating totalAffected: ${e.getMessage}")
+            Int.MaxValue // Fallback to a safe value
+        }
         val hyp = new HypergeometricDistribution(
           node.population,
           node.population - node.infected,
