@@ -11,7 +11,7 @@ import scalafx.scene.layout.{BorderPane, VBox}
 import view.cure.CureProgressBar
 import view.plague.PlagueView
 import view.updatables.UpdatableView
-import view.world.{SetupWorldFactory, WorldView}
+import view.world.SetupWorldFactory
 
 class MainView extends BorderPane with UpdatableView:
   private val controller = ViewController(this)

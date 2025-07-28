@@ -11,6 +11,13 @@ import scalafx.scene.text.TextAlignment.*
 import scalafx.stage.Stage
 import view.StdButton
 
+/**
+ * A simple introduction interface where the player can specify which node
+ * wants to infect first
+ *
+ * @param state the State the simulation starts with
+ * @return the state with the selected node infected
+ */
 def showStartPopup(state: SimulationState): SimulationState =
   type WorldNode = (String, Node)
 
@@ -48,6 +55,10 @@ def showStartPopup(state: SimulationState): SimulationState =
   popupStage.showAndWait()
   updatedState
 
+/**
+ *
+ * @return A [[Label]] with the introduction text
+ */
 private def introLabel(): Label =
   new Label():
     text = "Welcome to Plague-Sim, a minimalistic simulation game\n" +

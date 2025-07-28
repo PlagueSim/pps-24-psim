@@ -6,10 +6,10 @@ import model.time.Time
 import model.world.World
 
 object SimStateDSL:
-  def world(init: SimulationStateBuilder ?=> World)(using
-                                                    ssb: SimulationStateBuilder
-  ): Unit =
-    ssb.withWorld(init)
+//  def world(init: SimulationStateBuilder ?=> World)(using
+//                                                    ssb: SimulationStateBuilder
+//  ): Unit =
+//    ssb.withWorld(init)
 
   //  def cure(init: SimulationStateBuilder ?=> Cure)(using
   //      ssb: SimulationStateBuilder
