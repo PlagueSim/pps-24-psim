@@ -26,7 +26,8 @@ object WorldFactory:
       }.toMap
 
     val edgeSet: Set[Edge] = Set(
-      Edge("A", "C", EdgeType.Land).close,
+      Edge("A", "C", EdgeType.Land),
+      Edge("A", "C", EdgeType.Air),
       Edge("A", "B", EdgeType.Land),
       Edge("B", "C", EdgeType.Sea),
       Edge("C", "D", EdgeType.Air),
@@ -36,15 +37,15 @@ object WorldFactory:
       Edge("G", "H", EdgeType.Land),
       Edge("H", "I", EdgeType.Sea),
       Edge("I", "J", EdgeType.Air),
-      Edge("J", "K", EdgeType.Land).close,
-      Edge("K", "L", EdgeType.Sea).close,
+      Edge("J", "K", EdgeType.Land),
+      Edge("K", "L", EdgeType.Sea),
       Edge("L", "M", EdgeType.Air),
       Edge("M", "N", EdgeType.Land),
       Edge("N", "O", EdgeType.Sea),
       Edge("O", "A", EdgeType.Air), // wrap around to A
       Edge("A", "H", EdgeType.Sea),
       Edge("C", "I", EdgeType.Land),
-      Edge("D", "K", EdgeType.Air).close,
+      Edge("D", "K", EdgeType.Air),
       Edge("F", "M", EdgeType.Sea),
       Edge("G", "O", EdgeType.Land)
     )
@@ -57,5 +58,5 @@ object WorldFactory:
     World(
       nodes,
       edgeMap,
-      Map(Static -> 0.6, LocalPercentageMovement -> 0.4)
+      Map(Static -> 0.6, GlobalLogicMovement -> 0.4)
     )
