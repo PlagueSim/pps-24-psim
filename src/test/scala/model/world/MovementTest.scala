@@ -24,7 +24,7 @@ class MovementTest extends AnyFlatSpec with Matchers:
 
     val world = World(nodes, edge, movementStrategies)
 
-    val updateWorld = World.applyMovements(world, List(("A", "B"), ("A", "B")))
+    val updateWorld = World.applyMovements(world, List(("A", "B", 2)))
 
     assert(updateWorld.nodes("A").population == 47)
 
