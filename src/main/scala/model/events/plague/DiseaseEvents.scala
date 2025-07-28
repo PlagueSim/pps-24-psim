@@ -1,7 +1,6 @@
 package model.events.plague
 
 import model.core.SimulationState
-import model.cure.CureModifier.{Additive, ProgressModifier}
 import model.cure.*
 import model.events.{CureEventBuffer, Event}
 import model.plague.{Disease, Trait}

@@ -165,6 +165,12 @@ case class Disease private(
 
 
   /**
+   *
+   * @return how much dna points the involution of a trait gives back
+   */
+  def refund: Int = 2
+
+  /**
    * Attempts to remove a previously evolved [[Trait]] from the disease.
    *
    * A [[Trait]] can be removed only if:
@@ -181,7 +187,7 @@ case class Disease private(
   def involve(traitToRemove: Trait): Either[String, Disease] =
     Either.cond(hasTrait(traitToRemove.name), (), s"${traitToRemove.name} is not currently evolved.")
       .flatMap(_ => Either.cond(canInvolve(traitToRemove), (), s"${traitToRemove.name} cannot be removed because other traits depend on it."))
-      .map(_ => copy(traits = traits.filterNot(_.name == traitToRemove.name), dnaPoints = dnaPoints + 2))
+      .map(_ => copy(traits = traits.filterNot(_.name == traitToRemove.name), dnaPoints = dnaPoints + refund))
 
   /**
    * Attempts a random mutation by evolving a random [[Trait]] from the set of available traits.

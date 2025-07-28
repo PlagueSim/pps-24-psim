@@ -2,7 +2,6 @@ package view.plague
 
 import model.core.SimulationState
 import model.plague.Trait
-import model.plague.db.Symptoms
 import scalafx.geometry.Insets
 import scalafx.scene.layout.BorderPane
 import scalafx.Includes.jfxReadOnlyObjectProperty2sfx
