@@ -15,6 +15,12 @@ object DSL:
   export dsl.builders.disease.DiseaseDSL.*
   export dsl.builders.cure.CureDSL.*
   export dsl.builders.SimulationState.SimStateDSL.*
+  export dsl.builders.world.WorldDSL.{
+    world,
+    worldNodes,
+    worldEdges,
+    worldMovements
+  }
 
   def setup(init: SetupBuilder ?=> Unit): Unit =
     given builder: SetupBuilder = SetupBuilder()
