@@ -49,6 +49,8 @@ object World:
                       movements: List[(String, String, Int)]
                     ): World =
     val updatedNodes = movements.foldLeft(world.nodes):
+      case (acc, (from, to, num)) if acc(from).population <= 0 =>
+        acc
       case (acc, (from, to, num)) =>
         val hgd = new HypergeometricDistribution(
           acc(from).population,
