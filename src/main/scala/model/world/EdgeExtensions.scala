@@ -7,6 +7,7 @@ object EdgeExtensions:
     def close: (String, Edge) = (entry._1, entry._2.close)
     def edge: Edge = entry._2
     def id: String = entry._1
+    def connects(nodeId: String): Boolean = entry._2.connects(nodeId)
 
   extension (edge: Edge)
     def edgeId: String =

@@ -11,12 +11,10 @@ sealed trait LocalPercentageMovementStrategy extends MovementStrategy
 
 sealed trait GlobalLogicStrategy extends MovementStrategy
 
-sealed trait FinalLogicStrategy extends MovementStrategy
-
 case object Static extends MovementStrategy
 
 case object LocalPercentageMovement extends LocalPercentageMovementStrategy
 
 case object GlobalRandomMovement extends GlobalLogicStrategy
 
-case object GlobalLogicMovement extends FinalLogicStrategy
+case object GlobalLogicMovement extends MovementStrategy
