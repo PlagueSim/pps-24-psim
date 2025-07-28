@@ -3,7 +3,7 @@ package dsl.builders.world
 import model.world.{Edge, MovementStrategy, Node, World}
 
 /**
- * A DSL like builder for creating a [[World]] instance.
+ * Builder for constructing a [[World]] instance with nodes, edges, and movement strategies.
  */
 case class WorldBuilder (
                           nodes: Map[String, Node] = Map.empty,

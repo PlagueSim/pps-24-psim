@@ -52,6 +52,8 @@ object SimulationState:
            ): SimulationState =
     new SimulationState(time, disease, cure, world, infectionLogic, deathLogic, reactions)
 
+  /** Creates a standard simulation state with predefined values.
+   */
   def createStandardSimulationState(): SimulationState =
     val STARTING_DAY: Int  = 0
     val STARTING_YEAR: Int = 2025
