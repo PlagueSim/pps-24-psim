@@ -10,6 +10,10 @@ import scalafx.scene.text.Font
 import view.StdButton
 import view.updatables.UpdatableView
 
+/**
+ * The page containing the [[Disease]] information that gives the
+ * possibility to the player to modify the [[Disease]]
+ */
 class PlagueView extends BorderPane with UpdatableView:
   private val controller = ViewController(this)
 

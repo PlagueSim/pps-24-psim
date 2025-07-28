@@ -12,6 +12,11 @@ import scalafx.scene.text.Font
 import view.StdButton
 import view.updatables.UpdatableView
 
+/**
+ * The panel that shows The selected [[Trait]] information
+ *
+ * @param tr The [[Trait]] selected
+ */
 class TraitInfoPanel(tr: Trait) extends BorderPane with UpdatableView:
   private val nameLabel = new Label(s"${tr.name}"):
     font = Font(18)
