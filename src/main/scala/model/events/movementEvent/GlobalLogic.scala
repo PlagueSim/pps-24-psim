@@ -21,7 +21,7 @@ object GlobalLogic extends MovementLogicWithEdgeCapacityAndPercentages:
                         rng: scala.util.Random
   ): List[(String, String, Int)] =
 
-    world.nodes.toList.flatMap {
+    world.nodes.filter(_._2.population > 0).toList.flatMap {
       case (id, node) =>
       world.edges.filter(_.connects(id)).flatMap { case (_, edge) =>
         generateMovementTuple(id, node, edge, rng)
