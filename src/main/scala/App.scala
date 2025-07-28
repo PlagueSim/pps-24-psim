@@ -57,7 +57,7 @@ object App extends JFXApp3:
         s.time.day.value < 50
       scheduler:
         CustomScheduler(500)
-      bindings:
+      binding:
         mainView
       runMode:
         GuiFXMode

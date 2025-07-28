@@ -10,6 +10,9 @@ import model.core.SimulationState
 import model.scheduler.Scheduler
 import view.updatables.UpdatableView
 
+/**
+ * Provides a Domain-Specific Language (DSL) for creating and configuring simulations.
+ */
 object DSL:
 
   export dsl.builders.disease.DiseaseDSL.*
@@ -22,11 +25,17 @@ object DSL:
     worldMovements
   }
 
+  /**
+   * Sets up and runs the simulation. This is the main entry point of the DSL.
+   */
   def setup(init: SetupBuilderAndRunner ?=> Unit): Unit =
     given builder: SetupBuilderAndRunner = SetupBuilderAndRunner()
     init
     builder.run()
 
+  /**
+   * Defines a single state of the simulation.
+   */
   def simulationState(init: SimulationStateBuilder ?=> Unit)(using
       sb: SetupBuilderAndRunner
   ): Unit =
@@ -36,21 +45,33 @@ object DSL:
     init
     sb.addSimulationState(stateBuilder.build())
 
+  /**
+   * Defines a condition that must be met for the simulation to continue.
+   */
   def conditions(init: SetupBuilderAndRunner ?=> SimulationState => Boolean)(using
                                                                              sb: SetupBuilderAndRunner
   ): Unit =
     sb.addConditions(init)
 
+  /**
+   * Defines a scheduler for the simulation, which controls the timing of events.
+   */
   def scheduler(init: SetupBuilderAndRunner ?=> Scheduler)(using
                                                            sb: SetupBuilderAndRunner
   ): Unit =
     sb.addScheduler(init)
 
-  def bindings(init: SetupBuilderAndRunner ?=> UpdatableView)(using
-                                                              sb: SetupBuilderAndRunner
+  /**
+   * Binds the view to the simulation.
+   */
+  def binding(init: SetupBuilderAndRunner ?=> UpdatableView)(using
+                                                             sb: SetupBuilderAndRunner
   ): Unit =
     sb.setView(init)
 
+  /**
+   * Defines the execution mode of the simulation, which determines how the simulation runs.
+   */
   def runMode(init: SetupBuilderAndRunner ?=> ExecutionMode)(using
                                                              sb: SetupBuilderAndRunner
   ): Unit =
