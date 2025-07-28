@@ -4,6 +4,7 @@ import dsl.builders.SetupBuilderAndRunner
 import model.core.SimulationState
 import model.cure.CureModifiers
 import model.scheduler.CustomScheduler
+import model.world.{World, WorldFactory}
 import scalafx.application.JFXApp3
 import scalafx.scene.Scene
 import scalafx.stage.Screen
@@ -17,32 +18,32 @@ object App extends JFXApp3:
 
     val mainView = MainView()
 
-    val preSelectionState =
-      SimulationState.createStandardSimulationState()
+    val initialState: SimulationState = SimulationState.createStandardSimulationState()
 
-    val initialState: SimulationState = showStartPopup(preSelectionState)
+    val preSelectionNodes = WorldFactory.mockWorld().nodes
+    val postSelectionNodes = showStartPopup(preSelectionNodes)
 
     setup:
       simulationState:
         world:
           worldNodes:
-            initialState.world.nodes
+            postSelectionNodes
           worldEdges:
-            initialState.world.edges
+            WorldFactory.mockWorld().edges
           worldMovements:
-            initialState.world.movements
+            WorldFactory.mockWorld().movements
         disease:
           diseaseName:
             "Diesease X"
           diseaseTraits:
             Set.empty
           diseasePoints:
-            10
+            100
         cure:
           cureProgress:
             0.0
           cureBaseSpeed:
-            1.0
+            0.01
           cureModifiers:
             CureModifiers.empty
         time:
@@ -54,7 +55,7 @@ object App extends JFXApp3:
         reactions:
           initialState.reactions
       conditions: (s: SimulationState) =>
-        s.time.day.value < 50
+        s.time.day.value < 500
       scheduler:
         CustomScheduler(500)
       binding:
