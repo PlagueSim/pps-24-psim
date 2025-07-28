@@ -25,7 +25,12 @@ object App extends JFXApp3:
     setup:
       simulationState:
         world:
-          initialState.world
+          worldNodes:
+            initialState.world.nodes
+          worldEdges:
+            initialState.world.edges
+          worldMovements:
+            initialState.world.movements
         disease:
           diseaseName:
             "Diesease X"
