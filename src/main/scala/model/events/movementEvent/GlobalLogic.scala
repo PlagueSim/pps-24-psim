@@ -58,9 +58,6 @@ object GlobalLogic extends MovementLogicWithEdgeCapacityAndPercentages:
       toMove,
       avgPopulation
     )
-    println(
-      s"Final probability for node $nodeId: $finalProbability"
-    )
     edge.other(nodeId).isDefined && !edge.isClose && rng
       .nextDouble() < finalProbability
   }
