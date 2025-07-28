@@ -12,7 +12,7 @@ object WorldFactory:
     val nodes =
       (1 to 15).map { i =>
         val id = ('A' + (i - 1)).toChar.toString
-        val baseBuilder = Node.withPopulation(10 + i).withDied(2)
+        val baseBuilder = Node.withPopulation(100000000 + i).withDied(2)
 
         val builderWithInfection = id match
           case "A" => baseBuilder.withInfected(5)

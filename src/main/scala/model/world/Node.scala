@@ -64,8 +64,12 @@ object Node:
     
 
     /* Increases the infected count by the given value, capped at total population. */
-    def applyInfection(count: Int): Node =
+    def increaseInfection(count: Int): Node =
       node.copy(infected = (node.infected + count).min(node.population))
+
+    /* Decrease the infected count by the given value, capped at total population. */
+    def decreaseInfection(count: Int): Node =
+      node.copy(infected = (node.infected - count).max(0))
 
     /* Reduces the infected count by the given value, but never below zero. */
     def heal(count: Int): Node =
