@@ -15,14 +15,14 @@ import view.StdButton
  * A simple introduction interface where the player can specify which node
  * wants to infect first
  *
- * @param state the State the simulation starts with
- * @return the state with the selected node infected
+ * @param nodes the Nodes the simulation starts with
+ * @return the Nodes with the selected Node infected
  */
-def showStartPopup(state: SimulationState): SimulationState =
+def showStartPopup(nodes: Map[String, Node]): Map[String, Node] =
   type WorldNode = (String, Node)
 
-  var updatedState = state
   var selectedNode: Option[WorldNode] = None
+  var updatedNodes: Map[String, Node] = nodes
 
   val popupStage = new Stage:
     title = "Welcome"
@@ -30,14 +30,12 @@ def showStartPopup(state: SimulationState): SimulationState =
   val startButton = StdButton("Start"):
     selectedNode.foreach(node =>
       val (key, n) = node
-      val updatedNodes = state.world.nodes.updated(key, n.increaseInfection(1))
-      val updatedWorld = state.world.modifyNodes(updatedNodes)
-      updatedState = state.replace(updatedWorld)
+      updatedNodes = nodes.updated(key, n.increaseInfection(1))
     )
     popupStage.close()
   startButton.disable = true
 
-  val nodesBuffer = ObservableBuffer.from(state.world.nodes)
+  val nodesBuffer = ObservableBuffer.from(nodes)
   val nodeListView = new ListView[WorldNode](nodesBuffer):
     prefHeight = 150
     onMouseClicked = _ =>
@@ -53,7 +51,7 @@ def showStartPopup(state: SimulationState): SimulationState =
       padding = Insets(20)
       children = Seq(intro, nodeListView, startButton)
   popupStage.showAndWait()
-  updatedState
+  updatedNodes
 
 /**
  *
