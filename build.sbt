@@ -6,6 +6,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "pps-24-psim"
   )
+libraryDependencies += "org.apache.commons" % "commons-math3" % "3.6.1"
 
 libraryDependencies += "org.scalafx" %% "scalafx" % "22.0.0-R33"
 

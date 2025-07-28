@@ -16,3 +16,5 @@ case object Static extends MovementStrategy
 case object LocalPercentageMovement extends LocalPercentageMovementStrategy
 
 case object GlobalRandomMovement extends GlobalLogicStrategy
+
+case object GlobalLogicMovement extends MovementStrategy
