@@ -62,7 +62,7 @@ case object GlobalCureResearchEvent extends Event[Cure]:
   ): Map[ModifierId, CureModifier] =
     currentModifiers.filter { case (modifierId, _) =>
       modifierId.source match
-        case Node(nodeId) => nodes.contains(nodeId.name)
+        case Node(nodeId) => nodes.contains(nodeId)
         case _            => true // keep other modifiers
     }
     
