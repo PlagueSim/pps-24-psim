@@ -52,6 +52,11 @@ object MutationId:
   /** Extracts the string identifier from a MutationId */
   extension (id: MutationId) def unwrap: String = id
 
+/** Unique identifier for a cure modifier
+ *
+ * @param source Origin of the modifier (node, mutation, or global)
+ * @param kind   Type of modifier effect
+ */
 final case class ModifierId(
     source: ModifierSource,
     kind: ModifierKind
