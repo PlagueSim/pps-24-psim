@@ -12,14 +12,17 @@ import model.events.Event
   * based on the current day and applying any modifiers that may be present.
   */
 case class AdvanceCureEvent() extends Event[Cure]:
+  /** Advances the cure progress based on the current day and modifiers.
+    * @param state The current simulation state.
+    * @return The updated cure state with advanced progress.
+    */
   override def modifyFunction(state: SimulationState): Cure =
     state.cure.advance()
 
-/** Event that advances the cure progress linearly based on infected nodes. Adds
-  * a small additive modifier for each node above the infection threshold.
-  * @param threshold
-  *   The infection ratio above which a node contributes to cure progress.
-  */
+/**
+ * Event that applies an additive cure modifier to nodes whose infected ratio exceeds a threshold.
+ * @param threshold The minimum infected ratio required to apply the modifier (default: 0.5).
+ */
 case class LinearInfectedThresholdEvent(threshold: Double = 0.5)
     extends Event[Cure]:
 
@@ -44,11 +47,25 @@ case class LinearInfectedThresholdEvent(threshold: Double = 0.5)
       case (modId, _) =>
         state.cure.modifiers.modifiers.contains(modId)
 
+  /**
+   * Applies additive cure modifiers to nodes exceeding the infected threshold.
+   * @param state The current simulation state.
+   * @return The updated cure state with new modifiers applied.
+   */
   override def modifyFunction(state: SimulationState): Cure =
     missingModifiers(state).values.foldLeft(state.cure): (cure, mod) =>
       cure.addModifier(mod)
 
+/**
+ * Event that applies a progress modifier to the global cure state.
+ * @param progress The progress value to subtract from the cure.
+ */
 case class ProgressSubtractExampleEvent(progress: Double) extends Event[Cure]:
+  /**
+   * Applies a progress modifier to the global cure state.
+   * @param state The current simulation state.
+   * @return The updated cure state with the progress modifier applied.
+   */
   override def modifyFunction(state: SimulationState): Cure =
     val modId = model.cure.ModifierId(
       model.cure.ModifierSource.Global,
