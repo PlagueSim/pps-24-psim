@@ -47,7 +47,8 @@ class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
     val group = new Group(circle +: labels.map(_.label): _*)
     group.relocate(posX, posY)
 
-    Draggable.make(group, posX, posY, (x, y) => group.relocate(x, y), (_, _) => onMoved())
+    Draggable.make(group, (x, y) => group.relocate(x, y), (_, _) => onMoved())
+
 
     NodeView(
       id = id,
@@ -76,11 +77,10 @@ object Draggable:
    */
   def make(
             node: scalafx.scene.Node,
-            initialX: Double,
-            initialY: Double,
             setPosition: (Double, Double) => Unit,
             onMove: (Double, Double) => Unit
           ): Unit =
+
     def onDrag(offsetX: Double, offsetY: Double): MouseEvent => Unit =
       e =>
         val newX = (e.sceneX - offsetX).max(20).min(780)
@@ -95,6 +95,7 @@ object Draggable:
       node.cursor = Cursor.Default
 
     node.onMousePressed = (e: MouseEvent) =>
-      val offsetX = e.sceneX - initialX
-      val offsetY = e.sceneY - initialY
+      val offsetX = e.sceneX - node.layoutX.value
+      val offsetY = e.sceneY - node.layoutY.value
       node.onMouseDragged = onDrag(offsetX, offsetY)
+
