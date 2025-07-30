@@ -30,3 +30,17 @@ class ConsoleView extends VisualView:
 
   override def update(newState: SimulationState): Unit =
     render(newState.world)
+
+  override def getNodeView(id: String): Option[NodeView] = ???
+
+  override def removeEdge(id: String): Unit = ???
+
+  override def movePeople(from: String, to: String, amount: Int): Unit = ???
+
+  override def removeNode(id: String): Unit = ???
+
+  override def addNode(id: String, population: Int, infected: Int): Unit = ???
+
+  override def addEdge(nodeA: String, nodeB: String, typology: String): Unit = ???
+
+  override def updateNode(id: String, population: Int, infected: Int): Unit = ???

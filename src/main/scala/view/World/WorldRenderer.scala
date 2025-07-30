@@ -14,6 +14,9 @@ class WorldRenderer(world: World, pane: Pane):
     (edgeLayer.edgeLines.values ++ nodeLayer.allVisuals).toSeq*
   )
 
+
+
+
   /**
    * Updates the visual representation of the world using the provided simulation state.
    *
@@ -63,3 +66,19 @@ class WorldRenderer(world: World, pane: Pane):
 
   private def createEdgeLayer(edges: Iterable[Edge], nodePositions: Map[String, LivePosition]): EdgeLayer =
     EdgeLayer(edges, nodePositions)
+
+object WorldRenderer:
+  def render(
+              nodeViews: Map[String, NodeView],
+              edgeViews: Map[String, Line],
+              layout: CircularLayout
+            ): Seq[FxNode] =
+    val positions = layout.computePositions(nodeViews.keySet.toSeq)
+
+    val positionedNodeVisuals = nodeViews.toSeq.flatMap { case (id, view) =>
+      val (x, y) = positions(id)
+      view.visuals.foreach(_.relocate(x, y))
+      view.visuals
+    }
+
+    edgeViews.values.toSeq ++ positionedNodeVisuals
