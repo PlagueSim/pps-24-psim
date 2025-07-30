@@ -20,7 +20,7 @@ object App extends JFXApp3:
 
     val initialState: SimulationState = SimulationState.createStandardSimulationState()
 
-    val preSelectionNodes = WorldFactory.mockWorld().nodes
+    val preSelectionNodes = WorldFactory.mockWorld2().nodes
     val postSelectionNodes = showStartPopup(preSelectionNodes)
 
     setup:
@@ -29,9 +29,9 @@ object App extends JFXApp3:
           worldNodes:
             postSelectionNodes
           worldEdges:
-            WorldFactory.mockWorld().edges
+            WorldFactory.mockWorld2().edges
           worldMovements:
-            WorldFactory.mockWorld().movements
+            WorldFactory.mockWorld2().movements
         disease:
           diseaseName:
             "Diesease X"
