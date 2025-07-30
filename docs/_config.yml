@@ -1,0 +1,6 @@
+theme: jekyll-theme-primer
+title: PPS-24-psim
+description: "Project for the course of PPS24-25: PlagueSim"
+github:
+  private: false
+  repository_url: "https://github.com/PlagueSim/pps-24-psim"
