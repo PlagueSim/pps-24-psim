@@ -49,7 +49,7 @@ object EdgeLayer:
       line
 
 
-  private def updateLine(line: Line, edge: Edge, nodePositions: Map[String, LivePosition]): Unit =
+  def updateLine(line: Line, edge: Edge, nodePositions: Map[String, LivePosition]): Unit =
     val (startX, startY) = nodePositions(edge.nodeA).get()
     val (endX, endY) = nodePositions(edge.nodeB).get()
     val offset = edgeOffset(edge.typology)
@@ -85,7 +85,7 @@ object EdgeLayer:
 
     new Line(startX + offsetX, startY + offsetY, endX + offsetX, endY + offsetY)
 
-  def edgeOffset(edgeType: EdgeType): Double = edgeType match
+  private def edgeOffset(edgeType: EdgeType): Double = edgeType match
     case EdgeType.Land => 0
     case EdgeType.Sea  => 6.0
     case EdgeType.Air  => -6.0

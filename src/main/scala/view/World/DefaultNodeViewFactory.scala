@@ -1,5 +1,6 @@
 package view.world
 
+import scalafx.scene.Group
 import scalafx.scene.shape.{Circle, Shape}
 import scalafx.scene.text.Text
 import scalafx.scene.Cursor
@@ -27,34 +28,32 @@ class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
   override def createNode(id: String, data: Node, position: (Double, Double)): NodeView =
     val (posX, posY) = position
 
-    val circle = new Circle:
-      centerX = posX
-      centerY = posY
+    val circle = new Circle {
       radius = 15
       fill = Color.LightGray
       stroke = Color.Black
+    }
+    circle.relocate(-15, -15) // center circle at (0, 0)
 
     val labels = Seq(
-      LabelData(new Text(s"Node: $id"), -15, -20),
-      LabelData(new Text(s"Pop: ${data.population}"), -20, 30),
-      LabelData(new Text(s"Infected: ${data.infected}"), -20, 45),
-      LabelData(new Text(s"Died: ${data.died}"), -20, 60)
+      LabelData(new Text(s"Node: $id"), -15, -35),
+      LabelData(new Text(s"Pop: ${data.population}"), -20, 20), 
+      LabelData(new Text(s"Infected: ${data.infected}"), -20, 35),
+      LabelData(new Text(s"Died: ${data.died}"), -20, 50) 
     )
 
-    updateLabelPositions(posX, posY, labels)
+    labels.foreach { case LabelData(lbl, dx, dy) => lbl.relocate(dx, dy) }
 
-    Draggable.make(circle, posX, posY, (x, y) => {
-      circle.centerX = x
-      circle.centerY = y
-    }, (dx, dy) => {
-      updateLabelPositions(dx, dy, labels)
-      onMoved()
-    })
+    val group = new Group(circle +: labels.map(_.label): _*)
+    group.relocate(posX, posY)
+
+    Draggable.make(group, (x, y) => group.relocate(x, y), (_, _) => onMoved())
+
 
     NodeView(
       id = id,
-      visuals = circle.delegate +: labels.map(_.label.delegate),
-      position = () => (circle.centerX.value, circle.centerY.value),
+      visuals = Seq(group),
+      position = () => (group.layoutX.value, group.layoutY.value),
       labelId = labels.head.label,
       labelPop = labels(1).label,
       labelInf = labels(2).label,
@@ -63,8 +62,7 @@ class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
 
   private def updateLabelPositions(x: Double, y: Double, labels: Seq[LabelData]): Unit =
     labels.foreach { case LabelData(label, dx, dy) =>
-      label.x = x + dx
-      label.y = y + dy
+      label.relocate(x + dx, y + dy)
     }
 
 object Draggable:
@@ -78,12 +76,11 @@ object Draggable:
    * @param onMove      Callback called after every drag movement.
    */
   def make(
-            shape: Shape,
-            initialX: Double,
-            initialY: Double,
+            node: scalafx.scene.Node,
             setPosition: (Double, Double) => Unit,
             onMove: (Double, Double) => Unit
           ): Unit =
+
     def onDrag(offsetX: Double, offsetY: Double): MouseEvent => Unit =
       e =>
         val newX = (e.sceneX - offsetX).max(20).min(780)
@@ -91,13 +88,14 @@ object Draggable:
         setPosition(newX, newY)
         onMove(newX, newY)
 
-    shape.onMouseEntered = (_: MouseEvent) =>
-      shape.cursor = Cursor.Hand
+    node.onMouseEntered = (_: MouseEvent) =>
+      node.cursor = Cursor.Hand
 
-    shape.onMouseExited = (_: MouseEvent) =>
-      shape.cursor = Cursor.Default
+    node.onMouseExited = (_: MouseEvent) =>
+      node.cursor = Cursor.Default
 
-    shape.onMousePressed = (e: MouseEvent) =>
-      val offsetX = e.sceneX - initialX
-      val offsetY = e.sceneY - initialY
-      shape.onMouseDragged = onDrag(offsetX, offsetY)
+    node.onMousePressed = (e: MouseEvent) =>
+      val offsetX = e.sceneX - node.layoutX.value
+      val offsetY = e.sceneY - node.layoutY.value
+      node.onMouseDragged = onDrag(offsetX, offsetY)
+

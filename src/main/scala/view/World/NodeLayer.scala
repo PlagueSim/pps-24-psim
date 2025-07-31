@@ -37,3 +37,12 @@ object NodeLayer:
       nodeViews.values.flatMap(_.visuals).toSeq
 
     NodeLayer(nodeViews, positions, visuals)
+    
+  def createNode(
+                 id: String,
+                 data: Node,
+                 position: (Double, Double),
+                 onMoved: () => Unit
+               ): NodeView =
+    val factory = new DefaultNodeViewFactory(onMoved)
+    factory.createNode(id, data, position)

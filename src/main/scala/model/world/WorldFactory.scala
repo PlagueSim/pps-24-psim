@@ -8,6 +8,17 @@ object WorldFactory:
    * Some nodes are initialized with infection and death values.
    * A mix of edge types (Land, Sea, Air) is used for connections.
    */
+  def mockWorld2(): World =
+    val node = Node.withPopulation(100).withInfected(1).build()
+    val world = World(
+      Map("A" -> node, "B" -> node),
+      Map("A-B-Land" -> Edge("A", "B", EdgeType.Land),
+          "A-B-Sea" -> Edge("A", "B", EdgeType.Sea)),
+      Map(GlobalLogicMovement -> 1.0)
+    )
+    world
+
+
   def mockWorld(): World =
     val nodes =
       (1 to 15).map { i =>
@@ -26,8 +37,8 @@ object WorldFactory:
       }.toMap
 
     val edgeSet: Set[Edge] = Set(
-      Edge("A", "C", EdgeType.Land),
-      Edge("A", "C", EdgeType.Air),
+      Edge("A", "C", EdgeType.Land).close,
+      Edge("A", "C", EdgeType.Air).close,
       Edge("A", "B", EdgeType.Land),
       Edge("B", "C", EdgeType.Sea),
       Edge("C", "D", EdgeType.Air),
