@@ -19,7 +19,7 @@ import view.world.SetupWorldFactory
 class MainView extends BorderPane with UpdatableView:
   private val controller = ViewController(this)
 
-  private val setup = SetupWorldFactory.initializeWorldGui(WorldFactory.mockWorld2())
+  private val setup = SetupWorldFactory.initializeWorldGui(WorldFactory.mockWorld())
   private val mapView = setup.worldView
   private val mapPane: Node = mapView.root
   private val plgPane = PlagueView()
