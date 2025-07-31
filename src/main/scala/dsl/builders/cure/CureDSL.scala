@@ -5,7 +5,7 @@ import model.cure.CureModifiers
 
 /** A DSL for configuring the cure within the simulation. */
 object CureDSL:
-  
+
   /** Defines a cure configuration block.
     */
   def cure(init: CureBuilder ?=> Unit)(using

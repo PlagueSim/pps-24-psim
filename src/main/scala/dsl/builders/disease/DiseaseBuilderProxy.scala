@@ -32,8 +32,7 @@ class DiseaseBuilderProxy(
     set(updated)
     updated
 
-  /** Builds and returns a [[Disease]] instance using the
-    * underlying builder.
+  /** Builds and returns a [[Disease]] instance using the underlying builder.
     */
   override def build(): Disease =
     get().build()
