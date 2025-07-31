@@ -1,12 +1,11 @@
 package dsl.builders
 
+import controller.Controller
 import controller.ExecutionMode.{ExecutionMode, TerminalMode}
-import model.core.{SimulationEngine, SimulationState}
+import model.core.SimulationState
 import model.scheduler.{FixedStandardRateScheduler, Scheduler}
 import view.ConsoleSimulationView
 import view.updatables.UpdatableView
-
-import scala.annotation.tailrec
 
 /**
  * A builder class for setting up and running a simulation.
@@ -18,7 +17,6 @@ class SetupBuilderAndRunner:
   private var _view: UpdatableView = ConsoleSimulationView()
   private var _runMode: ExecutionMode = TerminalMode
   private var _scheduleMode: Scheduler = FixedStandardRateScheduler
-  private val _engine = SimulationEngine
 
   /**
    * Adds a simulation state to the builder.
@@ -59,27 +57,10 @@ class SetupBuilderAndRunner:
    * Runs the simulation with the configured settings.
    */
   def run(): Unit =
-    _runMode.execute {
-      _runMode.runLater(() => _view.update(_simulationState))
-      loop(_simulationState, _runMode.runLater)
-    }
-
-  @tailrec
-  private def loop(
-                    simState: SimulationState,
-                    runLater: Runnable => Unit
-                  ): SimulationState =
-    _scheduleMode.waitForNextTick()
-    val nextState = computeNextState(simState)
-    computeViewUpdates(nextState, runLater)
-    if _conditionsBuilder(nextState) then loop(nextState, runLater)
-    else nextState
-
-  private def computeNextState(simState: SimulationState): SimulationState =
-    _engine.runStandardSimulation(simState)
-
-  private def computeViewUpdates(
-                                  simState: SimulationState,
-                                  runLater: Runnable => Unit
-                                ): Unit =
-    runLater(() => _view.update(simState))
+    Controller(
+      _simulationState,
+      _conditionsBuilder,
+      _view,
+      _runMode,
+      _scheduleMode
+    ).run()
