@@ -1,4 +1,5 @@
 package model.world
+import model.world.MovementComputation.PeopleMovement
 import org.apache.commons.math3.distribution.HypergeometricDistribution
 
 case class World private (
@@ -46,12 +47,12 @@ object World:
 
   def applyMovements(
                       world: World,
-                      movements: List[(String, String, Int)]
+                      movements: List[PeopleMovement]
                     ): World =
     val updatedNodes = movements.foldLeft(world.nodes):
-      case (acc, (from, to, num)) if acc(from).population <= 0 =>
+      case (acc, PeopleMovement(from, to, num)) if acc(from).population <= 0 =>
         acc
-      case (acc, (from, to, num)) =>
+      case (acc, PeopleMovement(from, to, num)) =>
         val hgd = new HypergeometricDistribution(
           acc(from).population,
           acc(from).infected,
@@ -104,33 +105,6 @@ object World:
     )
 
   extension (world: World)
-    def addNode(id: String, data: Node): World =
-      world.modifyNodes(world.nodes + (id -> data))
-
-    def removeNode(id: String): World =
-      val updatedEdges = world.edges.filterNot { case (_, edge) => edge.connects(id) }
-      val updatedNodes = world.nodes - id
-      world.modifyNodes(updatedNodes).modifyEdges(updatedEdges)
-
-    def movePeople(from: String, to: String, amount: Int): World =
-      (for
-        fromNode <- world.nodes.get(from)
-        toNode <- world.nodes.get(to)
-      yield
-        val fromUpdated = fromNode.decreasePopulation(amount)
-        val toUpdated = toNode.increasePopulation(amount)
-        world.modifyNodes(world.nodes.updated(from, fromUpdated).updated(to, toUpdated))
-        ).getOrElse(world)
-
-    def addEdge(from: String, to: String, typology: EdgeType): World =
-      val key = s"${from}_${to}_${typology.toString}"
-      if world.edges.contains(key) then world
-      else world.modifyEdges(world.edges + (key -> Edge(from, to, typology)))
-
-    def removeEdge(from: String, to: String, typology: EdgeType): World =
-      val key = s"${from}_${to}_${typology.toString}"
-      world.modifyEdges(world.edges - key)
-
     def isEdgeOpen(a: String, b: String): Boolean =
       world.edges.values.exists(e =>
         ((e.nodeA == a && e.nodeB == b) || (e.nodeA == b && e.nodeB == a)) && !e.isClose
