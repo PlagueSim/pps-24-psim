@@ -26,11 +26,11 @@ object WorldFactory:
         val baseBuilder = Node.withPopulation(100000000 + i).withDied(2)
 
         val builderWithInfection = id match
-          case "A" => baseBuilder.withInfected(5)
-          case "C" => baseBuilder.withInfected(3)
-          case "F" => baseBuilder.withInfected(6)
-          case "J" => baseBuilder.withInfected(4)
-          case "O" => baseBuilder.withInfected(7)
+          case "A" => baseBuilder.withInfected(0)
+          case "C" => baseBuilder.withInfected(0)
+          case "F" => baseBuilder.withInfected(0)
+          case "J" => baseBuilder.withInfected(0)
+          case "O" => baseBuilder.withInfected(0)
           case _   => baseBuilder
 
         id -> builderWithInfection.build()
