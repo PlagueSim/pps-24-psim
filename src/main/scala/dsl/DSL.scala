@@ -30,7 +30,7 @@ object DSL:
   def setup(init: SetupBuilderAndRunner ?=> Unit): Unit =
     given builder: SetupBuilderAndRunner = SetupBuilderAndRunner()
     init
-    builder.run()
+    builder.buildAndRun()
 
   /** Defines a single state of the simulation.
     */

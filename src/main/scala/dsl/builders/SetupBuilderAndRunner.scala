@@ -52,7 +52,7 @@ class SetupBuilderAndRunner:
 
   /** Runs the simulation with the configured settings.
     */
-  def run(): Unit =
+  def buildAndRun(): Unit =
     Controller(
       _simulationState,
       _canRunCondition,
