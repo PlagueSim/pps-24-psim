@@ -12,8 +12,8 @@ object WorldFactory:
     val node = Node.withPopulation(100).withInfected(1).build()
     val world = World(
       Map("A" -> node, "B" -> node),
-      Map("A-B-L" -> Edge("A", "B", EdgeType.Land),
-          "A-B-S" -> Edge("A", "B", EdgeType.Sea)),
+      Map("A-B-Land" -> Edge("A", "B", EdgeType.Land),
+          "A-B-Sea" -> Edge("A", "B", EdgeType.Sea)),
       Map(GlobalLogicMovement -> 1.0)
     )
     world
