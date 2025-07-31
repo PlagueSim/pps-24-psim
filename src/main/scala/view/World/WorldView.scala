@@ -16,13 +16,11 @@ class WorldView extends Pane with UpdatableView with VisualView:
   private val layout: CircularLayout = CircularLayout()
 
   private var worldRenderer: Option[WorldRenderer] = None
-  private var currentWorld: Option[World] = None
 
   override def setEventHandler(handler: ViewEvent => Unit): Unit =
     this.eventHandler = handler
 
   override def render(world: World): Unit =
-    currentWorld = Some(world)
 
     val positionsMap = layout.computePositions(world.nodes.keySet.toSeq)
 
@@ -51,25 +49,46 @@ class WorldView extends Pane with UpdatableView with VisualView:
     children.removeAll(toRemove.toSeq*)
     children.addAll(toAdd.toSeq*)
 
-  private def getNodesChanged(nodes: Map[String, Node]): Map[String, NodeView] =
-    nodeViews.filter { case (id, view) =>
-      nodes.get(id) match
-        case Some(node) => view.population != node.population ||
-                          view.infected != node.infected ||
-                          view.died != node.died
-        case None => true
+  private def getNodesThatExistsAndChangedValues(nodes: Map[String, Node]): Map[String, NodeView] =
+    nodes.collect {
+      case (id, node) if nodeViews.get(id).exists(view =>
+        view.population != node.population ||
+          view.infected != node.infected ||
+          view.died != node.died
+      ) =>
+        id -> nodeViews(id)
     }
 
   private def update(world: World): Unit =
-    val nodesChanged = getNodesChanged(world.nodes)
+    val nodesChanged = getNodesThatExistsAndChangedValues(world.nodes)
     nodesChanged.foreach {
       case (id, view) =>
         view.updatePopulation(world.nodes(id).population)
         view.updateInfected(world.nodes(id).infected)
         view.updateDied(world.nodes(id).died)
     }
-    
-    
+    val nodesThatDontExistAnymore = nodeViews.keySet -- world.nodes.keySet
+    nodesThatDontExistAnymore.foreach { id =>
+      nodeViews.get(id).foreach { view =>
+        children.removeAll(view.visuals: _*)
+        nodeViews -= id
+      }
+    }
+
+    val nodesThatNeedsToBeCreated = world.nodes.keySet -- nodeViews.keySet
+    nodesThatNeedsToBeCreated.foreach { id =>
+      val node = world.nodes(id)
+      val position = layout.computePositions(Seq(id)).getOrElse(id, (0.0, 0.0))
+      val newNode = NodeLayer.createNode(id, node, position, () => redrawEdges(world.edges.values))
+      nodeViews += (id -> newNode)
+      children.addAll(newNode.visuals: _*)
+    }
+
+    redrawEdges(world.edges.values)
+
+  
+
+
 
   override def update(newState: SimulationState): Unit =
     update(newState.world)
