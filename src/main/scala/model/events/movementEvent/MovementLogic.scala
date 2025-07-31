@@ -1,4 +1,5 @@
 package model.events.movementEvent
+import model.world.MovementComputation.PeopleMovement
 import model.world.{Edge, Node, World}
 
 trait MovementLogic:
@@ -6,4 +7,4 @@ trait MovementLogic:
                world: World,
                percent: Double,
                rng: scala.util.Random
-             ): List[(String, String, Int)]
+             ): List[PeopleMovement]

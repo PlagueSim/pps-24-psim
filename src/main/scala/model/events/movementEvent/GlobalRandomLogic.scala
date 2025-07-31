@@ -1,5 +1,6 @@
 package model.events.movementEvent
 
+import model.world.MovementComputation.PeopleMovement
 import model.world.{Edge, Node, World}
 
 object GlobalRandomLogic extends MovementLogic:
@@ -8,15 +9,19 @@ object GlobalRandomLogic extends MovementLogic:
                world: World,
                percent: Double,
                rng: scala.util.Random
-             ): List[(String, String, Int)] =
+             ): List[PeopleMovement] =
     val totalPopulation = world.nodes.values.map(_.population).sum
     val peopleToMove = (totalPopulation * percent).toInt
     if peopleToMove == 0 then return List.empty
+
     val eligibleSources = world.nodes.filter(_._2.population > 0).keys.toVector
     val assigned = assignPeopleToSources(world.nodes, eligibleSources, peopleToMove, rng)
+
     assigned.toList
-      .filter((from, _) => world.neighbors(from).exists(world.isEdgeOpen(from, _)))
-      .flatMap(generateMovesFromSource(_, world.neighbors, world.isEdgeOpen, rng))
+      .filter { case (from, _) => world.neighbors(from).exists(world.isEdgeOpen(from, _)) }
+      .flatMap { case (from, amount) =>
+        generateMovesFromSource((from, amount), world.neighbors, world.isEdgeOpen, rng)
+      }
 
   private def assignPeopleToSources(
                                      nodes: Map[String, Node],
@@ -39,12 +44,13 @@ object GlobalRandomLogic extends MovementLogic:
                                        neighbors: String => Set[String],
                                        isEdgeOpen: (String, String) => Boolean,
                                        rng: scala.util.Random
-                                     ): List[(String, String, Int)] =
+                                     ): List[PeopleMovement] =
     val (from, count) = entry
     val openDestinations = neighbors(from).filter(isEdgeOpen(from, _)).toVector
 
-    if openDestinations.isEmpty then List.empty
+    if openDestinations.isEmpty 
+    then List.empty
     else
       val to = openDestinations(rng.nextInt(openDestinations.size))
-      List((from, to, count))
+      List(PeopleMovement(from, to, count))
 

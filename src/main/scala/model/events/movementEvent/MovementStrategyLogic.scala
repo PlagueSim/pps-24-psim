@@ -1,5 +1,6 @@
 package model.events.movementEvent
 
+import model.world.MovementComputation.PeopleMovement
 import model.world.{Edge, GlobalLogicStrategy, GlobalRandomMovement, LocalPercentageMovement, LocalPercentageMovementStrategy, MovementStrategy, Node, Static, World}
 object MovementStrategyLogic:
 
@@ -8,7 +9,7 @@ object MovementStrategyLogic:
                strategy: MovementStrategy,
                percentage: Double,
                rng: scala.util.Random
-             ): List[(String, String, Int)] =
+             ): List[PeopleMovement] =
     
     MovementStrategyDispatcher.logicFor(strategy)
       .compute(world, percentage, rng)
