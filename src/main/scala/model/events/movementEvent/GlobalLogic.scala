@@ -28,19 +28,15 @@ object GlobalLogic extends MovementLogicWithEdgeCapacityAndPercentages:
                         world: World,
                         percent: Double,
                         rng: scala.util.Random
-                      ): List[PeopleMovement] = {
+                      ): Iterable[PeopleMovement] = {
     val avgPopulation = world.getAvgPopulationPerNode
-    world.nodes
-      .filter(_._2.population > 0)
-      .toList
-      .flatMap { case (id, node) =>
-        world.edges
-          .filter(_._2.connects(id))
-          .flatMap { case (_, edge) =>
-            val toMove = (node.population * percent).floor.toInt
-            generateMovementTuple(id, node, edge, rng, avgPopulation, toMove)
-          }
-      }
+    
+    for {
+      (id, node) <- world.nodes if node.population > 0
+      (_, edge) <- world.edges if edge.connects(id)
+      toMove = (node.population * percent).floor.toInt
+      move <- generateMovementTuple(id, node, edge, rng, avgPopulation, toMove)
+    } yield move
   }
 
 

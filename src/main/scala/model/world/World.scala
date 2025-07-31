@@ -41,14 +41,13 @@ object World:
              edges: Map[String, Edge],
              movements: Map[MovementStrategy, Double]
            ): World =
-    WorldValidation.validateEdges(nodes, edges)
-    WorldValidation.validateMovements(movements)
+    WorldValidator.validateEdges(nodes, edges)
+    WorldValidator.validateMovements(movements)
     new World(nodes, edges, movements)
 
-  def applyMovements(world: World, movements: List[PeopleMovement]): World = {
+  def applyMovements(world: World, movements: Iterable[PeopleMovement]): World = {
     val updatedNodes = movements.foldLeft(world.nodes):
       case (nodesAcc, move) => updateNodesWithMovement(nodesAcc, move)
-      
     world.copy(nodes = updatedNodes)
   }
 
@@ -57,19 +56,22 @@ object World:
                                        movement: PeopleMovement
                                      ): Map[String, Node] =
     val PeopleMovement(from, to, amount) = movement
+    
     val fromNode = nodes(from)
-
     if fromNode.population <= 0 then return nodes
-
+    
     val infectedMoving = sampleInfected(fromNode, amount)
+    
     val updatedFrom = fromNode
       .decreasePopulation(amount)
       .decreaseInfection(infectedMoving)
+    
     val updatedTo = nodes(to)
       .increasePopulation(amount)
       .increaseInfection(infectedMoving)
-
-    nodes.updated(from, updatedFrom).updated(to, updatedTo)
+    
+    nodes.updated(from, updatedFrom)
+      .updated(to, updatedTo)
 
   private def sampleInfected(node: Node, amount: Int): Int =
     val hgd = new HypergeometricDistribution(

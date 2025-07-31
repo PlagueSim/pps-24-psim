@@ -7,4 +7,4 @@ trait MovementLogic:
                world: World,
                percent: Double,
                rng: scala.util.Random
-             ): List[PeopleMovement]
+             ): Iterable[PeopleMovement]

@@ -8,5 +8,5 @@ object StaticLogic extends MovementLogic:
                         world: World,
                         percent: Double,
                         rng: scala.util.Random
-                      ): List[PeopleMovement] = Nil
+                      ): List[PeopleMovement] = List.empty
 

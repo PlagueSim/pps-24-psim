@@ -1,6 +1,6 @@
 package model.world
 
-object WorldValidation:
+object WorldValidator:
 
   def validateEdges(nodes: Map[String, Node], edges: Map[String, Edge]): Unit =
     edgesMustConnectExistingNodes(nodes, edges)

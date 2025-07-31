@@ -9,7 +9,7 @@ object MovementStrategyLogic:
                strategy: MovementStrategy,
                percentage: Double,
                rng: scala.util.Random
-             ): List[PeopleMovement] =
+             ): Iterable[PeopleMovement] =
     
     MovementStrategyDispatcher.logicFor(strategy)
       .compute(world, percentage, rng)
