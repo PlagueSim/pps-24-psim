@@ -45,25 +45,39 @@ object World:
     validateMovements(movements)
     new World(nodes, edges, movements)
 
-  def applyMovements(
-                      world: World,
-                      movements: List[PeopleMovement]
-                    ): World =
+  def applyMovements(world: World, movements: List[PeopleMovement]): World = {
     val updatedNodes = movements.foldLeft(world.nodes):
-      case (acc, PeopleMovement(from, to, num)) if acc(from).population <= 0 =>
-        acc
-      case (acc, PeopleMovement(from, to, num)) =>
-        val hgd = new HypergeometricDistribution(
-          acc(from).population,
-          acc(from).infected,
-          num
-        )
-        val infected = hgd.sample()
-        acc
-          .updated(from, acc(from).decreasePopulation(num).decreaseInfection(infected))
-          .updated(to, acc(to).increasePopulation(num).increaseInfection(infected))
-
+      case (nodesAcc, move) => updateNodesWithMovement(nodesAcc, move)
+      
     world.copy(nodes = updatedNodes)
+  }
+
+  private def updateNodesWithMovement(
+                                       nodes: Map[String, Node],
+                                       movement: PeopleMovement
+                                     ): Map[String, Node] =
+    val PeopleMovement(from, to, amount) = movement
+    val fromNode = nodes(from)
+
+    if fromNode.population <= 0 then return nodes
+
+    val infectedMoving = sampleInfected(fromNode, amount)
+    val updatedFrom = fromNode
+      .decreasePopulation(amount)
+      .decreaseInfection(infectedMoving)
+    val updatedTo = nodes(to)
+      .increasePopulation(amount)
+      .increaseInfection(infectedMoving)
+
+    nodes.updated(from, updatedFrom).updated(to, updatedTo)
+
+  private def sampleInfected(node: Node, amount: Int): Int =
+    val hgd = new HypergeometricDistribution(
+      node.population,
+      node.infected,
+      amount
+    )
+    hgd.sample()
 
 
   private def validateEdges(nodes: Map[String, Node], edges: Map[String, Edge]): Unit =
