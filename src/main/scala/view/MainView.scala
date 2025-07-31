@@ -11,7 +11,7 @@ import scalafx.scene.layout.{BorderPane, VBox}
 import view.cure.CureProgressBar
 import view.plague.PlagueView
 import view.updatables.UpdatableView
-import view.world.SetupWorldFactory
+import view.world.WorldView
 
 /**
  * The main graphic interface of the game containing the world and plague views
@@ -19,8 +19,8 @@ import view.world.SetupWorldFactory
 class MainView extends BorderPane with UpdatableView:
   private val controller = ViewController(this)
 
-  private val setup = SetupWorldFactory.initializeWorldGui(WorldFactory.mockWorld())
-  private val mapView = setup.worldView
+  private val mapView = new WorldView()
+  mapView.render(WorldFactory.mockWorld())
   private val mapPane: Node = mapView.root
   private val plgPane = PlagueView()
   private val controlPane = ControlPane(controller)
