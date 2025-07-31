@@ -45,9 +45,10 @@ class WorldView extends Pane with UpdatableView with VisualView:
         updatedEdges,
         nodeViews.view.mapValues(nv => LivePosition(nv.position)).toMap
       )
+
     edgeViews = newEdgeMap
-    children.removeAll(toRemove.toSeq*)
-    children.addAll(toAdd.toSeq*)
+    children.removeAll(toRemove.toSeq: _*)
+    children.addAll(toAdd.toSeq: _*)
 
   private def getNodesThatExistsAndChangedValues(nodes: Map[String, Node]): Map[String, NodeView] =
     nodes.collect {
