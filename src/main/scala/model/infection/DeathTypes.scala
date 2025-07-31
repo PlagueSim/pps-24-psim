@@ -9,7 +9,7 @@ object DeathTypes:
   private val STANDARD_CAN_APPLY: Node => Boolean = _.infected > 0
 
   val StandardDeath: PopulationEffect =
-    PopulationEffectBuilder.apply(
+    PopulationEffectComposer.apply(
       canApply = STANDARD_CAN_APPLY,
       parameterExtractor = _.lethality,
       populationSelector = _.infected,
@@ -18,7 +18,7 @@ object DeathTypes:
     )
 
   val ProbabilisticDeath: PopulationEffect =
-    PopulationEffectBuilder.apply(
+    PopulationEffectComposer.apply(
       canApply = STANDARD_CAN_APPLY,
       parameterExtractor = _.lethality,
       populationSelector = _.infected,

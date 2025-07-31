@@ -11,8 +11,10 @@ import model.world.World
 /** A proxy for [[SimulationStateBuilder]] that allows modifying a simulation
   * state builder instance through a getter and a setter.
   */
-class SimulationStateBuilderProxy(get: () => SimulationStateBuilder,
-                                  set: SimulationStateBuilder => Unit) extends SimulationStateBuilder:
+class SimulationStateBuilderProxy(
+    get: () => SimulationStateBuilder,
+    set: SimulationStateBuilder => Unit
+) extends SimulationStateBuilder:
   /** Sets the world for the simulation and updates the underlying builder
     * instance.
     */
@@ -48,19 +50,23 @@ class SimulationStateBuilderProxy(get: () => SimulationStateBuilder,
   /** Sets the infection logic for the simulation and updates the underlying
     * builder instance.
     */
-  override def withInfectionLogic(infectionLogic: PopulationEffect): SimulationStateBuilder =
+  override def withInfectionLogic(
+      infectionLogic: PopulationEffect
+  ): SimulationStateBuilder =
     val updated = get().withInfectionLogic(infectionLogic)
     set(updated)
     updated
-    
+
   /** Sets the death logic for the simulation and updates the underlying builder
     * instance.
     */
-  override def withDeathLogic(deathLogic: PopulationEffect): SimulationStateBuilder =
+  override def withDeathLogic(
+      deathLogic: PopulationEffect
+  ): SimulationStateBuilder =
     val updated = get().withDeathLogic(deathLogic)
     set(updated)
     updated
-    
+
   /** Sets the reactions for the simulation and updates the underlying builder
     * instance.
     */
@@ -72,5 +78,5 @@ class SimulationStateBuilderProxy(get: () => SimulationStateBuilder,
   /** Builds and returns a [[SimulationState]] instance using the underlying
     * builder.
     */
-  override def build(): SimulationState = 
+  override def build(): SimulationState =
     get().build()

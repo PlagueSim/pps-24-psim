@@ -8,7 +8,7 @@ import model.plague.Disease
  * Factory object for creating instances of [[PopulationEffect]].
  * This object provides a flexible way to construct population effects by composing functions.
  */
-private[infection] object PopulationEffectBuilder:
+private[infection] object PopulationEffectComposer:
   /**
    * A concrete implementation of [[PopulationEffect]] that applies a series of functions
    * to a node's population based on a disease's characteristics.
