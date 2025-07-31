@@ -11,21 +11,21 @@ class WorldView extends Pane with UpdatableView with VisualView:
 
   private var nodeViews: Map[String, NodeView] = Map.empty
   private var edgeViews: Map[String, Line] = Map.empty
+  private var edges: Iterable[Edge] = List.empty
   private val layout: CircularLayout = CircularLayout()
-  private var currentWorld: Option[World] = None
 
   override def render(world: World): Unit =
-    currentWorld = Some(world)
+    edges = world.edges.values
     val positionsMap = layout.computePositions(world.nodes.keySet.toSeq)
 
     nodeViews = NodeLayer.fromNodes(
       nodes = world.nodes,
       layout = id => positionsMap(id),
-      onMoved = () => redrawEdges(currentWorld.get.getEdges)
+      onMoved = () => redrawEdges(edges)
     ).nodeViews
 
     edgeViews = EdgeLayer(
-      edges = currentWorld.get.getEdges,
+      edges = edges,
       nodePositions = nodeViews.view.mapValues(nv => LivePosition(nv.position)).toMap
     ).edgeLines
 
@@ -55,7 +55,7 @@ class WorldView extends Pane with UpdatableView with VisualView:
     }
 
   private def update(world: World): Unit =
-    currentWorld = Some(world)
+    edges = world.edges.values
     val nodesChanged = getNodesThatExistsAndChangedValues(world.nodes)
     nodesChanged.foreach {
       case (id, view) =>
@@ -82,7 +82,7 @@ class WorldView extends Pane with UpdatableView with VisualView:
 
     redrawEdges(world.edges.values)
 
-  
+
 
 
 

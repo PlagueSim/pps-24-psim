@@ -85,7 +85,7 @@ object EdgeLayer:
 
     new Line(startX + offsetX, startY + offsetY, endX + offsetX, endY + offsetY)
 
-  def edgeOffset(edgeType: EdgeType): Double = edgeType match
+  private def edgeOffset(edgeType: EdgeType): Double = edgeType match
     case EdgeType.Land => 0
     case EdgeType.Sea  => 6.0
     case EdgeType.Air  => -6.0

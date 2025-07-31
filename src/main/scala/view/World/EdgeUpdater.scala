@@ -27,8 +27,6 @@ object EdgeUpdater:
     val toAdd = scala.collection.mutable.Set[Line]()
     val seenIds = scala.collection.mutable.Set[String]()
 
-    println("currentEdges: " + currentEdges.keySet)
-    println("updatedEdges: " + updatedEdges.map(_.edgeId).toSet)
     for edge <- updatedEdges do
       val id = edge.edgeId
       seenIds += id
