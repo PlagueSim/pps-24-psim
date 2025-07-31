@@ -1,6 +1,7 @@
 package model.world
 import model.events.movementEvent
 import model.events.movementEvent.MovementEvent
+import model.world.MovementComputation.PeopleMovement
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -24,7 +25,7 @@ class MovementTest extends AnyFlatSpec with Matchers:
 
     val world = World(nodes, edge, movementStrategies)
 
-    val updateWorld = World.applyMovements(world, List(("A", "B", 2)))
+    val updateWorld = World.applyMovements(world, List(PeopleMovement("A", "B", 2)))
 
     assert(updateWorld.nodes("A").population == 47)
 
