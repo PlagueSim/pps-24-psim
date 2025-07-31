@@ -1,15 +1,17 @@
 name: Generate ScalaDoc
 
 on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
   pull_request:
     branches:
       - '**'
-  push:
-    branches:
-      - 'feature/**'
 
 jobs:
-  scaladoc:
+  build-docs:
+    name: Build ScalaDoc
     runs-on: ubuntu-latest
 
     steps:
@@ -48,8 +50,13 @@ jobs:
       - name: Generate ScalaDoc
         run: sbt doc
 
-      - name: Upload ScalaDoc artifact
+      - name: Prepare site/scaladoc folder
+        run: |
+          mkdir -p site/scaladoc
+          cp -r target/scala-*/api/* site/scaladoc/
+
+      - name: Upload site artifact
         uses: actions/upload-artifact@v4
         with:
-          name: scaladoc
-          path: target/scala-*/api
+          name: scaladoc-site
+          path: site
