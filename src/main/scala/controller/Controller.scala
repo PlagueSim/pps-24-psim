@@ -1,18 +1,23 @@
 package controller
 
+import controller.ExecutionMode.ExecutionMode
 import model.core.{SimulationEngine, SimulationState}
+import model.scheduler.Scheduler
 import view.updatables.UpdatableView
 
 import scala.annotation.tailrec
 
+/** The main controller for the simulation, responsible for running the
+  * simulation loop and updating the view.
+  */
 class Controller(
-    simulationState: model.core.SimulationState,
-    conditionsBuilder: model.core.SimulationState => Boolean,
+    simulationState: SimulationState,
+    canRun: SimulationState => Boolean,
     view: UpdatableView,
-    runMode: ExecutionMode.ExecutionMode,
-    scheduleMode: model.scheduler.Scheduler
+    runMode: ExecutionMode,
+    scheduleMode: Scheduler
 ):
-  
+
   private val engine = SimulationEngine
 
   /** Runs the simulation with the configured settings.
@@ -31,7 +36,7 @@ class Controller(
     scheduleMode.waitForNextTick()
     val nextState = computeNextState(simState)
     computeViewUpdates(nextState, runLater)
-    if conditionsBuilder(nextState) then loop(nextState, runLater)
+    if canRun(nextState) then loop(nextState, runLater)
     else nextState
 
   private def computeNextState(simState: SimulationState): SimulationState =
