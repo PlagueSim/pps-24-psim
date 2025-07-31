@@ -3,35 +3,29 @@ package view.world
 import model.core.SimulationState
 import model.world.{Edge, Node, World}
 import scalafx.scene.layout.Pane
-import view.event.ViewEvent
 import view.updatables.UpdatableView
 import javafx.scene.shape.Line
 import scalafx.scene.Node as NodeVisual
 
 class WorldView extends Pane with UpdatableView with VisualView:
 
-  private var eventHandler: ViewEvent => Unit = _ => ()
   private var nodeViews: Map[String, NodeView] = Map.empty
   private var edgeViews: Map[String, Line] = Map.empty
   private val layout: CircularLayout = CircularLayout()
-
-  private var worldRenderer: Option[WorldRenderer] = None
-
-  override def setEventHandler(handler: ViewEvent => Unit): Unit =
-    this.eventHandler = handler
+  private var currentWorld: Option[World] = None
 
   override def render(world: World): Unit =
-
+    currentWorld = Some(world)
     val positionsMap = layout.computePositions(world.nodes.keySet.toSeq)
 
     nodeViews = NodeLayer.fromNodes(
       nodes = world.nodes,
       layout = id => positionsMap(id),
-      onMoved = () => redrawEdges(world.edges.values)
+      onMoved = () => redrawEdges(currentWorld.get.getEdges)
     ).nodeViews
 
     edgeViews = EdgeLayer(
-      edges = world.edges.values,
+      edges = currentWorld.get.getEdges,
       nodePositions = nodeViews.view.mapValues(nv => LivePosition(nv.position)).toMap
     ).edgeLines
 
@@ -61,6 +55,7 @@ class WorldView extends Pane with UpdatableView with VisualView:
     }
 
   private def update(world: World): Unit =
+    currentWorld = Some(world)
     val nodesChanged = getNodesThatExistsAndChangedValues(world.nodes)
     nodesChanged.foreach {
       case (id, view) =>
@@ -93,9 +88,6 @@ class WorldView extends Pane with UpdatableView with VisualView:
 
   override def update(newState: SimulationState): Unit =
     update(newState.world)
-
-  override def handleEvent(event: ViewEvent): Unit =
-    eventHandler(event)
 
   override def root: NodeVisual = this
 
