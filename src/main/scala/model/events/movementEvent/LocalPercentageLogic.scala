@@ -14,7 +14,7 @@ object LocalPercentageLogic extends MovementLogicWithEdgeCapacityAndPercentages:
                       ): List[PeopleMovement] =
     world.nodes
       .collect { case (id, node) if canMove(id, node, world) => (id, node) }
-      .flatMap((id, node) => generateMovement(id, node, world, percent, rng))
+      .flatMap((id, node) => generateMovement(id, world, percent, rng))
       .toList
 
   private def canMove(id: String, node: Node, world: World): Boolean =
@@ -22,17 +22,16 @@ object LocalPercentageLogic extends MovementLogicWithEdgeCapacityAndPercentages:
 
   private def generateMovement(
                                 from: String,
-                                node: Node,
                                 world: World,
                                 percent: Double,
                                 rng: scala.util.Random
                               ): Option[PeopleMovement] =
-    
+
     val openNeighbors = world.neighbors(from).filter(world.isEdgeOpen(from, _)).toVector
     if openNeighbors.isEmpty then return None
 
     val to = openNeighbors(rng.nextInt(openNeighbors.size))
-    val baseAmount = (node.population * percent).toInt.min(node.population)
+    val baseAmount = (world.nodes(from).population * percent).toInt.min(world.nodes(from).population)
 
     val edgeOpt = world.getEdges.find(e => e.connects(from) && e.other(from).contains(to))
     val finalAmount = edgeOpt
