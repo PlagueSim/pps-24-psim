@@ -1,4 +1,4 @@
-name: Generate_ScalaDoc
+name: Build and Deploy ScalaDoc
 
 on:
   push:
@@ -9,9 +9,17 @@ on:
     branches:
       - '**'
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
-  build-docs:
-    name: Build ScalaDoc
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,7 +35,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Set JAVA_HOME from JAVA_HOME_21_X64
+      - name: Set JAVA_HOME
         run: echo "JAVA_HOME=$JAVA_HOME_21_X64" >> $GITHUB_ENV
 
       - name: Generate ScalaDoc
@@ -50,8 +58,14 @@ jobs:
       - name: Verify copied files
         run: ls -R site
 
-      - name: Upload site artifact
-        uses: actions/upload-artifact@v4
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: scaladoc-site
-          path: site
+          path: ./site
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
