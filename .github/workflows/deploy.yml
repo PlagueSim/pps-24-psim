@@ -86,8 +86,8 @@ jobs:
           </head>
           <body>
             <h1>Benvenuto nella Documentazione</h1>
-            <button onclick="window.location.href='scaladoc/index.md'">ScalaDoc</button>
-            <button onclick="window.location.href='relazione/index.html'">Relazione</button>
+            <button onclick="window.location.href='scaladoc/index.html'">ScalaDoc</button>
+            <button onclick="window.location.href='relazione/index.md'">Relazione</button>
           </body>
           </html>
           EOF
