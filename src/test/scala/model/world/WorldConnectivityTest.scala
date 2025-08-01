@@ -32,8 +32,12 @@ class WorldConnectivityTest extends AnyFlatSpec with Matchers:
 
     WorldConnectivity.areConnected(world, "A", "C") shouldBe false
     WorldConnectivity.areConnected(world, "A", "D") shouldBe false
-    WorldConnectivity.areConnected(world, "B", "C") shouldBe true
     WorldConnectivity.areConnected(world, "C", "A") shouldBe false
+
+    WorldConnectivity.areConnected(world, "B", "C") shouldBe true
+    WorldConnectivity.areConnected(world, "C", "B") shouldBe true
+    WorldConnectivity.areConnected(world, "A", "B") shouldBe true
+    WorldConnectivity.areConnected(world, "B", "A") shouldBe true
   }
 
   it should "return false when no connection exists" in {
