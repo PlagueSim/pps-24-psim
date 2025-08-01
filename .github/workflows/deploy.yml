@@ -1,45 +1,99 @@
-name: Deploy ScalaDoc to GitHub Pages
+name: Build and Deploy ScalaDoc with Index
 
 on:
-  workflow_run:
-    workflows: ["Generate_ScalaDoc"]
-    types:
-      - completed
+  push:
+    branches:
+      - 'feature/**'
+      - main
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
-concurrency:
-  group: pages
-  cancel-in-progress: false
-
 jobs:
-  deploy-docs:
-    name: Deploy to GitHub Pages
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  build-deploy:
     runs-on: ubuntu-latest
 
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-
     steps:
-      - name: Download site artifact
-        uses: actions/download-artifact@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Scala and sbt
+        uses: olafurpg/setup-scala@v14
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
         with:
-          name: scaladoc-site
-          path: .
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache sbt dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.ivy2/cache
+            ~/.sbt
+            ~/.coursier
+          key: ${{ runner.os }}-sbt-${{ hashFiles('**/*.sbt') }}
+
+      - name: Generate ScalaDoc
+        run: sbt doc
+
+      - name: Prepare site directory
+        run: |
+          mkdir -p site/scaladoc
+          mkdir -p site/relazione
+
+      - name: Copy ScalaDoc to site
+        run: cp -r target/scala-*/api/* site/scaladoc/
+
+      - name: Copy relazione files
+        run: cp -r docs/* site/docs/
+
+      - name: Create custom index.html
+        run: |
+          cat > site/index.html <<EOF
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>Documentazione Progetto</title>
+            <style>
+              body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+              button {
+                margin: 20px;
+                padding: 15px 30px;
+                font-size: 18px;
+                cursor: pointer;
+                border: none;
+                background-color: #007bff;
+                color: white;
+                border-radius: 8px;
+                transition: background-color 0.3s ease;
+              }
+              button:hover {
+                background-color: #0056b3;
+              }
+            </style>
+          </head>
+          <body>
+            <h1>Benvenuto nella Documentazione</h1>
+            <button onclick="window.location.href='scaladoc/index.html'">ScalaDoc</button>
+            <button onclick="window.location.href='relazione/index.html'">Relazione</button>
+          </body>
+          </html>
+          EOF
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v4
 
-      - name: Upload pages artifact
+      - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./site
 
-      - name: Deploy
+      - name: Deploy to GitHub Pages
         id: deploy
         uses: actions/deploy-pages@v4
