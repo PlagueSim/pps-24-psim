@@ -3,7 +3,9 @@ import { withMermaid } from "vitepress-plugin-mermaid";
 
 let reportPath = '/report'
 
-export default withMermaid( defineConfig({
+export default withMermaid(
+    defineConfig({
+    ignoreDeadLinks: true,
     title: 'Relazione progetto',
     description: 'Relazione del progetto PlagueSim',
     themeConfig: {
