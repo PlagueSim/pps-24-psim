@@ -8,47 +8,40 @@ import org.scalatest.matchers.should.Matchers
 
 class WorldTest extends AnyFlatSpec with Matchers:
 
-  "model/world" should "validate that edges connect existing nodes" in {
+  "model/world" should "validate that edges connect existing nodes" in:
     val node = Node.withPopulation(10).build()
     val nodes = Map("A" -> node)
     val edges = Map("A-B" -> Edge("A", "B", EdgeType.Land))
-    val movements: Map[MovementStrategy, Double] = Map(
-      Static -> 1.0
-    )
+    val movements: Map[MovementStrategy, Double] = Map(Static -> 1.0)
 
-    an[IllegalArgumentException] shouldBe thrownBy {
+    an[IllegalArgumentException] shouldBe thrownBy:
       World(nodes, edges, movements)
-    }
-  }
 
-  it should "validate that movement percentages are non-empty and sum to 1.0" in {
+  it should "validate that movement percentages are non-empty and sum to 1.0" in:
     val node = Node.withPopulation(10).build()
     val nodes = Map("A" -> node)
     val edges = Map.empty[String, Edge]
 
     val emptyMovements = Map.empty[MovementStrategy, Double]
-    an[IllegalArgumentException] shouldBe thrownBy {
+    an[IllegalArgumentException] shouldBe thrownBy:
       World(nodes, edges, emptyMovements)
-    }
 
     val invalidMovements: Map[MovementStrategy, Double] = Map(
       Static -> 0.6,
       LocalPercentageMovement -> 0.3
     )
-    an[IllegalArgumentException] shouldBe thrownBy {
+    an[IllegalArgumentException] shouldBe thrownBy:
       World(nodes, edges, invalidMovements)
-    }
 
     val negativeMovements: Map[MovementStrategy, Double] = Map(
       Static -> 0.5,
       LocalPercentageMovement -> -0.5
     )
-    an[IllegalArgumentException] shouldBe thrownBy {
+    an[IllegalArgumentException] shouldBe thrownBy:
       World(nodes, edges, negativeMovements)
-    }
-  }
+  
 
-  it should "create a valid World when all nodes, edges, and global movement percentages are correct" in {
+  it should "create a valid World when all nodes, edges, and global movement percentages are correct" in:
     val nodeA = Node.withPopulation(10).build()
     val nodeB = Node.withPopulation(5).build()
 
@@ -67,9 +60,8 @@ class WorldTest extends AnyFlatSpec with Matchers:
     world.nodes shouldBe nodes
     world.edges shouldBe edges
     world.movements shouldBe movements
-  }
 
-  it should "ignore the adding of an edge, if already exists" in {
+  it should "ignore the adding of an edge, if already exists" in:
     val nodeA = Node.withPopulation(10).build()
     val nodeB = Node.withPopulation(5).build()
 
@@ -87,9 +79,8 @@ class WorldTest extends AnyFlatSpec with Matchers:
     )
 
     edges.size should be (1)
-  }
 
-  it should "allow neighbors to be retrieved correctly" in {
+  it should "allow neighbors to be retrieved correctly" in:
     val nodeA = Node.withPopulation(10).build()
     val nodeB = Node.withPopulation(5).build()
     val nodeC = Node.withPopulation(3).build()
@@ -110,9 +101,8 @@ class WorldTest extends AnyFlatSpec with Matchers:
     world.neighbors("A") should contain theSameElementsAs Set("B")
     world.neighbors("B") should contain theSameElementsAs Set("A", "C")
     world.neighbors("C") should contain theSameElementsAs Set("B")
-  }
   
-  it should "modify nodes correctly" in {
+  it should "modify nodes correctly" in:
     val nodeA = Node.withPopulation(10).build()
     val nodeB = Node.withPopulation(5).build()
 
@@ -134,9 +124,8 @@ class WorldTest extends AnyFlatSpec with Matchers:
 
     modifiedWorld.nodes should contain key "C"
     modifiedWorld.nodes("C").population shouldBe 7
-  }
 
-  it should "check if two nodes are connected" in {
+  it should "check if two nodes are connected" in:
     val nodeA = Node.withPopulation(1).build()
     val nodeB = Node.withPopulation(2).build()
     val nodeC = Node.withPopulation(3).build()
@@ -157,4 +146,3 @@ class WorldTest extends AnyFlatSpec with Matchers:
     world.areConnected("A", "B") shouldBe true
     world.areConnected("B", "C") shouldBe true
     world.areConnected("A", "C") shouldBe false
-  }

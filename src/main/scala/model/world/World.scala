@@ -1,4 +1,5 @@
 package model.world
+import model.world.MovementComputation.PeopleMovement
 import org.apache.commons.math3.distribution.HypergeometricDistribution
 
 case class World private (
@@ -40,98 +41,52 @@ object World:
              edges: Map[String, Edge],
              movements: Map[MovementStrategy, Double]
            ): World =
-    validateEdges(nodes, edges)
-    validateMovements(movements)
+    WorldValidator.validateEdges(nodes, edges)
+    WorldValidator.validateMovements(movements)
     new World(nodes, edges, movements)
 
-  def applyMovements(
-                      world: World,
-                      movements: List[(String, String, Int)]
-                    ): World =
+  def applyMovements(world: World, movements: Iterable[PeopleMovement]): World = {
     val updatedNodes = movements.foldLeft(world.nodes):
-      case (acc, (from, to, num)) if acc(from).population <= 0 =>
-        acc
-      case (acc, (from, to, num)) =>
-        val hgd = new HypergeometricDistribution(
-          acc(from).population,
-          acc(from).infected,
-          num
-        )
-        val infected = hgd.sample()
-        acc
-          .updated(from, acc(from).decreasePopulation(num).decreaseInfection(infected))
-          .updated(to, acc(to).increasePopulation(num).increaseInfection(infected))
-
+      case (nodesAcc, move) => updateNodesWithMovement(nodesAcc, move)
     world.copy(nodes = updatedNodes)
+  }
 
+  private def updateNodesWithMovement(
+                                       nodes: Map[String, Node],
+                                       movement: PeopleMovement
+                                     ): Map[String, Node] =
+    val PeopleMovement(from, to, amount) = movement
+    
+    val fromNode = nodes(from)
+    if fromNode.population <= 0 then return nodes
+    
+    val infectedMoving = sampleInfected(fromNode, amount)
+    
+    val updatedFrom = fromNode
+      .decreasePopulation(amount)
+      .decreaseInfection(infectedMoving)
+    
+    val updatedTo = nodes(to)
+      .increasePopulation(amount)
+      .increaseInfection(infectedMoving)
+    
+    nodes.updated(from, updatedFrom)
+      .updated(to, updatedTo)
 
-  private def validateEdges(nodes: Map[String, Node], edges: Map[String, Edge]): Unit =
-    edgesMustConnectExistingNodes(nodes, edges)
-    twoNodesCannotBeConnectedByMultipleEdgesOfSameTypology(edges)
-
-  private def validateMovements(movements: Map[MovementStrategy, Double]): Unit =
-    AtLeastOneMovementStrategyExists(movements)
-    movementPercentagesMustBeNonNegative(movements)
-    movementPercentagesMustSumToOne(movements)
-
-  private def twoNodesCannotBeConnectedByMultipleEdgesOfSameTypology(edges: Map[String, Edge]): Unit =
-    val grouped = edges.values.groupBy(e => Set(e.nodeA, e.nodeB) -> e.typology)
-    require(
-      grouped.forall(_._2.size == 1),
-      "Two nodes cannot be connected by multiple edges of the same typology"
+  private def sampleInfected(node: Node, amount: Int): Int =
+    val hgd = new HypergeometricDistribution(
+      node.population,
+      node.infected,
+      amount
     )
-
-  private def edgesMustConnectExistingNodes(nodes: Map[String, Node], edges: Map[String, Edge]): Unit =
-    require(
-      edges.values.forall(e => nodes.contains(e.nodeA) && nodes.contains(e.nodeB)),
-      "Edges must connect existing nodes"
-    )
-
-  private def AtLeastOneMovementStrategyExists(movements: Map[MovementStrategy, Double]): Unit =
-    require(movements.nonEmpty, "At least one movement strategy must be defined")
-
-  private def movementPercentagesMustBeNonNegative(movements: Map[MovementStrategy, Double]): Unit =
-    require(
-      movements.values.forall(_ >= 0.0),
-      "Movement percentages must be non-negative"
-    )
-
-  private def movementPercentagesMustSumToOne(movements: Map[MovementStrategy, Double]): Unit =
-    val total = movements.values.sum
-    require(
-      total >= 0.999 && total <= 1.001,
-      s"Movement percentages must sum to 1.0 (got $total)"
-    )
+    hgd.sample()
+  
 
   extension (world: World)
-    def addNode(id: String, data: Node): World =
-      world.modifyNodes(world.nodes + (id -> data))
-
-    def removeNode(id: String): World =
-      val updatedEdges = world.edges.filterNot { case (_, edge) => edge.connects(id) }
-      val updatedNodes = world.nodes - id
-      world.modifyNodes(updatedNodes).modifyEdges(updatedEdges)
-
-    def movePeople(from: String, to: String, amount: Int): World =
-      (for
-        fromNode <- world.nodes.get(from)
-        toNode <- world.nodes.get(to)
-      yield
-        val fromUpdated = fromNode.decreasePopulation(amount)
-        val toUpdated = toNode.increasePopulation(amount)
-        world.modifyNodes(world.nodes.updated(from, fromUpdated).updated(to, toUpdated))
-        ).getOrElse(world)
-
-    def addEdge(from: String, to: String, typology: EdgeType): World =
-      val key = s"${from}_${to}_${typology.toString}"
-      if world.edges.contains(key) then world
-      else world.modifyEdges(world.edges + (key -> Edge(from, to, typology)))
-
-    def removeEdge(from: String, to: String, typology: EdgeType): World =
-      val key = s"${from}_${to}_${typology.toString}"
-      world.modifyEdges(world.edges - key)
-
     def isEdgeOpen(a: String, b: String): Boolean =
       world.edges.values.exists(e =>
         ((e.nodeA == a && e.nodeB == b) || (e.nodeA == b && e.nodeB == a)) && !e.isClose
       )
+    def getAvgPopulationPerNode: Int =
+      if world.nodes.isEmpty then 0
+      else world.nodes.values.map(_.population).sum / world.nodes.size

@@ -1,5 +1,6 @@
 package model.events.movementEvent
 
+import model.world.MovementComputation.PeopleMovement
 import model.world.{Node, World}
 
 object StaticLogic extends MovementLogic:
@@ -7,5 +8,5 @@ object StaticLogic extends MovementLogic:
                         world: World,
                         percent: Double,
                         rng: scala.util.Random
-                      ): List[(String, String, Int)] = Nil
+                      ): List[PeopleMovement] = List.empty
 
