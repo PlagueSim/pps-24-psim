@@ -30,30 +30,25 @@ jobs:
       - name: Set JAVA_HOME from JAVA_HOME_21_X64
         run: echo "JAVA_HOME=$JAVA_HOME_21_X64" >> $GITHUB_ENV
 
-      - name: Confirm Java version
-        run: java -version
-
-      - name: Confirm JAVA_HOME
-        run: echo $JAVA_HOME
-
-      - name: Cache sbt dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.ivy2/cache
-            ~/.sbt
-            ~/.coursier
-          key: ${{ runner.os }}-sbt-${{ hashFiles('**/*.sbt') }}
-          restore-keys: |
-            ${{ runner.os }}-sbt-
-
       - name: Generate ScalaDoc
         run: sbt doc
 
-      - name: Prepare site/scaladoc folder
+      - name: Debug target content
+        run: ls -R target
+
+      - name: Copy ScalaDoc to site/scaladoc
         run: |
           mkdir -p site/scaladoc
-          cp -r target/scala-*/api/* site/scaladoc/
+          DOC_PATH=$(find target -type d -path "*/api" | head -n 1)
+          echo "Found doc path: $DOC_PATH"
+          cp -r "$DOC_PATH"/* site/scaladoc/
+
+      - name: Add redirect from root to /scaladoc
+        run: |
+          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=scaladoc/"></head></html>' > site/index.html
+
+      - name: Verify copied files
+        run: ls -R site
 
       - name: Upload site artifact
         uses: actions/upload-artifact@v4
