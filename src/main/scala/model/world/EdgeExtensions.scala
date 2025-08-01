@@ -12,3 +12,7 @@ object EdgeExtensions:
   extension (edge: Edge)
     def edgeId: String =
       if edge.nodeA < edge.nodeB then s"${edge.nodeA}-${edge.nodeB}-${edge.typology}" else s"${edge.nodeB}-${edge.nodeA}-${edge.typology}"
+
+  extension (edges: Iterable[Edge])
+    def getMapEdges: Map[String, Edge] =
+      edges.map(edge => edge.edgeId -> edge).toMap

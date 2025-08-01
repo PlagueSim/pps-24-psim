@@ -7,6 +7,13 @@ object LocalPercentageLogic extends MovementLogicWithEdgeCapacityAndPercentages:
 
   override def edgeMovementConfig: EdgeMovementConfig = EdgeConfigurationFactory().getDefaultEdgeConfiguration
 
+  /*
+  * This logic computes movements based on a percentage of the population at each node.
+  * It checks if the node has a population greater than zero and if it has open edges to neighbors.
+  * If so, it generates movements to a random neighbor, respecting the edge capacity.
+  * The amount of movement is calculated as a percentage of the node's population,
+  * limited by the edge's capacity if specified.
+  * */
   override def compute(
                         world: World,
                         percent: Double,
@@ -38,4 +45,4 @@ object LocalPercentageLogic extends MovementLogicWithEdgeCapacityAndPercentages:
       .map(edge => baseAmount.min(edgeMovementConfig.capacity.getOrElse(edge.typology, baseAmount)))
       .getOrElse(0)
 
-    Some(PeopleMovement(from, to, finalAmount))
+    if finalAmount <= 0 then None else Some(PeopleMovement(from, to, finalAmount))

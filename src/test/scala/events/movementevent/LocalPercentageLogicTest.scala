@@ -6,6 +6,7 @@ import model.world.*
 import model.world.MovementComputation.PeopleMovement
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+import model.world.EdgeExtensions.getMapEdges
 
 import scala.language.postfixOps
 import scala.util.Random
@@ -18,7 +19,7 @@ class LocalPercentageLogicTest extends AnyFlatSpec with Matchers:
         "A" -> Node.withPopulation(0).withInfected(0).withDied(0).build(),
         "B" -> Node.withPopulation(0).withInfected(0).withDied(0).build()
       ),
-      edges = Map("A-B-Land" -> Edge("A", "B", EdgeType.Land)),
+      edges = List(Edge("A", "B", EdgeType.Land)).getMapEdges,
       movements = Map(LocalPercentageMovement -> 1.0)
     )
 
@@ -31,7 +32,7 @@ class LocalPercentageLogicTest extends AnyFlatSpec with Matchers:
         "A" -> Node.withPopulation(100).withInfected(0).withDied(0).build(),
         "B" -> Node.withPopulation(100).withInfected(0).withDied(0).build()
       ),
-      edges = Map("A-B-Land" -> Edge("A", "B", EdgeType.Land).close),
+      edges = List(Edge("A", "B", EdgeType.Land).close).getMapEdges,
       movements = Map(LocalPercentageMovement -> 1.0)
     )
 
@@ -44,7 +45,7 @@ class LocalPercentageLogicTest extends AnyFlatSpec with Matchers:
         "A" -> Node.withPopulation(100).withInfected(0).withDied(0).build(),
         "B" -> Node.withPopulation(0).withInfected(0).withDied(0).build()
       ),
-      edges = Map("A-B-Sea" -> Edge("A", "B", EdgeType.Sea)),
+      edges = List(Edge("A", "B", EdgeType.Sea)).getMapEdges,
       movements = Map(LocalPercentageMovement -> 1.0)
     )
 
@@ -65,7 +66,7 @@ class LocalPercentageLogicTest extends AnyFlatSpec with Matchers:
         "A" -> Node.withPopulation(200).withInfected(0).withDied(0).build(),
         "B" -> Node.withPopulation(200).withInfected(0).withDied(0).build()
       ),
-      edges = Map("A-B-Air" -> Edge("A", "B", EdgeType.Air)),
+      edges = List(Edge("A", "B", EdgeType.Air)).getMapEdges,
       movements = Map(LocalPercentageMovement -> 1.0)
     )
 
