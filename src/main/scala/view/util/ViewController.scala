@@ -1,4 +1,5 @@
-package controller
+package view.util
+
 import scalafx.scene.Node
 import scalafx.scene.layout.BorderPane
 

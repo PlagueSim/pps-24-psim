@@ -9,8 +9,8 @@ import model.plague.Trait
 import scalafx.geometry.Insets
 import scalafx.scene.control.Label
 import scalafx.scene.text.Font
-import view.StdButton
 import view.updatables.UpdatableView
+import view.util.StdButton
 
 /**
  * The panel that shows The selected [[Trait]] information

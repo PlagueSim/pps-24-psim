@@ -9,7 +9,7 @@ import scalafx.scene.control.{Label, ListView}
 import scalafx.scene.layout.VBox
 import scalafx.scene.text.TextAlignment.*
 import scalafx.stage.Stage
-import view.StdButton
+import view.util.StdButton
 
 /**
  * A simple introduction interface where the player can specify which node
@@ -50,6 +50,7 @@ def showStartPopup(nodes: Map[String, Node]): Map[String, Node] =
       alignment = Pos.Center
       padding = Insets(20)
       children = Seq(intro, nodeListView, startButton)
+  popupStage.onCloseRequest = _ => System.exit(0)
   popupStage.showAndWait()
   updatedNodes
 

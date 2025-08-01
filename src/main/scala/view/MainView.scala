@@ -1,7 +1,6 @@
 package view
 
 import model.world.WorldFactory
-import controller.ViewController
 import model.core.SimulationState
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.Center
@@ -11,6 +10,7 @@ import scalafx.scene.layout.{BorderPane, VBox}
 import view.cure.CureProgressBar
 import view.plague.PlagueView
 import view.updatables.UpdatableView
+import view.util.*
 import view.world.WorldView
 
 /**
@@ -76,7 +76,7 @@ class DatePane extends BorderPane with UpdatableView:
 /**
  * Shows the current available DNA points
  */
-case object DnaPointsCounter extends Label with UpdatableView:
+object DnaPointsCounter extends Label with UpdatableView:
   text = "DNA points: 0"
   padding = Insets(3)
   override def update(newState: SimulationState): Unit =
@@ -85,7 +85,7 @@ case object DnaPointsCounter extends Label with UpdatableView:
 /**
  * Displays the information about the infected, healthy and deceased people in the world
  */
-case object InfectionRecap extends Label with UpdatableView:
+object InfectionRecap extends Label with UpdatableView:
   text = "Infected: 0 / Healthy: 0 \\ Deceased: 0"
   padding = Insets(3)
   override def update(newState: SimulationState): Unit =
