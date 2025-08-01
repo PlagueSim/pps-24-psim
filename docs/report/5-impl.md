@@ -14,4 +14,4 @@ come ad esempio relativamente all'uso di meccanismi avanzati di Scala
 
 [Back to index](../index.md) |
 [Previous Chapter](../4-detailed-design/design.md) |
-[Next Chapter](../6-testing/testing.md)
+[Next Chapter](testing.md)

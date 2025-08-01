@@ -48,13 +48,17 @@ jobs:
       - name: Copy ScalaDoc
         run: cp -r target/scala-*/api/* site/scaladoc/
 
-      - name: Copy relazione
+      - name: Install dependencies for relazione
+        run: npm install
+        working-directory: ./docs
+
+      - name: Build relazione HTML with VitePress
+        run: npm run docs:build
+        working-directory: ./docs
+
+      - name: Copy relazione to site
         run: |
-          if [ -d "relazione" ]; then
-            cp -r docs/* site/relazione/
-          else
-            echo "Relazione directory not found, skipping copy"
-          fi
+          cp -r docs/.vitepress/dist/* site/relazione/
 
       - name: Create custom index.html
         run: |
@@ -86,7 +90,7 @@ jobs:
           <body>
             <h1>Benvenuto nella Documentazione</h1>
             <button onclick="window.location.href='scaladoc/index.html'">ScalaDoc</button>
-            <button onclick="window.location.href='relazione/index.md'">Relazione</button>
+            <button onclick="window.location.href='relazione/index.html'">Relazione</button>
           </body>
           </html>
           EOF

@@ -13,10 +13,10 @@ Si consiglia di realizzare la relazione come insieme di file di markdown (uno pe
 da tenere in continuous integration col progetto, come illustrato a lezione.
 
 ## Sommario:
-- [Processo di sviluppo](1-development-process/intro.md)
+- [Processo di sviluppo](report/1-intro.md)
 - [Requisiti](2-requirement-specification/req.md)
 - [Design architetturale](3-architectural-design/design.md)
 - [Design di dettaglio](4-detailed-design/design.md)
 - [Implementazione](5-implementation/impl.md)
-- [Testing](6-testing/testing.md)
-- [Retrospettiva](7-conclusion/end.md)
+- [Testing](report/testing.md)
+- [Retrospettiva](report/end.md)
