@@ -9,7 +9,7 @@ import scalafx.scene.control.{Label, ListView}
 import scalafx.scene.layout.VBox
 import scalafx.scene.text.TextAlignment.*
 import scalafx.stage.Stage
-import view.StdButton
+import view.util.StdButton
 
 /**
  * A simple introduction interface where the player can specify which node

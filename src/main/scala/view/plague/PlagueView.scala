@@ -1,14 +1,13 @@
 package view.plague
 
-import controller.ViewController
 import model.core.SimulationState
 import model.plague.db.*
 import scalafx.geometry.Insets
 import scalafx.scene.control.Label
 import scalafx.scene.layout.{BorderPane, HBox, VBox}
 import scalafx.scene.text.Font
-import view.StdButton
 import view.updatables.UpdatableView
+import view.util.*
 
 /**
  * The page containing the [[Disease]] information that gives the

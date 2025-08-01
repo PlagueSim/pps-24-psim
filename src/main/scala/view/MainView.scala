@@ -1,7 +1,6 @@
 package view
 
 import model.world.WorldFactory
-import controller.ViewController
 import model.core.SimulationState
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.Center
@@ -11,6 +10,7 @@ import scalafx.scene.layout.{BorderPane, VBox}
 import view.cure.CureProgressBar
 import view.plague.PlagueView
 import view.updatables.UpdatableView
+import view.util.*
 import view.world.WorldView
 
 /**
