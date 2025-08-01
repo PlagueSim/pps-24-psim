@@ -51,7 +51,7 @@ jobs:
       - name: Copy relazione
         run: |
           if [ -d "relazione" ]; then
-            cp -r docs/* site/docs/
+            cp -r docs/* site/relazione/
           else
             echo "Relazione directory not found, skipping copy"
           fi
