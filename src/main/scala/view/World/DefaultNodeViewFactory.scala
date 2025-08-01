@@ -13,7 +13,7 @@ import model.world.*
  * A factory for creating visual representations of nodes using circles and labels.
  * Each node is draggable and displays information about its state.
  *
- * @param onMoved A callback invoked when a node is dragged.
+ * @param onMoved A callback invoked when a node is dragged. (update all edges)
  */
 
 class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
@@ -23,7 +23,12 @@ class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
   /**
    * Creates a draggable NodeView consisting of a circle and several labels
    * showing node-related data (population, infected, dead).
-   *
+   * 
+   * @param id The unique identifier for the node.
+   * @param data The Node data containing population, infected, and died counts.
+   * @param position The initial position of the node in the scene.
+   *                 
+   * @return A NodeView containing the visual representation of the node.
    */
   override def createNode(id: String, data: Node, position: (Double, Double)): NodeView =
     val (posX, posY) = position
@@ -66,14 +71,8 @@ class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
     }
 
 object Draggable:
-  /**
+  /*
    * Makes a shape draggable on the scene. Handles mouse interaction and position update.
-   *
-   * @param shape       The shape to be made draggable.
-   * @param initialX    Initial X coordinate.
-   * @param initialY    Initial Y coordinate.
-   * @param setPosition Function to apply the new position.
-   * @param onMove      Callback called after every drag movement.
    */
   def make(
             node: scalafx.scene.Node,
@@ -81,6 +80,15 @@ object Draggable:
             onMove: (Double, Double) => Unit
           ): Unit =
 
+    /**
+     * Handles the dragging of the node.
+     * Calculates the new position based on mouse movement,
+     * ensures it stays within bounds, and updates the position.
+     * @param offsetX The initial X offset from the mouse to the node's position.
+     * @param offsetY The initial Y offset from the mouse to the node's position.
+     *                
+     * @return A function that takes a MouseEvent and updates the node's position.
+     */
     def onDrag(offsetX: Double, offsetY: Double): MouseEvent => Unit =
       e =>
         val newX = (e.sceneX - offsetX).max(20).min(780)

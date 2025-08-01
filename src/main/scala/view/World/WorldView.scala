@@ -7,13 +7,22 @@ import view.updatables.UpdatableView
 import javafx.scene.shape.Line
 import scalafx.scene.Node as NodeVisual
 
-class WorldView extends Pane with UpdatableView with VisualView:
+class WorldView extends Pane with UpdatableWorldView:
 
   private var nodeViews: Map[String, NodeView] = Map.empty
   private var edgeViews: Map[String, Line] = Map.empty
   private var edges: Iterable[Edge] = List.empty
   private val layout: CircularLayout = CircularLayout()
 
+  /**
+   * Renders the world view by computing positions for nodes and creating visual representations.
+   * @param world The current state of the world containing nodes and edges.
+   * initializes the node and edge views based on the world state.
+   * computes the positions of nodes using the layout strategy and creates NodeViews
+   * for each node.
+   * It also creates EdgeLines for each edge based on the current node positions.
+   * This method is called to render the initial state of the world.
+   * */
   override def render(world: World): Unit =
     edges = world.edges.values
     val positionsMap = layout.computePositions(world.nodes.keySet.toSeq)
@@ -31,6 +40,51 @@ class WorldView extends Pane with UpdatableView with VisualView:
 
     val visuals = WorldRenderer.render(nodeViews, edgeViews, layout)
     children.setAll(visuals: _*)
+
+
+  /**
+   *
+   * @param world
+   * Updates the world view with the latest state of the world.
+   * This method checks for changes in node populations, infected counts, and deaths,
+   * and updates the visual representations accordingly.
+   * It also handles the addition and removal of nodes
+   * and edges based on the current world state.
+   *
+   */
+  private def update(world: World): Unit =
+    val totPopulation = world.nodes.values.map(_.population).sum
+    edges = world.edges.values
+    val nodesChanged = getNodesThatExistsAndChangedValues(world.nodes)
+    nodesChanged.foreach {
+      case (id, view) =>
+        view.updatePopulation(world.nodes(id).population)
+        view.updateInfected(world.nodes(id).infected)
+        view.updateDied(world.nodes(id).died)
+    }
+
+    val nodesThatDontExistAnymore = nodeViews.keySet -- world.nodes.keySet
+    nodesThatDontExistAnymore.foreach { id =>
+      nodeViews.get(id).foreach { view =>
+        children.removeAll(view.visuals: _*)
+        nodeViews -= id
+      }
+    }
+
+    val nodesThatNeedsToBeCreated = world.nodes.keySet -- nodeViews.keySet
+    nodesThatNeedsToBeCreated.foreach { id =>
+      val node = world.nodes(id)
+      val position = layout.computePositions(Seq(id)).getOrElse(id, (0.0, 0.0))
+      val newNode = NodeLayer.createNode(id, node, position, () => redrawEdges(world.edges.values))
+      nodeViews += (id -> newNode)
+      children.addAll(newNode.visuals: _*)
+    }
+
+    redrawEdges(world.edges.values)
+
+
+  override def update(newState: SimulationState): Unit =
+    update(newState.world)
 
   private def redrawEdges(updatedEdges: Iterable[Edge]): Unit =
     val (newEdgeMap, toAdd, toRemove) =
@@ -54,64 +108,3 @@ class WorldView extends Pane with UpdatableView with VisualView:
         id -> nodeViews(id)
     }
 
-  private def update(world: World): Unit =
-    val totPopulation = world.nodes.values.map(_.population).sum
-    edges = world.edges.values
-    val nodesChanged = getNodesThatExistsAndChangedValues(world.nodes)
-    nodesChanged.foreach {
-      case (id, view) =>
-        view.updatePopulation(world.nodes(id).population)
-        view.updateInfected(world.nodes(id).infected)
-        view.updateDied(world.nodes(id).died)
-    }
-    val nodesThatDontExistAnymore = nodeViews.keySet -- world.nodes.keySet
-    nodesThatDontExistAnymore.foreach { id =>
-      nodeViews.get(id).foreach { view =>
-        children.removeAll(view.visuals: _*)
-        nodeViews -= id
-      }
-    }
-
-    val nodesThatNeedsToBeCreated = world.nodes.keySet -- nodeViews.keySet
-    nodesThatNeedsToBeCreated.foreach { id =>
-      val node = world.nodes(id)
-      val position = layout.computePositions(Seq(id)).getOrElse(id, (0.0, 0.0))
-      val newNode = NodeLayer.createNode(id, node, position, () => redrawEdges(world.edges.values))
-      nodeViews += (id -> newNode)
-      children.addAll(newNode.visuals: _*)
-    }
-
-    redrawEdges(world.edges.values)
-
-
-
-
-
-  override def update(newState: SimulationState): Unit =
-    update(newState.world)
-
-  override def root: NodeVisual = this
-
-  override def getNodeView(id: String): Option[NodeView] =
-    nodeViews.get(id)
-
-  override def removeEdge(id: String): Unit =
-    edgeViews.get(id).foreach { line =>
-      children.remove(line)
-      edgeViews -= id
-    }
-
-  override def movePeople(from: String, to: String, amount: Int): Unit =
-    nodeViews.get(from).foreach(x => x.updatePopulation(x.population - amount))
-    nodeViews.get(to).foreach(x => x.updatePopulation(x.population + amount))
-
-  override def removeNode(id: String): Unit = ???
-  override def addNode(id: String, population: Int, infected: Int): Unit = ???
-
-  override def addEdge(nodeA: String, nodeB: String, typology: String): Unit = ???
-
-  override def updateNode(id: String, population: Int, infected: Int): Unit =
-    nodeViews.get(id).foreach { view =>
-      view.updatePopulation(population)
-      view.updateInfected(infected)
-    }

@@ -8,13 +8,15 @@ import view.world.EdgeLayer.createEdgeLineSafe
 
 object EdgeUpdater:
   /**
-   * Updates the visual representation of edges in the scene.
-   *
-   * It compares the current visual edges (`currentEdges`) with the updated logical edges (`updatedEdges`)
-   * and returns:
-   *  - a new map of edge IDs to Line instances (both updated and reused),
-   *  - the set of new Line instances to be added to the scene,
-   *  - the set of old Line instances to be removed from the scene.
+   * @param currentEdges A map of current edges in the scene, where keys are edge IDs and values are Line instances.
+   * @param updatedEdges An iterable of updated edges, which may include new edges or modifications to existing ones.
+   * @param nodePositions A map of node positions, where keys are node IDs and values are their positions.
+   * 
+   * @return A tuple containing:
+   *         - A map of updated edges with their corresponding Line instances.
+   *         - A set of new Line instances to be added to the scene.
+   *         - A set of old Line instances to be removed from the scene.
+   * This method ensures that the visual representation of edges is kept in sync with the logical state of the world.
    * */
 
   def update(

@@ -7,27 +7,36 @@ case class World private (
                            edges: Map[String, Edge],
                            movements: Map[MovementStrategy, Double]
                          ):
-  /* Returns a new World instance with updated nodes */
+  /** @return a new World instance with updated nodes */
   def modifyNodes(newNodes: Map[String, Node]): World = copy(nodes = newNodes)
 
-  /* Returns a new World instance with updated edges */
+  /** @return a new World instance with updated edges */
   def modifyEdges(newEdges: Map[String, Edge]): World = copy(edges = newEdges)
 
-  /* Returns a new World instance with updated movement strategies */
+  /** @return a new World instance with updated movement strategies */
   def modifyMovements(newMovements: Map[MovementStrategy, Double]): World = copy(movements = newMovements)
 
-  /* Returns all edges in the world */
+  /** @return all edges in the world */
   def getEdges: Iterable[Edge] =
     edges.values
 
-  /* Returns the set of neighboring node IDs for the given node ID */
+  /** 
+   * Returns a set of all nodes in the world.
+   * @param nodeId the ID of the node to find neighbors for
+   *               
+   * @return a set of node IDs
+   * */
   def neighbors(nodeId: String): Set[String] =
     edges.values.collect {
       case e if e.nodeA == nodeId => e.nodeB
       case e if e.nodeB == nodeId => e.nodeA
     }.toSet
 
-  /* Returns true if there is at least one edge connecting the two given nodes */
+  /**
+   * @param nodeA the ID of the first node
+   * @param nodeB the ID of the second node
+   *              
+   * @return true if there is at least one edge connecting the two given nodes */
   def areConnected(nodeA: String, nodeB: String): Boolean =
     edges.values.exists(e =>
       (e.nodeA == nodeA && e.nodeB == nodeB) ||
@@ -45,6 +54,14 @@ object World:
     WorldValidator.validateMovements(movements)
     new World(nodes, edges, movements)
 
+  /**
+   * Applies a list of movements to the world.
+   * This method updates the population and infection counts of nodes based on the movements.
+   * @param world The current state of the world containing nodes and edges.
+   * @param movements An iterable of PeopleMovement instances representing the movements to apply.
+   * 
+   * @return A new World instance with updated nodes after applying the movements.
+   * */
   def applyMovements(world: World, movements: Iterable[PeopleMovement]): World = {
     val updatedNodes = movements.foldLeft(world.nodes):
       case (nodesAcc, move) => updateNodesWithMovement(nodesAcc, move)
@@ -83,10 +100,21 @@ object World:
   
 
   extension (world: World)
+    /**
+     * Checks if there is an open edge between two nodes.
+     * @param a the ID of the first node
+     * @param b the ID of the second node
+     * 
+     * @return true if there is an open edge between the two nodes, false otherwise
+     * */
     def isEdgeOpen(a: String, b: String): Boolean =
       world.edges.values.exists(e =>
         ((e.nodeA == a && e.nodeB == b) || (e.nodeA == b && e.nodeB == a)) && !e.isClose
       )
+
+    /**
+     * @return the average population per node, or 0 if there are no nodes
+     */
     def getAvgPopulationPerNode: Int =
       if world.nodes.isEmpty then 0
       else world.nodes.values.map(_.population).sum / world.nodes.size

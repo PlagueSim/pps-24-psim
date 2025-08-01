@@ -16,8 +16,13 @@ object WorldFactory:
     )
     world
 
-
-  def mockWorld(): World =
+  /*
+  * Creates an initial World instance with 15 nodes and a predefined set of edges.
+   * Each node has a population of 100,000,000 plus its index, with no initial infections or deaths.
+   * The edges connect the nodes in a specific pattern, including various types (Land, Sea, Air).
+   * Movement strategies are defined with specific probabilities for static and global logic movements.
+  * */
+  def createInitialWorld(): World =
     val nodes =
       (1 to 15).map { i =>
         val id = ('A' + (i - 1)).toChar.toString
