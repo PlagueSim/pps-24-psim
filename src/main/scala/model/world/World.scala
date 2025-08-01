@@ -87,3 +87,6 @@ object World:
       world.edges.values.exists(e =>
         ((e.nodeA == a && e.nodeB == b) || (e.nodeA == b && e.nodeB == a)) && !e.isClose
       )
+    def getAvgPopulationPerNode: Int =
+      if world.nodes.isEmpty then 0
+      else world.nodes.values.map(_.population).sum / world.nodes.size

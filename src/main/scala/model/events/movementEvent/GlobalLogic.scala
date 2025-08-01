@@ -8,10 +8,6 @@ import java.util.concurrent.ThreadLocalRandom
 
 object GlobalLogic extends MovementLogicWithEdgeCapacityAndPercentages:
 
-  extension (world: World)
-    private def getAvgPopulationPerNode: Int =
-      if world.nodes.isEmpty then 0
-      else world.nodes.values.map(_.population).sum / world.nodes.size
   
   override def edgeMovementConfig: EdgeMovementConfig = EdgeConfigurationFactory().getDefaultEdgeConfiguration
 
@@ -19,16 +15,15 @@ object GlobalLogic extends MovementLogicWithEdgeCapacityAndPercentages:
                         world: World,
                         percent: Double,
                         rng: scala.util.Random
-                      ): Iterable[PeopleMovement] = {
+                      ): Iterable[PeopleMovement] =
     val avgPopulation = world.getAvgPopulationPerNode
     
     for {
       (id, node) <- world.nodes if node.population > 0
-      (_, edge) <- world.edges if edge.connects(id)
+      (_, edge) <- world.edges if edge.connects(id) && !edge.isClose
       toMove = (node.population * percent).floor.toInt
       move <- generateMovementTuple(id, node, edge, rng, avgPopulation, toMove)
     } yield move
-  }
 
 
   private def getFinalProbability(
