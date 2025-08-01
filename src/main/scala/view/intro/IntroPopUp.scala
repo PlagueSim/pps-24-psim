@@ -50,6 +50,7 @@ def showStartPopup(nodes: Map[String, Node]): Map[String, Node] =
       alignment = Pos.Center
       padding = Insets(20)
       children = Seq(intro, nodeListView, startButton)
+  popupStage.onCloseRequest = _ => System.exit(0)
   popupStage.showAndWait()
   updatedNodes
 
