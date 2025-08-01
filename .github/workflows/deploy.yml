@@ -1,10 +1,10 @@
-name: Build and Deploy ScalaDoc with Index
+name: Build and Deploy ScalaDoc
 
 on:
   push:
     branches:
-      - 'feature/**'
       - main
+      - 'feature/**'
 
 permissions:
   contents: read
@@ -12,7 +12,7 @@ permissions:
   id-token: write
 
 jobs:
-  build-deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -40,16 +40,22 @@ jobs:
       - name: Generate ScalaDoc
         run: sbt doc
 
-      - name: Prepare site directory
+      - name: Prepare site directories
         run: |
           mkdir -p site/scaladoc
           mkdir -p site/relazione
 
-      - name: Copy ScalaDoc to site
+      - name: Copy ScalaDoc
         run: cp -r target/scala-*/api/* site/scaladoc/
 
-      - name: Copy relazione files
-        run: cp -r docs/* site/docs/
+      - name: Copy relazione
+        # Modifica il percorso qui sotto se la relazione è altrove o non presente
+        run: |
+          if [ -d "relazione" ]; then
+            cp -r relazione/* site/relazione/
+          else
+            echo "Relazione directory not found, skipping copy"
+          fi
 
       - name: Create custom index.html
         run: |
