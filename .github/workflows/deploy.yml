@@ -2,7 +2,7 @@ name: Deploy ScalaDoc to GitHub Pages
 
 on:
   workflow_run:
-    workflows: ["Generate ScalaDoc"]
+    workflows: ["Generate_ScalaDoc"]
     types:
       - completed
 
