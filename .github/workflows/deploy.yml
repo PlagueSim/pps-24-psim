@@ -49,10 +49,9 @@ jobs:
         run: cp -r target/scala-*/api/* site/scaladoc/
 
       - name: Copy relazione
-        # Modifica il percorso qui sotto se la relazione è altrove o non presente
         run: |
-          if [ -d "relazione" ]; then
-            cp -r relazione/* site/relazione/
+          if [ -d "docs" ]; then
+            cp -r docs/* site/docs/
           else
             echo "Relazione directory not found, skipping copy"
           fi
