@@ -20,8 +20,8 @@ class MainView extends BorderPane with UpdatableView:
   private val controller = ViewController(this)
 
   private val mapView = new WorldView()
-  mapView.render(WorldFactory.mockWorld())
-  private val mapPane: Node = mapView.root
+  mapView.render(WorldFactory.createInitialWorld())
+  private val mapPane: Node = mapView
   private val plgPane = PlagueView()
   private val controlPane = ControlPane(controller)
   private val datePane = DatePane()

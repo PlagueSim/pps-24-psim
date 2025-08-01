@@ -1,6 +1,5 @@
 package model.world
 import model.world.EdgeExtensions.*
-
 object WorldFactory:
 
   /*
@@ -8,32 +7,26 @@ object WorldFactory:
    * Some nodes are initialized with infection and death values.
    * A mix of edge types (Land, Sea, Air) is used for connections.
    */
-  def mockWorld2(): World =
+  def createWorldWithTwoNodesAndTwoEdges(): World =
     val node = Node.withPopulation(100).withInfected(1).build()
     val world = World(
       Map("A" -> node, "B" -> node),
-      Map("A-B-Land" -> Edge("A", "B", EdgeType.Land),
-          "A-B-Sea" -> Edge("A", "B", EdgeType.Sea)),
+      List(Edge("A", "B", EdgeType.Land), Edge("A", "B", EdgeType.Sea)).getMapEdges,
       Map(GlobalLogicMovement -> 1.0)
     )
     world
 
-
-  def mockWorld(): World =
+  /*
+  * Creates an initial World instance with 15 nodes and a predefined set of edges.
+   * Each node has a population of 100,000,000 plus its index, with no initial infections or deaths.
+   * The edges connect the nodes in a specific pattern, including various types (Land, Sea, Air).
+   * Movement strategies are defined with specific probabilities for static and global logic movements.
+  * */
+  def createInitialWorld(): World =
     val nodes =
       (1 to 15).map { i =>
         val id = ('A' + (i - 1)).toChar.toString
-        val baseBuilder = Node.withPopulation(100000000 + i).withDied(2)
-
-        val builderWithInfection = id match
-          case "A" => baseBuilder.withInfected(0)
-          case "C" => baseBuilder.withInfected(0)
-          case "F" => baseBuilder.withInfected(0)
-          case "J" => baseBuilder.withInfected(0)
-          case "O" => baseBuilder.withInfected(0)
-          case _   => baseBuilder
-
-        id -> builderWithInfection.build()
+        id -> Node.withPopulation(100000000 + i).withDied(0).withInfected(0).build()
       }.toMap
 
     val edgeSet: Set[Edge] = Set(
@@ -53,7 +46,7 @@ object WorldFactory:
       Edge("L", "M", EdgeType.Air),
       Edge("M", "N", EdgeType.Land),
       Edge("N", "O", EdgeType.Sea),
-      Edge("O", "A", EdgeType.Air), // wrap around to A
+      Edge("O", "A", EdgeType.Air),
       Edge("A", "H", EdgeType.Sea),
       Edge("C", "I", EdgeType.Land),
       Edge("D", "K", EdgeType.Air),
@@ -61,13 +54,8 @@ object WorldFactory:
       Edge("G", "O", EdgeType.Land)
     )
 
-    val edgeMap: Map[String, Edge] = edgeSet.map { edge =>
-      val id = edge.edgeId
-      id -> edge
-    }.toMap
-
     World(
       nodes,
-      edgeMap,
+      edgeSet.getMapEdges,
       Map(Static -> 0.6, GlobalLogicMovement -> 0.4)
     )

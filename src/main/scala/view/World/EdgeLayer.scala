@@ -21,7 +21,11 @@ class EdgeLayer(
     createEdgeLineSafe(edge, nodePositions).map(edge.edgeId -> _)
   }.toMap
 
-  /* Updates existing edges' visuals or creates new ones if needed. */
+  /** Updates existing edges' visuals or creates new ones if needed.
+   * @param updatedEdges Iterable of edges to update.
+   *                     
+   * @return A map of edge IDs to their corresponding updated Line objects.
+   * */
   def updateEdges(updatedEdges: Iterable[Edge]): Map[String, Line] =
     updatedEdges.map { edge =>
       val id = edge.edgeId
@@ -34,8 +38,21 @@ class EdgeLayer(
       id -> line
     }.toMap
 
+/*
+* EdgeLayer provides methods to create and update JavaFX Line objects
+* representing edges in the simulation.
+* It ensures that edges are created with the correct positions and colors
+* based on their type and state.
+* */
 object EdgeLayer:
 
+  /**
+  * Creates a JavaFX Line for the given edge if both nodes are present in the nodePositions map.
+  * @param edge The edge to create a line for.
+  * @param nodePositions A map of node IDs to their LivePosition objects.
+   *                      
+  * @return An Option containing the created Line if both nodes are found, otherwise None.
+  * */
   def createEdgeLineSafe(edge: Edge, nodePositions: Map[String, LivePosition]): Option[Line] =
     for
       start <- nodePositions.get(edge.nodeA)
@@ -48,7 +65,13 @@ object EdgeLayer:
       line.setStroke(edgeColor(edge.typology, edge.isClose))
       line
 
-
+  /**
+   * Updates the position and color of an existing JavaFX Line based on the edge and node positions.
+   * @param line The Line object to update.
+   * @param edge The Edge object containing the nodes and type.
+   * @param nodePositions A map of node IDs to their LivePosition objects.
+   * This method modifies the Line's start and end coordinates and updates its stroke color
+   * */
   def updateLine(line: Line, edge: Edge, nodePositions: Map[String, LivePosition]): Unit =
     val (startX, startY) = nodePositions(edge.nodeA).get()
     val (endX, endY) = nodePositions(edge.nodeB).get()
@@ -64,7 +87,7 @@ object EdgeLayer:
 
 
   /*  Returns the color to use for an edge based on its type and state. */
-  def edgeColor(edgeType: EdgeType, isClose: Boolean): Color =
+  private def edgeColor(edgeType: EdgeType, isClose: Boolean): Color =
     if isClose then Color.Gray
     else
       edgeType match
@@ -72,6 +95,7 @@ object EdgeLayer:
         case EdgeType.Sea  => Color.Blue
         case EdgeType.Air  => Color.Red
 
+  /* Creates a Line object representing an edge with an offset. */
   private def createOffsetLine(startX: Double, startY: Double, endX: Double, endY: Double, offset: Double): Line =
     val dx = endX - startX
     val dy = endY - startY
@@ -85,6 +109,7 @@ object EdgeLayer:
 
     new Line(startX + offsetX, startY + offsetY, endX + offsetX, endY + offsetY)
 
+  /* represent the offset based on edge typology*/
   private def edgeOffset(edgeType: EdgeType): Double = edgeType match
     case EdgeType.Land => 0
     case EdgeType.Sea  => 6.0

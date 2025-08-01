@@ -1,5 +1,6 @@
 package events.movementevent
 
+import model.world.EdgeExtensions.getMapEdges
 import model.events.movementEvent.GlobalLogic
 import model.world.*
 import model.world.MovementComputation.PeopleMovement
@@ -15,7 +16,7 @@ class GlobalLogicTest extends AnyFlatSpec with Matchers:
         "A" -> Node.withPopulation(0).withInfected(0).withDied(0).build(),
         "B" -> Node.withPopulation(0).withInfected(0).withDied(0).build()
       ),
-      edges = Map("A-B-Land" -> Edge("A", "B", EdgeType.Land)),
+      edges = List(Edge("A", "B", EdgeType.Land)).getMapEdges,
       movements = Map(GlobalLogicMovement -> 1.0)
     )
   
@@ -28,19 +29,20 @@ class GlobalLogicTest extends AnyFlatSpec with Matchers:
         "A" -> Node.withPopulation(100).withInfected(20).withDied(0).build(),
         "B" -> Node.withPopulation(100).withInfected(10).withDied(0).build()
       ),
-      edges = Map("A-B-Land" -> Edge("A", "B", EdgeType.Land).close),
+      edges = List(Edge("A", "B", EdgeType.Land).close).getMapEdges,
       movements = Map(GlobalLogicMovement -> 1.0)
     )
 
     GlobalLogic.compute(world, 1.0, new Random()) shouldBe empty
 
   it should "generate movement when the edge is open, population > 0, and random < edge probability" in:
+    
     val world: World = World(
       nodes = Map(
         "A" -> Node.withPopulation(100).withInfected(20).withDied(0).build(),
         "B" -> Node.withPopulation(100).withInfected(10).withDied(0).build()
       ),
-      edges = Map("A-B-Air" -> Edge("A", "B", EdgeType.Air)),
+      edges = List(Edge("A", "B", EdgeType.Air)).getMapEdges,
       movements = Map(GlobalLogicMovement -> 1.0)
     )
   
@@ -61,7 +63,7 @@ class GlobalLogicTest extends AnyFlatSpec with Matchers:
         "A" -> Node.withPopulation(100).withInfected(20).withDied(0).build(),
         "B" -> Node.withPopulation(100).withInfected(10).withDied(0).build()
       ),
-      edges = Map("A-B-Air" -> Edge("A", "B", EdgeType.Air)),
+      edges = List(Edge("A", "B", EdgeType.Air)).getMapEdges,
       movements = Map(GlobalLogicMovement -> 1.0)
     )
   

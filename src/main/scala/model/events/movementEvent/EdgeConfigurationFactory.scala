@@ -3,6 +3,10 @@ package model.events.movementEvent
 import model.world.EdgeType
 
 class EdgeConfigurationFactory:
+  /*
+   * Returns a default edge configuration with predefined probabilities 
+   * and capacities for each edge type.
+   */
   def getDefaultEdgeConfiguration: EdgeMovementConfig =
     EdgeMovementConfig(
       Map(

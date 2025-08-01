@@ -5,69 +5,14 @@ import javafx.scene.shape.Line
 import model.world.{Edge, Node, World}
 import scalafx.scene.layout.Pane
 
-class WorldRenderer(world: World, pane: Pane):
-
-  private var nodeLayer: NodeLayer = createNodeLayer(world.nodes)
-  private var edgeLayer: EdgeLayer = createEdgeLayer(world.edges.values, nodeLayer.positions)
-
-  pane.children.addAll(
-    (edgeLayer.edgeLines.values ++ nodeLayer.allVisuals).toSeq*
-  )
-
-
-
-
-  /**
-   * Updates the visual representation of the world using the provided simulation state.
-   *
-   * This method updates the node and edge layers, recalculates positions,
-   * and efficiently updates the scene by reusing visuals where possible.
-   *
-   * @param state the current simulation state containing the latest world data
-   */
-  def update(world: World): Unit =
-    val newNodeLayer = createNodeLayer(world.nodes)
-    nodeLayer.updateWith(newNodeLayer)
-
-    val newEdgeLayer = createEdgeLayer(world.edges.values, newNodeLayer.positions)
-    val updatedEdgeLines = newEdgeLayer.updateEdges(world.edges.values)
-
-    updateScene(newNodeLayer.allVisuals, updatedEdgeLines.values.toSeq)
-
-    nodeLayer = newNodeLayer
-    edgeLayer = newEdgeLayer
-
-  private def redraw(): Unit =
-    val updatedEdgeLines = edgeLayer.updateEdges(world.edges.values)
-    updateScene(nodeLayer.allVisuals, updatedEdgeLines.values.toSeq)
-
-  private def updateScene(nodes: Seq[FxNode], edges: Seq[FxNode]): Unit =
-    val current = pane.children.toSet
-    val updated = (edges ++ nodes).toSet
-
-    val toRemove = current -- updated
-    val toAdd = updated -- current
-
-    pane.children.removeAll(toRemove.toSeq *)
-
-    val (toAddEdges, toAddNodes) = toAdd.partition(_.isInstanceOf[Line])
-    pane.children.addAll((toAddEdges.toSeq ++ toAddNodes.toSeq) *)
-
-
-  private def createNodeLayer(nodes: Map[String, Node]): NodeLayer =
-    val layout = CircularLayout()
-    val positionsMap = layout.computePositions(nodes.keySet.toSeq)
-    NodeLayer.fromNodes(
-      nodes,
-      id => positionsMap(id),
-      () => redraw()
-    )
-
-
-  private def createEdgeLayer(edges: Iterable[Edge], nodePositions: Map[String, LivePosition]): EdgeLayer =
-    EdgeLayer(edges, nodePositions)
-
 object WorldRenderer:
+  /**
+   * Renders the world by combining node views and edge views into a sequence of JavaFX nodes.
+   * * @param nodeViews A map of node IDs to their corresponding NodeView instances.
+   * * @param edgeViews A map of edge IDs to their corresponding Line instances.
+   * * @param layout A CircularLayout instance that computes positions for the nodes.
+   * * @return A sequence of JavaFX nodes representing the edges and positioned node visuals.
+   * */
   def render(
               nodeViews: Map[String, NodeView],
               edgeViews: Map[String, Line],

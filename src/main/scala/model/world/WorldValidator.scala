@@ -2,10 +2,29 @@ package model.world
 
 object WorldValidator:
 
+  /**
+   * Validates the nodes in the world.
+   * Ensures that each node has a unique ID and a valid position.
+   *
+   * @param nodes Map of node IDs to Node objects
+   * @param edges Map of edge IDs to Edge objects
+   *              
+   * @throws IllegalArgumentException if any edge connects non-existing nodes
+   * @throws IllegalArgumentException if there are duplicate edges of the same typology between two nodes
+   */
   def validateEdges(nodes: Map[String, Node], edges: Map[String, Edge]): Unit =
     edgesMustConnectExistingNodes(nodes, edges)
     noDuplicateTypologyEdges(edges)
 
+  /**
+   * Validates the movement strategies defined in the world.
+   * 
+   * @param movements Map of MovementStrategy to their corresponding percentages
+   *                  
+   * @throws IllegalArgumentException if no movement strategies are defined
+   * @throws IllegalArgumentException if any movement percentage is negative
+   * @throws IllegalArgumentException if the sum of movement percentages is not approximately 1.0
+   */
   def validateMovements(movements: Map[MovementStrategy, Double]): Unit =
     atLeastOneStrategy(movements)
     allPercentagesNonNegative(movements)
