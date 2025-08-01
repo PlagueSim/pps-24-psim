@@ -76,7 +76,7 @@ class DatePane extends BorderPane with UpdatableView:
 /**
  * Shows the current available DNA points
  */
-case object DnaPointsCounter extends Label with UpdatableView:
+object DnaPointsCounter extends Label with UpdatableView:
   text = "DNA points: 0"
   padding = Insets(3)
   override def update(newState: SimulationState): Unit =
@@ -85,7 +85,7 @@ case object DnaPointsCounter extends Label with UpdatableView:
 /**
  * Displays the information about the infected, healthy and deceased people in the world
  */
-case object InfectionRecap extends Label with UpdatableView:
+object InfectionRecap extends Label with UpdatableView:
   text = "Infected: 0 / Healthy: 0 \\ Deceased: 0"
   padding = Insets(3)
   override def update(newState: SimulationState): Unit =
