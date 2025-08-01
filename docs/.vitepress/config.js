@@ -6,6 +6,7 @@ let reportPath = '/report'
 export default withMermaid(
     defineConfig({
     ignoreDeadLinks: true,
+    base: '/pps-24-psim/relazione/',
     title: 'Relazione progetto',
     description: 'Relazione del progetto PlagueSim',
     themeConfig: {
