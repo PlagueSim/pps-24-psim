@@ -15,6 +15,13 @@ object WorldConnectivity:
     connected(A, B) :- edge(B, A).
     """
 
+  /**
+   * Checks if two nodes in the world are connected via edges.
+   * @param world the World object containing nodes and edges
+   * @param from the ID of the starting node
+   * @param to the ID of the target node
+   * @return
+   */
   def areConnected(world: World, from: String, to: String): Boolean =
     val prologFacts = generatePrologEdges(world.edges)
     val fullProgram = s"$prologFacts\n$connectivityRules"
