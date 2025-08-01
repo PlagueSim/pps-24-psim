@@ -6,6 +6,7 @@ import model.world.*
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import model.world.EdgeExtensions.getMapEdges
+import model.world.prolog.WorldConnectivity
 
 class WorldTest extends AnyFlatSpec with Matchers:
 
@@ -143,6 +144,6 @@ class WorldTest extends AnyFlatSpec with Matchers:
 
     val world = World(nodes, edges, movements)
 
-    world.areConnected("A", "B") shouldBe true
-    world.areConnected("B", "C") shouldBe true
-    world.areConnected("A", "C") shouldBe false
+    WorldConnectivity.areConnected(world, "A", "B") shouldBe true
+    WorldConnectivity.areConnected(world,"B", "C") shouldBe true
+    WorldConnectivity.areConnected(world,"A", "C") shouldBe false
