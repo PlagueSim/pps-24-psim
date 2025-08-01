@@ -55,6 +55,7 @@ class WorldView extends Pane with UpdatableView with VisualView:
     }
 
   private def update(world: World): Unit =
+    val totPopulation = world.nodes.values.map(_.population).sum
     edges = world.edges.values
     val nodesChanged = getNodesThatExistsAndChangedValues(world.nodes)
     nodesChanged.foreach {

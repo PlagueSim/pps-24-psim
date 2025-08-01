@@ -12,17 +12,8 @@ object GlobalLogic extends MovementLogicWithEdgeCapacityAndPercentages:
     private def getAvgPopulationPerNode: Int =
       if world.nodes.isEmpty then 0
       else world.nodes.values.map(_.population).sum / world.nodes.size
-
-  override val edgeProbabilityMap: Map[EdgeType, Double] = Map(
-    EdgeType.Land -> 0.3,
-    EdgeType.Sea  -> 0.2,
-    EdgeType.Air  -> 0.15
-  )
-  override val edgeTypeCapacityMap: Map[EdgeType, Int] = Map(
-    EdgeType.Land -> 500,
-    EdgeType.Sea  -> 200,
-    EdgeType.Air  -> 100
-  )
+  
+  override def edgeMovementConfig: EdgeMovementConfig = EdgeConfigurationFactory().getDefaultEdgeConfiguration
 
   override def compute(
                         world: World,
@@ -45,7 +36,7 @@ object GlobalLogic extends MovementLogicWithEdgeCapacityAndPercentages:
     toMove: Int,
     avgPopulation: Int
   ): Double = {
-    edgeProbabilityMap.getOrElse(
+    edgeMovementConfig.probability.getOrElse(
       edgeTypology,
       0.0
     ) * (toMove.toDouble / avgPopulation)
@@ -80,7 +71,7 @@ object GlobalLogic extends MovementLogicWithEdgeCapacityAndPercentages:
         PeopleMovement(
           id,
           edge.other(id).get,
-          edgeTypeCapacityMap.getOrElse(edge.typology, 0).min(toMove)
+          edgeMovementConfig.capacity.getOrElse(edge.typology, 0).min(toMove)
         )
       )
     else None
