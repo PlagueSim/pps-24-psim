@@ -6,7 +6,17 @@ una malattia che si diffonde nel mondo e di evolverla per infettare e uccidere t
 che questa sia in grado di curarla.
 
 ## Modello di dominio
-
+Il **Mondo** è l'insieme dei **Nodi** e i loro **Collegamenti**. Ogni nodo contiene della **Popolazione** che
+può spostarsi tra un nodo e l'altro tramite i relativi collegamenti. La popolazione è suddivisa in **Sani** e
+**Infetti**, mentre i **Morti** non ne fanno parte.
+La **Malattia** infetta la popolazione in base alla sua **Infettività** e la uccide in base all sua **Letalità**.
+La malattia può **Evolvere** nuovi **Tratti** secondo la volontà del giocatore spendendo **punti dna**, oppure
+gratuitamente nel caso in cui avvenga una **Mutazione** casuale determinata dalla **Probabilità di mutazione**
+della malattia. L'infettività, la letalità e la probabilità di mutazione sono **Statistiche** della malattia,
+calcolate come la somma delle statistiche di ogni tratto, insieme alla **Gravità** che simula la visibilità
+dei tratti evoluti. La gravità determina quanto i diversi nodi lavoreranno allo sviluppo di una **Cura**.
+La cura ha una **Velocità** di **Progresso** determinata dalla somma del contributo dei vari nodi.
+Esistono tratti che possono ridurre la velocità o il progresso della cura.
 
 ## Requisiti funzionali
 
@@ -29,19 +39,19 @@ che questa sia in grado di curarla.
 - Il nodo selezionato come inizio dovrà avere un infetto
 - Le persone presenti in un nodo possono spostarsi in un altro solo se presente un collegamento aperto
 - Ogni collegamento ha un numero massimo di persone trasportabili per giorno
-- I collegamenti tra nodi iniziano a chiudersi se la malattia raggiunge un certo livello di **severity** e/o una 
+- I collegamenti tra nodi iniziano a chiudersi se la malattia raggiunge un certo livello di severità e/o una 
 determinata soglia di infetti
-- Ogni nodo inizia a contribuire alla cura se la malattia raggiunge un certo livello di **severity** e una determinata
+- Ogni nodo inizia a contribuire alla cura se la malattia raggiunge un certo livello di gravità e una determinata
 soglia di infetti
 - Ogni nodo contribuisce alla cura proporzionalmente alla sua popolazione rispetto a quella globale
 - Se un nodo perde popolazione a causa della malattia perderà proporzionalmente la sua capacità di ricerca della cura
 - Il gioco termina se la cura raggiunge il 100% o tutta la popolazione è deceduta
-- I **tratti** della malattia possono essere acquistati solo se:
-  - L'utente ha abbastanza **punti dna**
-  - L'utente ha già acquistato i **tratti** considerati prerequisito
-- Un **tratto** della malattia non può essere de-evoluto se è stato già evoluto un altro **tratto** che lo richiede 
+- I tratti della malattia possono essere acquistati solo se:
+  - L'utente ha abbastanza punti dna
+  - L'utente ha già acquistato i tratti considerati prerequisito
+- Un tratto della malattia non può essere de-evoluto se è stato già evoluto un altro tratto che lo richiede 
 come prerequisito
-- De-evolvere un **tratto** restituisce un po di **punti dna**
+- De-evolvere un tratto restituisce un po di punti dna
 
 ## Requisiti non funzionali
 - La realizzazione di algoritmi e strutture dati efficienti per aspetti riguardanti la popolazione visti 
