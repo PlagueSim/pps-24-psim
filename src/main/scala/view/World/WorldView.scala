@@ -6,11 +6,11 @@ import scalafx.scene.layout.Pane
 import view.updatables.UpdatableView
 import javafx.scene.shape.Line
 import scalafx.scene.Node as NodeVisual
-
+import model.world.Types.*
 class WorldView extends Pane with UpdatableWorldView:
 
-  private var nodeViews: Map[String, NodeView] = Map.empty
-  private var edgeViews: Map[String, Line] = Map.empty
+  private var nodeViews: Map[NodeId, NodeView] = Map.empty
+  private var edgeViews: Map[EdgeId, Line] = Map.empty
   private var edges: Iterable[Edge] = List.empty
   private val layout: CircularLayout = CircularLayout()
 
@@ -98,7 +98,7 @@ class WorldView extends Pane with UpdatableWorldView:
     children.removeAll(toRemove.toSeq: _*)
     children.addAll(toAdd.toSeq: _*)
 
-  private def getNodesThatExistsAndChangedValues(nodes: Map[String, Node]): Map[String, NodeView] =
+  private def getNodesThatExistsAndChangedValues(nodes: Map[NodeId, Node]): Map[String, NodeView] =
     nodes.collect {
       case (id, node) if nodeViews.get(id).exists(view =>
         view.population != node.population ||

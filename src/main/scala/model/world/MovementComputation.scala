@@ -1,11 +1,11 @@
 package model.world
 
 import model.events.movementEvent.MovementStrategyLogic
-
+import Types.*
 object MovementComputation:
 
-  case class PeopleMovement(from: String, to: String, amount: Int)
-  case class MovementResult(updatedNodes: Map[String, Node], moves: List[PeopleMovement])
+  case class PeopleMovement(from: NodeId, to: NodeId, amount: Int)
+  case class MovementResult(updatedNodes: Map[NodeId, Node], moves: List[PeopleMovement])
 
   /**
   * MovementComputation is responsible for computing the movement of people in the world.

@@ -4,6 +4,7 @@ import javafx.scene.Node as FxNode
 import javafx.scene.shape.Line
 import model.world.{Edge, Node, World}
 import scalafx.scene.layout.Pane
+import model.world.Types.*
 
 object WorldRenderer:
   /**
@@ -14,8 +15,8 @@ object WorldRenderer:
    * * @return A sequence of JavaFX nodes representing the edges and positioned node visuals.
    * */
   def render(
-              nodeViews: Map[String, NodeView],
-              edgeViews: Map[String, Line],
+              nodeViews: Map[NodeId, NodeView],
+              edgeViews: Map[EdgeId, Line],
               layout: CircularLayout
             ): Seq[FxNode] =
     val positions = layout.computePositions(nodeViews.keySet.toSeq)

@@ -1,13 +1,14 @@
 package model.world
 
+import Types.*
 /* Describes the type of connection between nodes.*/
 enum EdgeType:
   case Air, Sea, Land
 
 /* Represents an undirected connection of a specific typology between two nodes */
 case class Edge private (
-                          nodeA: String,
-                          nodeB: String,
+                          nodeA: NodeId,
+                          nodeB: NodeId,
                           typology: EdgeType,
                           isClose: Boolean = false,
                         ):
@@ -18,7 +19,7 @@ case class Edge private (
    * 
    * @return A unique string identifier for the edge.
    */
-  def connects(nodeId: String): Boolean =
+  def connects(nodeId: NodeId): Boolean =
     nodeId == nodeA || nodeId == nodeB
 
   /**
@@ -28,7 +29,7 @@ case class Edge private (
    * 
    * @return An Option containing the other node ID if it exists, otherwise None.
    */
-  def other(nodeId: String): Option[String] =
+  def other(nodeId: NodeId): Option[NodeId] =
     if nodeId == nodeA then Some(nodeB)
     else if nodeId == nodeB then Some(nodeA)
     else None
@@ -50,8 +51,6 @@ object Edge:
    * 
    * @return An Edge instance with nodes ordered lexicographically.
    * */
-  def apply(a: String, b: String, typology: EdgeType): Edge =
+  def apply(a: NodeId, b: NodeId, typology: EdgeType): Edge =
     if a <= b then new Edge(a, b, typology)
     else new Edge(b, a, typology)
-    
-    

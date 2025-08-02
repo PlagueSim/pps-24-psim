@@ -8,7 +8,7 @@ import scalafx.scene.input.MouseEvent
 import scalafx.scene.paint.Color
 import scalafx.Includes.*
 import model.world.*
-
+import model.world.Types.*
 /**
  * A factory for creating visual representations of nodes using circles and labels.
  * Each node is draggable and displays information about its state.
@@ -30,7 +30,7 @@ class DefaultNodeViewFactory(onMoved: () => Unit) extends NodeViewFactory:
    *                 
    * @return A NodeView containing the visual representation of the node.
    */
-  override def createNode(id: String, data: Node, position: (Double, Double)): NodeView =
+  override def createNode(id: NodeId, data: Node, position: (PosX, PosY)): NodeView =
     val (posX, posY) = position
 
     val circle = new Circle {
@@ -76,8 +76,8 @@ object Draggable:
    */
   def make(
             node: scalafx.scene.Node,
-            setPosition: (Double, Double) => Unit,
-            onMove: (Double, Double) => Unit
+            setPosition: (PosX, PosY) => Unit,
+            onMove: (PosX, PosY) => Unit
           ): Unit =
 
     /**
@@ -89,7 +89,7 @@ object Draggable:
      *                
      * @return A function that takes a MouseEvent and updates the node's position.
      */
-    def onDrag(offsetX: Double, offsetY: Double): MouseEvent => Unit =
+    def onDrag(offsetX: PosX, offsetY: PosY): MouseEvent => Unit =
       e =>
         val newX = (e.sceneX - offsetX).max(20).min(780)
         val newY = (e.sceneY - offsetY).max(20).min(580)
