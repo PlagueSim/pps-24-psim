@@ -4,6 +4,7 @@ import model.world.{Edge, EdgeType}
 import model.world.EdgeExtensions.*
 import javafx.scene.shape.Line
 import scalafx.scene.paint.Color
+import model.world.Types.*
 
 /*
  * EdgeLayer manages the visual representation of edges in the simulation.
@@ -11,13 +12,13 @@ import scalafx.scene.paint.Color
  */
 class EdgeLayer(
                  edges: Iterable[Edge],
-                 nodePositions: Map[String, LivePosition]
+                 nodePositions: Map[NodeId, LivePosition]
                ):
 
   import EdgeLayer.*
 
   /* Map of edge IDs to their corresponding JavaFX Line visuals. */
-  val edgeLines: Map[String, Line] = edges.flatMap { edge =>
+  val edgeLines: Map[EdgeId, Line] = edges.flatMap { edge =>
     createEdgeLineSafe(edge, nodePositions).map(edge.edgeId -> _)
   }.toMap
 
@@ -26,7 +27,7 @@ class EdgeLayer(
    *                     
    * @return A map of edge IDs to their corresponding updated Line objects.
    * */
-  def updateEdges(updatedEdges: Iterable[Edge]): Map[String, Line] =
+  def updateEdges(updatedEdges: Iterable[Edge]): Map[EdgeId, Line] =
     updatedEdges.map { edge =>
       val id = edge.edgeId
       val line = edgeLines.get(id) match
@@ -53,7 +54,7 @@ object EdgeLayer:
    *                      
   * @return An Option containing the created Line if both nodes are found, otherwise None.
   * */
-  def createEdgeLineSafe(edge: Edge, nodePositions: Map[String, LivePosition]): Option[Line] =
+  def createEdgeLineSafe(edge: Edge, nodePositions: Map[NodeId, LivePosition]): Option[Line] =
     for
       start <- nodePositions.get(edge.nodeA)
       end <- nodePositions.get(edge.nodeB)
@@ -72,7 +73,7 @@ object EdgeLayer:
    * @param nodePositions A map of node IDs to their LivePosition objects.
    * This method modifies the Line's start and end coordinates and updates its stroke color
    * */
-  def updateLine(line: Line, edge: Edge, nodePositions: Map[String, LivePosition]): Unit =
+  def updateLine(line: Line, edge: Edge, nodePositions: Map[NodeId, LivePosition]): Unit =
     val (startX, startY) = nodePositions(edge.nodeA).get()
     val (endX, endY) = nodePositions(edge.nodeB).get()
     val offset = edgeOffset(edge.typology)
@@ -96,7 +97,7 @@ object EdgeLayer:
         case EdgeType.Air  => Color.Red
 
   /* Creates a Line object representing an edge with an offset. */
-  private def createOffsetLine(startX: Double, startY: Double, endX: Double, endY: Double, offset: Double): Line =
+  private def createOffsetLine(startX: PosX, startY: PosY, endX: PosX, endY: PosY, offset: Double): Line =
     val dx = endX - startX
     val dy = endY - startY
     val length = math.hypot(dx, dy).max(0.001)
