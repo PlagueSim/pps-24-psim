@@ -4,7 +4,8 @@ import model.world.{Edge, LocalPercentageMovement, MovementStrategy, Node, Stati
 import model.core.SimulationState
 import model.events.Event
 import model.world.MovementComputation
-case class MovementEvent() extends Event[Map[String, Node]]:
+import model.world.Types.*
+case class MovementEvent() extends Event[Map[NodeId, Node]]:
   /*
   * MovementEvent is responsible for computing the movement of people in the world.
   * It uses the MovementComputation to determine how nodes should move based on their movement strategy.

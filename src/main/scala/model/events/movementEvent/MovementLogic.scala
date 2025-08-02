@@ -1,6 +1,7 @@
 package model.events.movementEvent
 import model.world.MovementComputation.PeopleMovement
 import model.world.{Edge, Node, World}
+import model.world.Types.*
 
 trait MovementLogic:
   /*
@@ -9,6 +10,6 @@ trait MovementLogic:
    */
   def compute(
                world: World,
-               percent: Double,
+               percent: Percentage,
                rng: scala.util.Random
              ): Iterable[PeopleMovement]

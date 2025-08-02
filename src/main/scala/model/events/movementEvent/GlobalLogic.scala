@@ -3,8 +3,8 @@ package model.events.movementEvent
 import model.world.{Edge, EdgeType, Node, World}
 import model.world.EdgeExtensions.connects
 import model.world.MovementComputation.PeopleMovement
-
 import java.util.concurrent.ThreadLocalRandom
+import model.world.Types.*
 
 object GlobalLogic extends MovementLogicWithEdgeCapacityAndPercentages:
 
@@ -23,7 +23,7 @@ object GlobalLogic extends MovementLogicWithEdgeCapacityAndPercentages:
   * */
   override def compute(
                         world: World,
-                        percent: Double,
+                        percent: Percentage,
                         rng: scala.util.Random
                       ): Iterable[PeopleMovement] =
     val avgPopulation = world.getAvgPopulationPerNode
@@ -48,7 +48,7 @@ object GlobalLogic extends MovementLogicWithEdgeCapacityAndPercentages:
 
   private def shouldMove(
       edge: Edge,
-      nodeId: String,
+      nodeId: NodeId,
       rng: scala.util.Random,
       avgPopulation: Int,
       toMove: Int
@@ -63,7 +63,7 @@ object GlobalLogic extends MovementLogicWithEdgeCapacityAndPercentages:
   }
 
   private def generateMovementTuple(
-      from: String,
+      from: NodeId,
       edge: Edge,
       rng: scala.util.Random,
       avgPopulation: Int,
