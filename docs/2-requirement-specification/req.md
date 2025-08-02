@@ -14,5 +14,5 @@
 ## Requisiti di implementazione
 
 [Back to index](../index.md) |
-[Previous Chapter](../1-development-process/intro.md) |
+[Previous Chapter](../1-development-process/dev-process) |
 [Next Chapter](../3-architectural-design/design.md)

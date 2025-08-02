@@ -7,14 +7,14 @@ scelta degli strumenti di test/build/continuous integration
 ## SCRUM
 Abbiamo seguito uno stile SCRUM inspired come consigliato nel punto P8 delle regole d’esame.
 Ogni membro ha avuto ruolo di developer e nello specifico:
-- Matteo Susca ha svolto il ruolo di committente ed esperto di dominio.
-- Andrea Zavatta ha svolto il ruolo di SCRUM master.
-- Lorenzo Tosi ha svolto il ruolo di product owner.
+- Matteo Susca ha svolto il ruolo di committente ed esperto di dominio
+- Andrea Zavatta ha svolto il ruolo di SCRUM master
+- Lorenzo Tosi ha svolto il ruolo di product owner
 
 Il lavoro è stato suddiviso in Sprint settimanali con il team che ogni lunedì effettuava un meeting per:
-- redigere un breve documento nel quale si riportava quanto fatto nello sprint appena concluso;
-- discutere di eventuali problemi riscontrati;
-- pianificare gli obiettivi da portare a termine lo sprint seguente.
+- redigere un breve documento nel quale si riportava quanto fatto nello sprint appena concluso
+- discutere di eventuali problemi riscontrati
+- pianificare gli obiettivi da portare a termine lo sprint seguente
 
 ### Jira
 La gestione degli sprint e la suddivisione e l'assegnamento dei task è stata effettuata tramite Jira, un tool
@@ -31,10 +31,22 @@ Lo scrum master ha definito una board con i relativi stati di avanzamento dei ta
 - done: Lo sprint è terminato e ogni task è inserito nella branch di produzione
 
 ### Confluence
-Sincronizzato con Jira, il team ha sfruttato Confluence per mantenere in condivisione i documenti relativi allo sviluppo
-del progetto 
+Sincronizzato con Jira, il team ha sfruttato Confluence per mantenere in condivisione gli sprint log e 
+i documenti relativi allo sviluppo del progetto.
 
 ## Branching Strategy
+Il team ha sfruttato una branching strategy fortemente ispirata a git-flow. La repository è stata suddivisa in due 
+branch stabili:
+- `main`: destinato alle release stabili e aggiornato al termine di ogni sprint
+- `develop`: utilizzato per lo sviluppo continuo e sufficientemente testato
+
+Il team sviluppava ogni task su un branch `feature/ID-Jira_nome-task` che, una volta terminato lo sviluppo, veniva
+incorporato tramite pull request in `develop`. Nel caso in cui il team identificava un bug, questo veniva risolto su 
+un branch `bugfix/ID-Jira_nome-task` se identificato in `develop`; `hotfix/ID-Jira_nome-bug` se identificato in `main`.
+
+## CI/CD
+Sono state utilizzate le GitHub Actions per automatizzare la verifica del codice tramite test su pull request.
+
 
 
 
