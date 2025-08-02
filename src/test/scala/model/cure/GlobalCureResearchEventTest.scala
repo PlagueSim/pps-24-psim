@@ -51,7 +51,7 @@ class GlobalCureResearchEventTest extends AnyFlatSpec with Matchers:
 
   private def lowSeverityTraits: Set[Trait] = Set(
     Symptoms.paranoia,
-    Symptoms.abscesses
+    Symptoms.sweating
   ) // severity < 20
 
   private def highSeverityTraits: Set[Trait] =
@@ -67,14 +67,14 @@ class GlobalCureResearchEventTest extends AnyFlatSpec with Matchers:
   "GlobalCureResearchEvent" should "not modify cure when disease severity is below threshold" in:
     val s = state(traits = lowSeverityTraits)
 
-    val result = GlobalCureResearchEvent.modifyFunction(s)
+    val result = GlobalCureResearchEvent().modifyFunction(s)
     result shouldBe s.cure
 
   it should "add modifiers and increase effective speed" in:
     val s = state(traits = highSeverityTraits, cure = Cure(baseSpeed = 0.1))
     val severity = s.disease.severity
 
-    val result = GlobalCureResearchEvent.modifyFunction(s)
+    val result = GlobalCureResearchEvent().modifyFunction(s)
 
     // Check presence of modifiers
     val modAId =
@@ -90,7 +90,7 @@ class GlobalCureResearchEventTest extends AnyFlatSpec with Matchers:
 
   it should "correctly calculate contributions from nodes" in:
     val s = state(traits = highSeverityTraits, cure = Cure(baseSpeed = 0.0))
-    val result = GlobalCureResearchEvent.modifyFunction(s)
+    val result = GlobalCureResearchEvent().modifyFunction(s)
 
     // Check cumulative effect
     // 60k/300k + 160k/300k = 0.2 + 0.5333 = 0.7333
@@ -105,7 +105,7 @@ class GlobalCureResearchEventTest extends AnyFlatSpec with Matchers:
         "C" -> Node.withPopulation(100).withInfected(0).build() // Zero infected
       )
     )
-    val result = GlobalCureResearchEvent.modifyFunction(s)
+    val result = GlobalCureResearchEvent().modifyFunction(s)
     result.modifiers.modifiers should contain key ModifierId(
       ModifierSource.Node(NodeId("A")),
       ModifierKind.Additive
@@ -126,7 +126,7 @@ class GlobalCureResearchEventTest extends AnyFlatSpec with Matchers:
         "C" -> Node.withPopulation(100).withInfected(0).build() // Zero infected
       )
     )
-    val result = GlobalCureResearchEvent.modifyFunction(s)
+    val result = GlobalCureResearchEvent().modifyFunction(s)
     result.modifiers.modifiers shouldBe empty
 
   it should "handle nodes with zero total population" in:
@@ -139,7 +139,7 @@ class GlobalCureResearchEventTest extends AnyFlatSpec with Matchers:
           .build() // Zero population
       )
     )
-    val result = GlobalCureResearchEvent.modifyFunction(s)
+    val result = GlobalCureResearchEvent().modifyFunction(s)
     result.modifiers.modifiers shouldBe empty
 
   it should "remove a modifier if infected ratio decreases below threshold" in:
@@ -153,7 +153,7 @@ class GlobalCureResearchEventTest extends AnyFlatSpec with Matchers:
         .addModifier(CureModifier.additive(existingModId, 0.5).get)
     )
 
-    val result = GlobalCureResearchEvent.modifyFunction(s)
+    val result = GlobalCureResearchEvent().modifyFunction(s)
     result.modifiers.modifiers shouldBe empty
 
   it should "keep existing modifiers from other sources" in:
@@ -166,7 +166,7 @@ class GlobalCureResearchEventTest extends AnyFlatSpec with Matchers:
       cure = Cure(baseSpeed = 0.0).addModifier(globalModifier)
     )
 
-    val result = GlobalCureResearchEvent.modifyFunction(s)
+    val result = GlobalCureResearchEvent().modifyFunction(s)
 
     // Should have 2 modifiers: global + node A
     result.modifiers.modifiers should have size 2
@@ -185,7 +185,7 @@ class GlobalCureResearchEventTest extends AnyFlatSpec with Matchers:
       cure = Cure(baseSpeed = 0.0)
     )
 
-    val result = GlobalCureResearchEvent.modifyFunction(s)
+    val result = GlobalCureResearchEvent().modifyFunction(s)
 
     // Total population = 300, total infected = 70
     // Only A contributes: 60/300 = 0.2

@@ -22,9 +22,9 @@ import model.world.World
  * If the disease severity exceeds a threshold, nodes with infected ratios above a threshold
  * contribute additive cure modifiers. Otherwise, the cure state remains unchanged.
  */
-case object GlobalCureResearchEvent extends Event[Cure]:
+case class GlobalCureResearchEvent() extends Event[Cure]:
 
-  private val SEVERITY_THRESHOLD  = 20
+  private val SEVERITY_THRESHOLD  = 8
   private val INFECTION_THRESHOLD = 0.6
 
   /**
