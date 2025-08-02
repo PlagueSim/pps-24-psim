@@ -1,6 +1,5 @@
 package model.world
 import model.world.MovementComputation.PeopleMovement
-import org.apache.commons.math3.distribution.HypergeometricDistribution
 import Types.*
 case class World private (
                            nodes: Map[NodeId, Node],
@@ -54,49 +53,7 @@ object World:
     WorldValidator.validateMovements(movements)
     new World(nodes, edges, movements)
 
-  /**
-   * Applies a list of movements to the world.
-   * This method updates the population and infection counts of nodes based on the movements.
-   * @param world The current state of the world containing nodes and edges.
-   * @param movements An iterable of PeopleMovement instances representing the movements to apply.
-   *
-   * @return A new World instance with updated nodes after applying the movements.
-   * */
-  def applyMovements(world: World, movements: Iterable[PeopleMovement]): World = {
-    val updatedNodes = movements.foldLeft(world.nodes):
-      case (nodesAcc, move) => updateNodesWithMovement(nodesAcc, move)
-    world.copy(nodes = updatedNodes)
-  }
 
-  private def updateNodesWithMovement(
-                                       nodes: Map[NodeId, Node],
-                                       movement: PeopleMovement
-                                     ): Map[NodeId, Node] =
-    val PeopleMovement(from, to, amount) = movement
-
-    val fromNode = nodes(from)
-    if fromNode.population <= 0 then return nodes
-
-    val infectedMoving = sampleInfected(fromNode, amount)
-
-    val updatedFrom = fromNode
-      .decreasePopulation(amount)
-      .decreaseInfection(infectedMoving)
-
-    val updatedTo = nodes(to)
-      .increasePopulation(amount)
-      .increaseInfection(infectedMoving)
-
-    nodes.updated(from, updatedFrom)
-      .updated(to, updatedTo)
-
-  private def sampleInfected(node: Node, amount: Int): Int =
-    val hgd = new HypergeometricDistribution(
-      node.population,
-      node.infected,
-      amount
-    )
-    hgd.sample()
 
 
   extension (world: World)
