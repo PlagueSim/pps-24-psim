@@ -3,6 +3,7 @@ import dsl.DSL.*
 import dsl.builders.SetupBuilderAndRunner
 import model.core.SimulationState
 import model.cure.CureModifiers
+import model.infection.InfectionTypes
 import model.reaction.Reactions
 import model.scheduler.CustomScheduler
 import model.world.{World, WorldFactory}
@@ -50,7 +51,7 @@ object App extends JFXApp3:
         time:
           initialState.time
         infectionLogic:
-          initialState.infectionLogic
+          InfectionTypes.LogisticGrowthInfection
         deathLogic:
           initialState.deathLogic
         reactions:
