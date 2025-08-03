@@ -4,6 +4,10 @@ descrizione di pattern architetturali usati,
 eventuali componenti del sistema distribuito,
 scelte tecnologiche cruciali ai fini architetturali -- corredato da pochi ma efficaci diagrammi
 
+//AGGIUNGERE UN DIAGRAMMA DELLE CLASSI GENERICO (stile quello che abbiamo fatto all'inizio inizio)
+DOVE DICIAMO DI VOLER CRAFTARE L'APP TRAMIT UN ENGINE CHE ESEGUE EVENTI PER I DIVERSI ELEMENTI DEL DOMINIO,
+ES. DISEASE, CURE, WORLD ECC..
+
 ## Entità principali
 
 - `SimulationEngine`
