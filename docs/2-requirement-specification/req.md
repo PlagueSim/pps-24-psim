@@ -6,17 +6,25 @@ una malattia che si diffonde nel mondo e di evolverla per infettare e uccidere t
 che questa sia in grado di curarla.
 
 ## Modello di dominio
-Il **Mondo** è l'insieme dei **Nodi** e i loro **Collegamenti**. Ogni nodo contiene della **Popolazione** che
-può spostarsi tra un nodo e l'altro tramite i relativi collegamenti. La popolazione è suddivisa in **Sani** e
-**Infetti**, mentre i **Morti** non ne fanno parte.
+Il **Mondo** è l'insieme dei **Nodi** e i loro **Collegamenti** che possono essere di **Terra** di **Mare** o di **Aria**.
+Ogni nodo contiene della **Popolazione** che può spostarsi tra un nodo e l'altro tramite i relativi collegamenti.
+La popolazione è suddivisa in **Sani** e **Infetti**, mentre i **Morti** non ne fanno parte.
 La **Malattia** infetta la popolazione in base alla sua **Infettività** e la uccide in base all sua **Letalità**.
 La malattia può **Evolvere** nuovi **Tratti** secondo la volontà del giocatore spendendo **punti dna**, oppure
 gratuitamente nel caso in cui avvenga una **Mutazione** casuale determinata dalla **Probabilità di mutazione**
 della malattia. L'infettività, la letalità e la probabilità di mutazione sono **Statistiche** della malattia,
 calcolate come la somma delle statistiche di ogni tratto, insieme alla **Gravità** che simula la visibilità
-dei tratti evoluti. La gravità determina quanto i diversi nodi lavoreranno allo sviluppo di una **Cura**.
+dei tratti evoluti.
+La gravità determina quanto i diversi nodi lavoreranno allo sviluppo di una **Cura**.
 La cura ha una **Velocità** di **Progresso** determinata dalla somma del contributo dei vari nodi.
-Esistono tratti che possono ridurre la velocità o il progresso della cura.
+
+Esistono tre diverse categorie di tratti:
+- **Trasmissioni**: si concentrano sull'incremento dell'infettività
+- **Sintomi**: possono aumentare infettività, letalità, gravità, probabilità di mutazione e ridurre il progresso della cura
+- **Abilità**: possono avere effetti diversi tra cui rallentare o ridurre il progresso della cura
+
+
+### Glossario
 
 ## Requisiti funzionali
 
@@ -56,7 +64,6 @@ come prerequisito
 ## Requisiti non funzionali
 - La realizzazione di algoritmi e strutture dati efficienti per aspetti riguardanti la popolazione visti 
 i potenzialmente grandi numeri da utilizzare 
-- Interfaccia grafica intuitiva
 
 ### opzionale
 - Realizzare un dsl per impostare la simulazione in maniera rapida e semplice
