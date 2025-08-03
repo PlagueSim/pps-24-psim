@@ -1,7 +1,7 @@
 package view.world
 
 import scala.math.*
-
+import model.world.Types.*
 /* A layout strategy that arranges nodes evenly around a circle. */
 
 class CircularLayout(
@@ -10,11 +10,14 @@ class CircularLayout(
                       centerY: Double = 250
                     ) extends GraphLayout:
 
-  /*
+  /**
    * Computes positions for the given node IDs, placing them evenly
    * spaced around a circle centered at (centerX, centerY).
+   * @param nodeIds Sequence of node IDs to position
+   *                
+   * @return Map of node IDs to their (x, y) positions
    * */
-  def computePositions(nodeIds: Seq[String]): Map[String, (Double, Double)] =
+  def computePositions(nodeIds: Seq[NodeId]): Map[NodeId, (PosX, PosY)] =
     if nodeIds.isEmpty then Map.empty
     else
       val angleStep = 2 * Pi / nodeIds.size

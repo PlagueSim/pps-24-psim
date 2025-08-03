@@ -2,19 +2,19 @@ package view.world
 
 import scalafx.scene.text.Text
 import javafx.scene.Node as FxNode
-
+import model.world.Types.*
 case class NodeView(
                      visuals: Seq[FxNode],
-                     position: () => (Double, Double),
+                     position: () => (PosX, PosY),
                      labels: Map[String, Text],
                      var population: Int = 0,
                      var infected: Int = 0,
                      var died: Int = 0 
                    ):
 
-  /*
-   * Updates the labels of this NodeView using values from another NodeView.
-   * Only "pop", "inf", and "died" labels are updated.
+  /**
+   * @param from The NodeView instance from which to copy label values.
+   * This method updates the population, infected, and died counts
    */
   def updateLabels(from: NodeView): Unit =
     this.population = from.population
@@ -24,39 +24,28 @@ case class NodeView(
     this.labels.get("inf").foreach(_.text = from.labels("inf").text())
     this.labels.get("died").foreach(_.text = from.labels("died").text())
 
-  /*
-   * Returns a copy of this NodeView with labels updated from the given Node model.
-   * The text values are recreated based on the model's data.
-   */
-  def withUpdatedLabelsFromModel(node: model.world.Node): NodeView =
-    val values = Map(
-      "pop"  -> node.population,
-      "inf"  -> node.infected,
-      "died" -> node.died
-    )
-    values.get("pop").foreach { pop =>
-      labels.get("pop").foreach(_.text = s"Pop: $pop")
-      this.population = pop
-    }
-    values.get("inf").foreach { inf =>
-      labels.get("inf").foreach(_.text = s"Infected: $inf")
-      this.infected = inf
-    }
-    values.get("died").foreach { died =>
-      labels.get("died").foreach(_.text = s"Died: $died")
-      this.died = died
-    }
-    this
-
-
+  /**
+   * @param population The new population count to set.
+   * This method updates the population count and the corresponding label.
+   * */
   def updatePopulation(population: Int): Unit =
     this.population = population
     labels.get("pop").foreach(_.text = s"Pop: $population")
 
+  /**
+   * 
+   * @param infected The new infected count to set.
+   * This method updates the infected count and the corresponding label.
+   */
   def updateInfected(infected: Int): Unit =
     this.infected = infected
     labels.get("inf").foreach(_.text = s"Infected: $infected")
 
+  /**
+   * 
+   * @param died The new died count to set.
+   * This method updates the died count and the corresponding label.
+   */
   def updateDied(died: Int): Unit =
     this.died = died
     labels.get("died").foreach(_.text = s"Died: $died")
@@ -73,12 +62,13 @@ object NodeView:
    * @param labelPop the label showing the population
    * @param labelInf the label showing the infected count
    * @param labelDied the label showing the death count
+   * 
    * @return a new NodeView instance
    */
   def apply(
-             id: String,
+             id: NodeId,
              visuals: Seq[FxNode],
-             position: () => (Double, Double),
+             position: () => (PosX, PosY),
              labelId: Text,
              labelPop: Text,
              labelInf: Text,

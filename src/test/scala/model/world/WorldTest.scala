@@ -5,13 +5,15 @@ import model.world.*
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+import model.world.EdgeExtensions.getMapEdges
+import model.world.prolog.WorldConnectivity
 
 class WorldTest extends AnyFlatSpec with Matchers:
 
   "model/world" should "validate that edges connect existing nodes" in:
     val node = Node.withPopulation(10).build()
     val nodes = Map("A" -> node)
-    val edges = Map("A-B" -> Edge("A", "B", EdgeType.Land))
+    val edges = List(Edge("A", "B", EdgeType.Land)).getMapEdges
     val movements: Map[MovementStrategy, Double] = Map(Static -> 1.0)
 
     an[IllegalArgumentException] shouldBe thrownBy:
@@ -20,7 +22,7 @@ class WorldTest extends AnyFlatSpec with Matchers:
   it should "validate that movement percentages are non-empty and sum to 1.0" in:
     val node = Node.withPopulation(10).build()
     val nodes = Map("A" -> node)
-    val edges = Map.empty[String, Edge]
+    val edges = List().getMapEdges
 
     val emptyMovements = Map.empty[MovementStrategy, Double]
     an[IllegalArgumentException] shouldBe thrownBy:
@@ -49,7 +51,7 @@ class WorldTest extends AnyFlatSpec with Matchers:
       "A" -> nodeA,
       "B" -> nodeB
     )
-    val edges = Map("A-B" -> Edge("A", "B", EdgeType.Land))
+    val edges = List(Edge("A", "B", EdgeType.Land)).getMapEdges
     val movements: Map[MovementStrategy, Double] =Map(
       Static -> 0.7,
       LocalPercentageMovement -> 0.3
@@ -90,8 +92,7 @@ class WorldTest extends AnyFlatSpec with Matchers:
       "B" -> nodeB,
       "C" -> nodeC
     )
-    val edges = Map("A-B-L" -> Edge("A", "B", EdgeType.Land), 
-        "B-C-S" -> Edge("B", "C", EdgeType.Sea))
+    val edges = List(Edge("A", "B", EdgeType.Land), Edge("B", "C", EdgeType.Sea)).getMapEdges
     val movements: Map[MovementStrategy, Double] = Map(
       Static -> 1.0
     )
@@ -110,7 +111,7 @@ class WorldTest extends AnyFlatSpec with Matchers:
       "A" -> nodeA,
       "B" -> nodeB
     )
-    val edges = Map("A-B" -> Edge("A", "B", EdgeType.Land))
+    val edges = List(Edge("A", "B", EdgeType.Land)).getMapEdges
     val movements: Map[MovementStrategy, Double] = Map(
       Static -> 1.0
     )
@@ -135,14 +136,14 @@ class WorldTest extends AnyFlatSpec with Matchers:
       "B" -> nodeB,
       "C" -> nodeC
     )
-    val edges = Map("A-B" -> Edge("A", "B", EdgeType.Land), 
-        "B-C" -> Edge("B", "C", EdgeType.Air))
+    val edges = List(Edge("A", "B", EdgeType.Land), Edge("B", "C", EdgeType.Air)).getMapEdges
+    
     val movements: Map[MovementStrategy, Double] =Map(
       Static -> 1.0
     )
 
     val world = World(nodes, edges, movements)
 
-    world.areConnected("A", "B") shouldBe true
-    world.areConnected("B", "C") shouldBe true
-    world.areConnected("A", "C") shouldBe false
+    WorldConnectivity.areConnected(world, "A", "B") shouldBe true
+    WorldConnectivity.areConnected(world,"B", "C") shouldBe true
+    WorldConnectivity.areConnected(world,"A", "C") shouldBe false

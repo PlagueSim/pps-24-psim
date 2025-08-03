@@ -2,14 +2,21 @@ package model.events.movementEvent
 
 import model.world.MovementComputation.PeopleMovement
 import model.world.{Edge, Node, World}
-
+import model.world.Types.*
 object LocalPercentageLogic extends MovementLogicWithEdgeCapacityAndPercentages:
 
   override def edgeMovementConfig: EdgeMovementConfig = EdgeConfigurationFactory().getDefaultEdgeConfiguration
 
+  /*
+  * This logic computes movements based on a percentage of the population at each node.
+  * It checks if the node has a population greater than zero and if it has open edges to neighbors.
+  * If so, it generates movements to a random neighbor, respecting the edge capacity.
+  * The amount of movement is calculated as a percentage of the node's population,
+  * limited by the edge's capacity if specified.
+  * */
   override def compute(
                         world: World,
-                        percent: Double,
+                        percent: Percentage,
                         rng: scala.util.Random
                       ): List[PeopleMovement] =
     world.nodes
@@ -17,13 +24,13 @@ object LocalPercentageLogic extends MovementLogicWithEdgeCapacityAndPercentages:
       .flatMap((id, node) => generateMovement(id, world, percent, rng))
       .toList
 
-  private def canMove(id: String, node: Node, world: World): Boolean =
+  private def canMove(id: NodeId, node: Node, world: World): Boolean =
     node.population > 0 && world.neighbors(id).exists(world.isEdgeOpen(id, _))
 
   private def generateMovement(
-                                from: String,
+                                from: NodeId,
                                 world: World,
-                                percent: Double,
+                                percent: Percentage,
                                 rng: scala.util.Random
                               ): Option[PeopleMovement] =
 
@@ -38,4 +45,4 @@ object LocalPercentageLogic extends MovementLogicWithEdgeCapacityAndPercentages:
       .map(edge => baseAmount.min(edgeMovementConfig.capacity.getOrElse(edge.typology, baseAmount)))
       .getOrElse(0)
 
-    Some(PeopleMovement(from, to, finalAmount))
+    if finalAmount <= 0 then None else Some(PeopleMovement(from, to, finalAmount))
