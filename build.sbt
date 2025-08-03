@@ -23,8 +23,12 @@ libraryDependencies ++= {
 
 //enablePlugins(WartRemover)
 //wartremoverWarnings ++= Warts.unsafe
+coverageEnabled := true
+
+coverageExcludedPackages := "dsl.*;controller.*;prolog.*;view.*;<empty>;model.scheduler.*;"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % Test
 libraryDependencies += "org.typelevel" %% "cats-core" % "2.13.0"
 libraryDependencies += "org.typelevel" %% "cats-effect" % "3.6.1"
 libraryDependencies += "it.unibo.alice.tuprolog" % "tuprolog" % "3.3.0"
+libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
