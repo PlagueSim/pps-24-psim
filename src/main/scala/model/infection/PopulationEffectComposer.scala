@@ -13,12 +13,12 @@ private[infection] object PopulationEffectComposer:
    * A concrete implementation of [[PopulationEffect]] that applies a series of functions
    * to a node's population based on a disease's characteristics.
    */
-  private case class FunctionalPopulationEffect(
+  private case class FunctionalPopulationEffect[A](
       canApply: Node => Boolean,
       extractParameter: Disease => Double,
-      populationSelector: Node => Int,
+      populationSelector: Node => A,
       adjustParameter: Double => Probability,
-      calculateChange: (Int, Probability) => Int,
+      calculateChange: (A, Probability) => Int,
       applyChange: (Node, Int) => Node
   ) extends PopulationEffect:
     /**
@@ -36,12 +36,12 @@ private[infection] object PopulationEffectComposer:
   /**
    * Constructs a [[PopulationEffect]] by composing a set of functions.
    */
-  def apply(
+  def apply[A](
       canApply: Node => Boolean,
       parameterExtractor: Disease => Double,
-      populationSelector: Node => Int,
+      populationSelector: Node => A,
       parameterAdjuster: Double => Probability = Probability.fromPercentage,
-      changeCalculator: (Int, Probability) => Int,
+      changeCalculator: (A, Probability) => Int,
       changeApplier: (Node, Int) => Node
   ): PopulationEffect =
     FunctionalPopulationEffect(
