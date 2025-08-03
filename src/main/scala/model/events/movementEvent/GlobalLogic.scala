@@ -29,8 +29,8 @@ object GlobalLogic extends MovementLogicWithEdgeCapacityAndPercentages:
     val avgPopulation = world.getAvgPopulationPerNode
 
     for {
-      (id, node) <- world.nodes if node.population > 0
-      (_, edge) <- world.edges if edge.connects(id) && !edge.isClose
+      (id, node) <- world.nodes.filter((_, n) => (n.population * percent).floor.toInt > 0)
+      (_, edge) <- world.edges.filter((_, e) => e.connects(id)).filter((_, e) => e.isClose)
       toMove = (node.population * percent).floor.toInt
       move <- generateMovementTuple(id, edge, rng, avgPopulation, toMove)
     } yield move
