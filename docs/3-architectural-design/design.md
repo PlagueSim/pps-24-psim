@@ -58,12 +58,14 @@ Sono presenti in oltre tre pulsanti:
 - *Symptoms*: Mostra la pagina dedicata all'evoluzione dei sintomi
 - *Abilities*: Mostra la pagina dedicata all'evoluzione delle abilità
 
-Selezionano un tratto viene mostrata una piccola interfaccia che mostra le statistiche
-di quel tratto e un pulsante *Evolve*, se la malattia non possiede ancora quel tratto, che
-consente di evolverlo; altrimenti un pulsante *Involve*, che consente di rimuovere il tratto
-selezionato da quelli che la malattia possiede.
+<img src="PlagueView.drawio.png" alt="drawing" style="max-height:600px;"/>
 
+Selezionando un tratto viene mostrata una piccola interfaccia che mostra le sue statistiche
+e un pulsante *Evolve*, se la malattia non lo possiede ancora, che
+consente di evolverlo; altrimenti viene mostrato un pulsante *Involve*,
+che consente di rimuovere il tratto selezionato da quelli che la malattia possiede.
 
+<img src="TraitDetail.drawio.png" alt="drawing" style="max-height:600px;"/>
 
 
 [Back to index](../index.md) |
