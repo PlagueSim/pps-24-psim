@@ -29,6 +29,8 @@ L'interfaccia introduttiva fornisce una breve spiegazione del gioco.
 Consente al giocatore di selezionare il nodo di inizio della malattia e di avviare
 la simulazione tramite un pulsante *Start*
 
+<img src="IntroPopup.drawio.png" alt="drawing" style="max-height:600px;"/>
+
 ### Interfaccia Principale
 L'interfaccia principale mostra la partita in corso e nello specifico:
 - La data corrente
@@ -39,6 +41,9 @@ L'interfaccia principale mostra la partita in corso e nello specifico:
 È dotata di due pulsanti:
 - *World*: per mostrare la pagina del mondo 
 - *Plague*: per mostrare la pagina della malattia
+
+<img src="MainPage.drawio.png" alt="drawing" style="max-height:600px;"/>
+
 
 #### Pagina del Mondo
 La pagina del mondo mostra tutti i nodi con le relative popolazioni, numero di infetti,
