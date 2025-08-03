@@ -49,6 +49,8 @@ L'interfaccia principale mostra la partita in corso e nello specifico:
 La pagina del mondo mostra tutti i nodi con le relative popolazioni, numero di infetti,
 morti e collegamenti
 
+<img src="WorldPage.drawio.png" alt="drawing" style="max-height:600px;"/>
+
 #### Pagina della Malattia
 La pagina della malattia mostra il nome e le statistiche complessive della malattia.
 Sono presenti in oltre tre pulsanti:
