@@ -3,7 +3,6 @@ package model.events
 import cats.data.State
 import model.core.SimulationEngine.Simulation
 import model.core.SimulationState
-import model.time.Time
 
 /** Represents a stateful event in the simulation.
   */

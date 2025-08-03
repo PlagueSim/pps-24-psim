@@ -1,17 +1,20 @@
 package model.infection
 
-import jdk.dynalink.NamedOperation
 import model.infection.Probability.Probability
 import model.infection.TemperatureAdjuster.TemperatureAdjuster
+import model.plague.Disease
 import model.world.Node
-import org.apache.commons.math3.distribution.{BinomialDistribution, HypergeometricDistribution}
+import org.apache.commons.math3.distribution.{
+  BinomialDistribution,
+  HypergeometricDistribution
+}
 import org.apache.commons.math3.util.FastMath.pow
 
 /** Object containing all the infection types */
 object InfectionTypes:
 
-  private val STANDARD_CAN_APPLY: Node => Boolean =
-    n => n.infected > 0 && n.population - n.infected > 0
+  private val STANDARD_CAN_APPLY: (Node, Disease) => Boolean =
+    (n, d) => n.infected > 0 && n.population - n.infected > 0 && d.infectivity > 0.0
 
   val StandardInfection: PopulationEffect =
     PopulationEffectComposer.apply(

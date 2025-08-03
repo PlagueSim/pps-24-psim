@@ -5,7 +5,7 @@ import model.world.Node
 import model.plague.Disease
 
 /**
- * Factory object for creating instances of [[PopulationEffect]].
+ * Object for creating instances of [[PopulationEffect]].
  * This object provides a flexible way to construct population effects by composing functions.
  */
 private[infection] object PopulationEffectComposer:
@@ -14,7 +14,7 @@ private[infection] object PopulationEffectComposer:
    * to a node's population based on a disease's characteristics.
    */
   private case class FunctionalPopulationEffect[A](
-      canApply: Node => Boolean,
+      canApply: (Node, Disease) => Boolean,
       extractParameter: Disease => Double,
       populationSelector: Node => A,
       adjustParameter: Double => Probability,
@@ -25,7 +25,7 @@ private[infection] object PopulationEffectComposer:
      * Applies the population effect to a given node if the conditions are met.
      */
     override def applyToPopulation(node: Node, disease: Disease): Node =
-      if canApply(node) then
+      if canApply(node, disease) then
         lazy val rawParam       = extractParameter(disease)
         lazy val probability    = adjustParameter(rawParam)
         lazy val basePopulation = populationSelector(node)
@@ -37,7 +37,7 @@ private[infection] object PopulationEffectComposer:
    * Constructs a [[PopulationEffect]] by composing a set of functions.
    */
   def apply[A](
-      canApply: Node => Boolean,
+      canApply: (Node, Disease) => Boolean,
       parameterExtractor: Disease => Double,
       populationSelector: Node => A,
       parameterAdjuster: Double => Probability = Probability.fromPercentage,
