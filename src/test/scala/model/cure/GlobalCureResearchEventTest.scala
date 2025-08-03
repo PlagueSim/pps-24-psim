@@ -10,7 +10,7 @@ import model.cure.{
   ModifierSource,
   NodeId
 }
-import model.plague.db.Symptoms
+import model.plague.traits.Symptoms
 import model.plague.{Disease, Trait}
 import model.world.{Node, LocalPercentageMovement, Static, World}
 import model.time.TimeTypes.{Day, Year}

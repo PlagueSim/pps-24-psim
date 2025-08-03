@@ -1,7 +1,7 @@
 package model.plague
 
 import model.plague.TraitCategory.*
-import model.plague.db.Symptoms
+import model.plague.traits.Symptoms
 
 import scala.util.Random
 
