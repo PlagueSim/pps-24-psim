@@ -1,7 +1,7 @@
 package view.plague
 
 import model.core.SimulationState
-import model.plague.db.*
+import model.plague.traits.*
 import scalafx.geometry.Insets
 import scalafx.scene.control.Label
 import scalafx.scene.layout.{BorderPane, HBox, VBox}

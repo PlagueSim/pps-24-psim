@@ -4,13 +4,13 @@ import model.world.{Edge, MovementStrategy, Node, Static, World}
 import model.core.{SimulationEngine, SimulationState}
 import model.cure.Cure
 import model.plague.{Disease, Trait}
-import model.plague.db.Symptoms.*
-import model.plague.db.Abilities.*
+import model.plague.traits.Symptoms.*
+import model.plague.traits.Abilities.*
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import model.events.plague.DiseaseEvents.*
 import model.events.plague.DnaPointsCalculator
-import model.plague.db.Symptoms
+import model.plague.traits.Symptoms
 import model.time.BasicYear
 import model.time.TimeTypes.{Day, Year}
 import model.world.EdgeType.*

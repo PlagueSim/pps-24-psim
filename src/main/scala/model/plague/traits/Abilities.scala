@@ -1,4 +1,4 @@
-package model.plague.db
+package model.plague.traits
 
 import model.plague
 import model.plague.Trait

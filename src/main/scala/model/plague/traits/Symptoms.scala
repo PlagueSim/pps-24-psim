@@ -1,4 +1,4 @@
-package model.plague.db
+package model.plague.traits
 
 import model.plague.Trait
 import model.plague.TraitCategory.Symptom
