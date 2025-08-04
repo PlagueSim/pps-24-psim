@@ -52,13 +52,6 @@ case class NodeView(
     this.died = died
     labels.get("died").foreach(_.text = s"Died: $died")
 
-
-  /**
-   * Updates the background color based on infection ratio.
-   * The more infected, the more red the background becomes.
-   * @param population The population count.
-   * @param infected The infected count.
-   */
   def updateBackground(): Unit =
     import javafx.scene.paint.Color as JfxColor
     val color = calculateColor()
