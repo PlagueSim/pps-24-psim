@@ -138,7 +138,7 @@ la distribuzione ipergeometrica consente di stimare quanti dei k siano infetti, 
 senza rimpiazzo da un’urna con I palline rosse (infetti) e N−I bianche (sani). 
 Questo introduce un realismo statistico nella simulazione, mantenendo la proporzione tra infetti e sani durante gli spostamenti.
 
-**Nota**:  questa gestione basata sulla distribuzione ipergeometrica è stata realizzata in collaborazione con il collega Matteo Susca, con l'obiettivo di garantire coerenza statistica e biologica nei modelli di mobilità.
+**Nota**:  questa gestione basata sulla distribuzione ipergeometrica è stata realizzata in collaborazione con il collega Matteo Susca.
 
 Il processo per gestire lo spostamento degli infetti in questo modo 
 
