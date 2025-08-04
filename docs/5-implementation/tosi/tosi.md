@@ -20,7 +20,7 @@ I file completamente sviluppati da me sono: `SimulationEngine`, `SimulationState
 `PopulationEffectComposer`, `Probability`, `TemperatureAdjuster`, `Scheduler`, `BasicYear`, `Time`, `TimeTypes`,
 `UpdatableView`, `Controller`, `ExecutionMode`, `DSL`, `SetupBuilderAndRunner`, `CureBuilder`, `CureBuilderProxy`,
 `CureDSL`, `DiseaseBuilder`, `DiseaseBuilderProxy`, `DiseaseDSL`, `SimulationStateBuilder`,
-`SimulationStateBuilderProxy`, `SimStateDSL`, `WorldBuilder`, `WorldBuilderProxy`, `WorldDSL`, `PrologEngine`.
+`SimulationStateBuilderProxy`, `SimStateDSL`, `WorldBuilder`, `WorldBuilderProxy`, `WorldDSL`, `PrologEngine`, `Utils`.
 
 Le parti più importanti sono:
 
@@ -42,11 +42,11 @@ type Simulation[A] = State[SimulationState, A]
 Questo ha reso possibile la modellazione di ogni evento della simulazione come una computazione pura che trasforma uno
 SimulationState in un nuovo stato, restituendo anche un eventuale valore di tipo `A`.
 
-Il metodo `runStandardSimulation` rappresenta un singolo step completo della simulazione. E' definito come una
+Il metodo `runStandardSimulation` rappresenta un singolo step completo della simulazione. È definito come una
 composizione sequenziale di trasformazioni pure sullo stato, sfruttando la monade `State` della libreria `Cats`.
 All'interno viene definita una composizione monadica che rappresenta una esecuzione completa della simulazione, definita
 tramite `for-comprehension`. Per ogni evento di trasformazione dello stato, viene chiamata la
-`executeEvent(event: Event[A])` in modo tale da delegare l'esecuzione dell'evento ad un punto centrale, lasciando agli
+`executeEvent(event: Event[A])` in modo tale da delegare l'esecuzione dell'evento a un punto centrale, lasciando agli
 eventi stessi l'unico compito di definire cosa deve essere svolto.
 
 ## Event
@@ -72,10 +72,10 @@ def modifyFunction(state: SimulationState): A
 ```
 
 `execute()` sfrutta la monade `State` di Cats per accedere allo stato attuale, applicare la `modifyFunction` sullo
-stato, generare un risultato che andrà poi ad essere sostituito a quello presente nel `SimulationState`, aggiornare lo
+stato, generare un risultato che andrà poi a essere sostituito a quello presente nel `SimulationState`, aggiornare lo
 `State` della monade e restituire il valore calcolato.
 
-Questo design ed implementazione separa in modo chiaro il *cosa* e il *come*. L’evento descrive **cosa deve essere fatto
+Questo design e implementazione separa in modo chiaro il *cosa* e il *come*. L’evento descrive **cosa deve essere fatto
 ** tramite la `modifyFunction`, mentre la logica generica di **come aggiornare lo stato** viene centralizzata nel
 `execute()` definito nel trait stesso.
 
