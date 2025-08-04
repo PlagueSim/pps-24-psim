@@ -50,6 +50,33 @@ Questa impostazione riflette un'architettura event-driven, dove ogni evento è u
 Inoltre, questo approccio assicura un’alta coesione interna e una bassa dipendenza da altre parti del progetto,
 facilitando manutenzione, testing e riutilizzo.
 
+### Malattia
+`Disease` rappresenta la malattia evolvibile dal giocatore durante la partita.
+È principalmente composto da `Trait` che ne determinano le caratteristiche.
+I `Trait` possono essere:
+- `Transmissions`: modella come una malattia è in grado di trasmettersi e infettare la popolazione
+- `Symptoms`: modella i sintomi della malattia
+- `Abilities`: modella caratteristiche particolari come ad esempio la resistenza ai farmaci o a determinate condizioni climatiche
+
+#### Evoluzione / Involuzione
+È possibile aggiungere o rimuovere `Trait` a `Disease`:
+- Tramite input del giocatore
+  - `EventBuffer` aggiunge un `Event` al `SimulationEngine` che richiede l'evoluzione o l'involuzione 
+  di uno specifico `Trait` selezionato nella pagina della malattia
+- Tramite evoluzione casuale
+  - Un `Event` determina casualmente se evolvere gratuitamente un nuovo `Trait` tra quelli i `Symptoms` evolvibili.
+
+#### Infezione e Morte
+Un `Event` è adibito al calcolo tramite `PopulationEffect` dei nuovi infetti e morti nei diversi `Node` in base alle statistiche 
+dei `Trait` presenti in `Disease`.
+
+#### Guadagno punti dna
+Un `Event` è adibito al calcolo dei punti dna, dipendenti dal numero di persone infettate e/o uccise 
+determinate da `PopulationEffect`.
+
+#### Alterazione della cura
+Durante la partita è possibile evolvere `Trait` che alterano `Cure`, modifiche sempre apportate tramite `Event` o `EventBuffer`.
+
 ### Mondo
 Il sottosistema **Mondo** rappresenta la rete globale su cui si muove la popolazione e si diffonde la malattia.
 È composto da tre elementi principali:
@@ -62,7 +89,7 @@ ma anche quanti tra questi sono infetti, così da mantenere una propagazione rea
 
 
 ### Cura
-Il sottosistema di ricerca della cura modella gli sforzi scientifici globali per sviluppare un rimedion alla malattia. 
+Il sottosistema di ricerca della cura modella gli sforzi scientifici globali per sviluppare un rimedio alla malattia. 
 È composto da due elementi chiave:
 1. **Stato della ricerca**: Tiene traccia del progresso (0-100%) e della velocità base di avanzamento della cura
 2. **Modificatori della ricerca**: Rappresentano le azioni che possono influenzare la velocità e il progresso della ricerca
