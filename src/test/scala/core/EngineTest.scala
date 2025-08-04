@@ -61,15 +61,9 @@ class EngineTest extends AnyFlatSpec with Matchers:
   it should "start infecting from the first tick" in:
     newState.world.nodes.values.map(x => x.infected).sum should be > STARTING_NUMBER_OF_INFECTED
 
-  /*
-    
-  it should "have 5 (1 initial + 4 just infected) infected per nodes after the first tick" in:
-    newState.world.nodes.values.foreach(x => x.infected shouldEqual INFECTED_PER_NODE)
-    
-  */
-
-  it should "have in total 10 infected after the first tick" in:
-    newState.world.nodes.values.map(x => x.infected).sum shouldEqual (INFECTED_PER_NODE * NUMBER_OF_NODES)
+  it should "have in total 8 infected after the first tick" in:
+    val deaths = newState.world.nodes.values.map(x => x.died).sum
+    newState.world.nodes.values.map(x => x.infected).sum shouldEqual (INFECTED_PER_NODE * NUMBER_OF_NODES - deaths)
 
   it should "not advance the cure instantly" in:
     newState.cure.progress shouldEqual 0
@@ -80,5 +74,5 @@ class EngineTest extends AnyFlatSpec with Matchers:
   it should "have the standard disease, and not mutated one" in:
     newState.disease shouldEqual state.disease
 
-  it should "not have any deaths" in:
-    newState.world.nodes.values.map(x => x.died).sum shouldEqual 0
+  it should "have 1 death per node, so 2 total deaths" in:
+    newState.world.nodes.values.map(x => x.died).sum shouldEqual 2

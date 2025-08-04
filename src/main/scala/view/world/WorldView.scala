@@ -61,6 +61,7 @@ class WorldView extends Pane with UpdatableWorldView:
         view.updatePopulation(world.nodes(id).population)
         view.updateInfected(world.nodes(id).infected)
         view.updateDied(world.nodes(id).died)
+        view.updateBackground()
     }
 
     val nodesThatDontExistAnymore = nodeViews.keySet -- world.nodes.keySet

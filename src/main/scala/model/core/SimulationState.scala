@@ -5,7 +5,8 @@ import model.infection.InfectionAndDeathPopulation.*
 import model.plague.Disease
 import model.plague.traits.Symptoms.pulmonaryEdema
 import model.reaction.Reactions
-import model.reaction.Reactions.StandardReactions
+import model.reaction.ReactionAction.CloseEdges
+import model.reaction.{InfSeverityCondition, ReactionRule}
 import model.time.TimeTypes.{Day, Year}
 import model.time.{BasicYear, Time}
 import model.world.*
@@ -74,7 +75,17 @@ object SimulationState:
       world,
       StandardInfection,
       StandardDeath,
-      StandardReactions
+      Reactions(
+        rules = List(
+          ReactionRule(
+            condition = InfSeverityCondition(
+              infectedThreshold = 0.3,
+              severityThreshold = 3
+            ),
+            actionFactory = nodeId => CloseEdges(EdgeType.Land, nodeId)
+          )
+        )
+      )
     )
 
   extension (state: SimulationState)

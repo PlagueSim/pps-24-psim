@@ -30,8 +30,8 @@ object WorldFactory:
       }.toMap
 
     val edgeSet: Set[Edge] = Set(
-      Edge("A", "C", EdgeType.Land).close,
-      Edge("A", "C", EdgeType.Air).close,
+      Edge("A", "C", EdgeType.Land),
+      Edge("A", "C", EdgeType.Air),
       Edge("A", "B", EdgeType.Land),
       Edge("B", "C", EdgeType.Sea),
       Edge("C", "D", EdgeType.Air),
@@ -57,5 +57,5 @@ object WorldFactory:
     World(
       nodes,
       edgeSet.getMapEdges,
-      Map(Static -> 0.6, GlobalLogicMovement -> 0.4)
+      Map(Static -> 0.3, GlobalLogicMovement -> 0.7)
     )

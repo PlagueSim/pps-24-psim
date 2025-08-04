@@ -2,7 +2,7 @@ package model.core
 
 import cats.data.State
 import model.cure.Cure
-import model.events.cure.AdvanceCureEvent
+import model.events.cure.{AdvanceCureEvent, GlobalCureResearchEvent}
 import model.events.movementEvent.MovementEvent
 import model.events.plague.DiseaseEvents.*
 import model.events.reactionsEvents.{ApplyReactionsEvent, RevertExpiredEvent, UpdateActiveReactionsEvent}
@@ -53,6 +53,7 @@ object SimulationEngine:
       _     <- executeEvent(ChangeNodesInWorldEvent(y))
       moves <- executeEvent(MovementEvent())
       _     <- executeEvent(ChangeNodesInWorldEvent(moves))
+      _     <- executeEvent(GlobalCureResearchEvent())
       _     <- executeEvent(AdvanceCureEvent())
       _     <- executeEvent(Mutation())
       _     <- executeEvent(AdvanceDayEvent())

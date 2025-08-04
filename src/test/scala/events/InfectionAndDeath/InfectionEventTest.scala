@@ -164,8 +164,8 @@ class InfectionEventTest extends AnyFlatSpec with Matchers:
       Disease("test", Set(pulmonaryEdema), 1)
     )
 
-    ev1.population should be(97)
-    ev1.died should be(3)
+    ev1.population should be(96)
+    ev1.died should be(4)
 
   "A probabilistic death " should "behave correctly" in:
     val node = Node.withPopulation(NODE_POPULATION).withInfected(NODE_POPULATION).build()

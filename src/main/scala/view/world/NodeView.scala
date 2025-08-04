@@ -3,6 +3,8 @@ package view.world
 import scalafx.scene.text.Text
 import javafx.scene.Node as FxNode
 import model.world.Types.*
+import scalafx.scene.paint.Color
+
 case class NodeView(
                      visuals: Seq[FxNode],
                      position: () => (PosX, PosY),
@@ -49,6 +51,31 @@ case class NodeView(
   def updateDied(died: Int): Unit =
     this.died = died
     labels.get("died").foreach(_.text = s"Died: $died")
+
+  def updateBackground(): Unit =
+    import javafx.scene.paint.Color as JfxColor
+    val color = calculateColor()
+    val jfxColor = JfxColor.color(color.red, color.green, color.blue, color.opacity)
+    visuals.foreach:
+      case group: javafx.scene.Group =>
+        group.getChildren.forEach:
+          case circle: javafx.scene.shape.Circle => circle.setFill(jfxColor)
+          case _ =>
+      case _ =>
+
+  private def calculateColor(): Color =
+    val total = population + infected + died
+    val infectionRatio = if total > 0 then infected.toDouble / total else 0.0
+    val deathRatio = if total > 0 then died.toDouble / total else 0
+    val baseColor = Color.LightGray
+    val redColor = Color.Red
+    val grayColor = Color(0.3F, 0.3F, 0.3F, 1.0F) // Dark gray
+    Color(
+      baseColor.red + ((redColor.red - baseColor.red) * infectionRatio) + (grayColor.red - baseColor.red) * deathRatio,
+      baseColor.green + ((redColor.green - baseColor.green) * infectionRatio) + (grayColor.green - baseColor.green) * deathRatio,
+      baseColor.blue + ((redColor.blue - baseColor.blue) * infectionRatio) + (grayColor.blue - baseColor.blue) * deathRatio,
+      1.0
+    )
 
 
 object NodeView:

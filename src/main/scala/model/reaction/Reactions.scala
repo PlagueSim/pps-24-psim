@@ -65,10 +65,15 @@ object Reactions:
     Reactions(
       rules = List(
         ReactionRule(
-          condition = InfSeverityCondition(
-            infectedThreshold = 0.3,
-            severityThreshold = 3
-          ),
+          condition = SeverityCondition(4.0),
+          actionFactory = nodeId => CloseEdges(EdgeType.Air, nodeId)
+        ),
+        ReactionRule(
+          condition = SeverityCondition(6.0) and InfectedCondition(0.6),
+          actionFactory = nodeId => CloseEdges(EdgeType.Sea, nodeId)
+        ),
+        ReactionRule(
+          condition = SeverityCondition(8.0) and InfectedCondition(0.8),
           actionFactory = nodeId => CloseEdges(EdgeType.Land, nodeId)
         )
       )

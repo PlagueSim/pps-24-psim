@@ -2,17 +2,19 @@ package model.infection
 
 import model.infection.Probability.Probability
 import model.infection.TemperatureAdjuster.TemperatureAdjuster
+import model.plague.Disease
 import model.world.Node
 import org.apache.commons.math3.distribution.{
   BinomialDistribution,
   HypergeometricDistribution
 }
+import org.apache.commons.math3.util.FastMath.pow
 
 /** Object containing all the infection types */
 object InfectionTypes:
 
-  private val STANDARD_CAN_APPLY: Node => Boolean =
-    n => n.infected > 0 && n.population - n.infected > 0
+  private val STANDARD_CAN_APPLY: (Node, Disease) => Boolean =
+    (n, d) => n.infected > 0 && n.population - n.infected > 0 && d.infectivity > 0.0
 
   val StandardInfection: PopulationEffect =
     PopulationEffectComposer.apply(
@@ -66,32 +68,21 @@ object InfectionTypes:
       changeApplier = (node, infected) => node.increaseInfection(infected)
     )
 
-  /** Advanced probabilistic infection logic that allows for a variable number
-    * of affected individuals
-    */
-  def AdvancedProbabilistic(affectable: Int): PopulationEffect =
-    PopulationEffectComposer.apply(
+  val SIRLogic: PopulationEffect =
+    PopulationEffectComposer.apply[(Int,Int)](
       canApply = STANDARD_CAN_APPLY,
       parameterExtractor = _.infectivity,
       populationSelector = node => {
-        val totalAffected =
-          try {
-            Math.multiplyExact(node.infected, affectable)
-          } catch {
-            case e: ArithmeticException =>
-              println(
-                s"Overflow occurred while calculating totalAffected: ${e.getMessage}"
-              )
-              Int.MaxValue // Fallback to a safe value
-          }
-        val hyp = new HypergeometricDistribution(
-          node.population,
-          node.population - node.infected,
-          totalAffected
-        )
-        hyp.sample()
+        (node.population, node.infected)
       },
-      changeCalculator = (healthy, prob) =>
-        new BinomialDistribution(healthy, prob.value).sample(),
+      changeCalculator = (populationAndInfected, prob) => {
+        if prob.value <= 0 then 0
+        else
+          val (population, infected) = populationAndInfected
+          val healthy = population - infected
+          val beta = prob.value
+          val delta = beta * infected.toDouble * healthy.toDouble / population.toDouble
+          math.max(1, delta).toInt
+      },
       changeApplier = (node, infected) => node.increaseInfection(infected)
     )

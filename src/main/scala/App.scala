@@ -3,6 +3,8 @@ import dsl.DSL.*
 import dsl.builders.SetupBuilderAndRunner
 import model.core.SimulationState
 import model.cure.CureModifiers
+import model.infection.{DeathTypes, InfectionTypes}
+import model.reaction.Reactions
 import model.scheduler.CustomScheduler
 import model.world.{World, WorldFactory}
 import scalafx.application.JFXApp3
@@ -43,19 +45,19 @@ object App extends JFXApp3:
           cureProgress:
             0.0
           cureBaseSpeed:
-            0.01
+            0.00
           cureModifiers:
             CureModifiers.empty
         time:
           initialState.time
         infectionLogic:
-          initialState.infectionLogic
+          InfectionTypes.SIRLogic
         deathLogic:
-          initialState.deathLogic
+          DeathTypes.ProbabilisticDeath
         reactions:
-          initialState.reactions
+          Reactions.StandardReactions
       conditions: (s: SimulationState) =>
-        s.time.day.value < 500
+        s.cure.progress < 1.0 && s.world.nodes.map(_._2.population).sum > 0
       scheduler:
         CustomScheduler(500)
       binding:

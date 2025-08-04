@@ -1,5 +1,6 @@
 package model.world
 import model.world.MovementComputation.PeopleMovement
+import org.apache.commons.math3.distribution.HypergeometricDistribution
 import Types.*
 case class World private (
                            nodes: Map[NodeId, Node],
