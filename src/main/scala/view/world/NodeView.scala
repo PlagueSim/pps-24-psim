@@ -63,14 +63,13 @@ case class NodeView(
           case _ =>
       case _ =>
 
-  /* becomes red as infected increases and become dark gray as deaths increase */
   private def calculateColor(): Color =
     val total = population + infected + died
     val infectionRatio = if total > 0 then infected.toDouble / total else 0.0
     val deathRatio = if total > 0 then died.toDouble / total else 0
     val baseColor = Color.LightGray
     val redColor = Color.Red
-    val grayColor = Color.Black
+    val grayColor = Color(0.3F, 0.3F, 0.3F, 1.0F) // Dark gray
     Color(
       baseColor.red + ((redColor.red - baseColor.red) * infectionRatio) + (grayColor.red - baseColor.red) * deathRatio,
       baseColor.green + ((redColor.green - baseColor.green) * infectionRatio) + (grayColor.green - baseColor.green) * deathRatio,

@@ -57,5 +57,5 @@ object WorldFactory:
     World(
       nodes,
       edgeSet.getMapEdges,
-      Map(Static -> 0.6, GlobalLogicMovement -> 0.4)
+      Map(Static -> 0.3, GlobalLogicMovement -> 0.7)
     )
