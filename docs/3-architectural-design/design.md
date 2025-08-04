@@ -31,6 +31,8 @@ ES. DISEASE, CURE, WORLD ECC..
   tramite `dsl` che, aggiornata a ogni ciclo, aggiorna anche le sue sottocomponenti che
   estendono `UpdatableView` /////////// *design di dettaglio*
 
+<img src="generalArc.drawio.png" alt="drawing" style="max-height:600px;"/>
+
 ## Applicazione
 ### Interfaccia Introduttiva
 L'interfaccia introduttiva fornisce una breve spiegazione del gioco.
