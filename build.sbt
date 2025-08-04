@@ -4,8 +4,15 @@ ThisBuild / scalaVersion := "3.3.6"
 
 lazy val root = (project in file("."))
   .settings(
-    name := "pps-24-psim"
+    name := "pps-24-psim",
+    mainClass := Some("App"),
+    assembly / assemblyMergeStrategy := {
+      case PathList("META-INF", _*) => MergeStrategy.discard
+      case _                              => MergeStrategy.first
+    },
+    assembly / test := {}
   )
+
 libraryDependencies += "org.apache.commons" % "commons-math3" % "3.6.1"
 
 libraryDependencies += "org.scalafx" %% "scalafx" % "22.0.0-R33"
