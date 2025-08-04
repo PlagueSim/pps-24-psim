@@ -204,7 +204,8 @@ keywords presenti sono:
     - `infectionLogic`
     - `deathLogic`
     - `reactions`
-  - `conditions`
+  - `winCondition`
+  - `loseCondition`
   - `scheduler`
   - `binding`
   - `runMode`
