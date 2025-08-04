@@ -9,6 +9,8 @@ ultra-dettagliati estratti dal codice, quelli vanno nella parte di implementazio
 
 <img src="package.drawio.png" alt="drawing" style="max-height:600px;"/>
 
+<img src="detailedArc.drawio.png" alt="drawing"/>
+
 Nota: 
 - con cosa è stato realizzato (tecnologie, linguaggi, framework, librerie, ecc.)
 - diagramma delle classi
