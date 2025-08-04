@@ -239,7 +239,7 @@ Per ogni nodo con popolazione maggiore di zero, `GlobalLogic` esamina tutti gli 
 La quantità di persone da spostare viene calcolata come percentuale della popolazione del nodo, in base al parametro ricevuto.
 Tuttavia, non tutti i movimenti vengono generati indiscriminatamente: entra in gioco una logica di filtro basata su capacità e probabilità.
 
-Ogni edge può avere una capacità massima di transito e una probabilità base di movimento definite per tipologia (Air, Land, Sea). La decisione finale se spostare o meno le persone viene presa confrontando un valore casuale con una probabilità calcolata dinamicamente. Questa probabilità finale è ottenuta moltiplicando la probabilità base dell’edge per il rapporto tra il numero di persone da spostare e la popolazione media dei nodi nel mondo. In questo modo, i nodi con una popolazione sopra la media sono più propensi a generare movimento, mentre quelli più piccoli lo fanno meno frequentemente.
+Ogni edge può avere una capacità massima di transito e una probabilità base di movimento definite per tipologia (Air, Land, Sea). La decisione finale se spostare o meno le persone viene presa confrontando un valore casuale con una probabilità calcolata dinamicamente. Questa probabilità finale è ottenuta moltiplicando la probabilità base dell’edge per il rapporto tra il numero di persone da spostare (che è in proporzione alla popolazione del nodo) e la popolazione media dei nodi nel mondo. In questo modo, i nodi con una popolazione sopra la media sono più propensi a generare movimento, mentre quelli più piccoli lo fanno meno frequentemente.
 
 ```scala
   private def getFinalProbability(
