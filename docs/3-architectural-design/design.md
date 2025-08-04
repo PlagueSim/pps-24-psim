@@ -8,10 +8,6 @@ L'architettura (diagramma + spiegazione in prosa) deve spiegare quali sono i sot
 (da 5 a 15, diciamo), ognuno cosa fa, chi interagisce con chi e scambiandosi quali dati -- i diagrammi aiutano,
 ma poi la prosa deve chiaramente indicare questi aspetti.
 
-//AGGIUNGERE UN DIAGRAMMA DELLE CLASSI GENERICO (stile quello che abbiamo fatto all'inizio inizio)
-DOVE DICIAMO DI VOLER CRAFTARE L'APP TRAMIT UN ENGINE CHE ESEGUE EVENTI PER I DIVERSI ELEMENTI DEL DOMINIO,
-ES. DISEASE, CURE, WORLD ECC..
-
 ## Entità principali
 
 - `SimulationEngine`
@@ -30,6 +26,10 @@ ES. DISEASE, CURE, WORLD ECC..
   - /////////////`MainView`: Implementazione principale di `UpdateableView` passata al `Controller`
   tramite `dsl` che, aggiornata a ogni ciclo, aggiorna anche le sue sottocomponenti che
   estendono `UpdatableView` /////////// *design di dettaglio*
+
+- `SimulationState`
+  - Contiene gli elementi del dominio che possono essere modificati tramite `Event` come la malattia,
+  il mondo e la cura
 
 <img src="generalArc.drawio.png" alt="drawing" style="max-height:600px;"/>
 
