@@ -11,9 +11,9 @@ import utils.Utils.*
 import view.ConsoleSimulationView
 
 @main def runConsole(): Unit =
-  
-  val initialWorld = WorldFactory.createInitialWorld()
-  
+
+  val initialWorld = WorldFactory.createWorldWithInfected()
+
   setup:
     simulationState:
       world:
