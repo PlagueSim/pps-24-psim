@@ -51,7 +51,7 @@ object MovementComputation:
     val fromNode = nodes(from)
     if fromNode.population <= 0 then return nodes
 
-    val infectedMoving = sampleInfected(fromNode, amount)
+    val infectedMoving = sampleInfected(fromNode, amount.min(fromNode.population))
 
     val updatedFrom = fromNode
       .decreasePopulation(amount)
