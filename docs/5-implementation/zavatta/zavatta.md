@@ -28,7 +28,7 @@ Ho definito le entità fondamentali:
 - `Node`: con builder e validazioni(popolazione, infetti, morti)
 - `Edge`: con ordinamento lessicografico (per consentire l'uguaglianza di edge unidirezionali) e tipologie (`Air`, `Land`, `Sea`)
 - `MovementStrategy`: un trait per definire le strategie di movimento.
-  `Edge` e `Node` sono corredate di comodi extension methods (infectedPercentage, increasePopulation, edgeId, getMapEdges, ecc.) per semplificare ogni operazione nel Mondo.
+  `Edge` e `Node` sono corredate di extension methods (infectedPercentage, increasePopulation, edgeId, getMapEdges, ecc.) per semplificare ogni operazione nel Mondo.
 
 Il `World` è l'insieme di queste tre Entità:
 
@@ -44,7 +44,6 @@ case class World private (
 Ho modellato il `World` come una private case class con costruttore privato e un metodo apply nel companion object per due ragioni principali:
 1. **Immutabilità e utilities automatiche**
    - Come case class offre immutabilità, copy, equals e pattern matching “gratis”, semplificando la gestione dello stato e il testing.
-   - La copia immutabile con copy(nodes = .., edges = .., movements = ..) rende triviali aggiornamenti puntuali (ad es. modifyNodes, modifyEdges).
 2. **Centralizzazione delle validazioni**
    - Il costruttore è privato: non è possibile creare un’istanza invalida bypassando i controlli.
    - Il companion apply(nodes, edges, movements) contentente le validazioni del mondo e la sua creazione tramite costruttore privato.
@@ -55,7 +54,6 @@ Questo approccio consente di mantenere il codice pulito e facilmente testabile, 
 
 ```scala
 object World:
-  /* Creates a World instance after validating edges and movement strategies */
   def apply(
              nodes: Map[NodeId, Node],
              edges: Map[EdgeId, Edge],
@@ -72,7 +70,7 @@ Gestire nodes, edges e movements nella World usando mappe (con ID come chiavi) o
 - **Accesso diretto e performante (lookup in O(1))**
 
 Per quanto riguarda movements i vantaggi di gestirlo come mappa `Strategy` -> `Percentage` sono:
-- **Separazione tra logica e distribuzione**
+- **Separazione tra modalità e distribuzione**
 - **Facilità di validazione e controllo**
 - **Estendibilità semplice**
 
@@ -91,14 +89,17 @@ Per quanto riguarda movements i vantaggi di gestirlo come mappa `Strategy` -> `P
 Sono stati implementati questi due extension methods per aiutare l'utilizzatore di `World` a creare la mappa di `Edge` passando al costruttore di `World` la Lista di `Edge`
 delegando la computazione degli ID e la creazione della mappa a questi metodi.
 
-## Movimento della popolazione
-Ho esteso il modello con un vero e proprio **sottosistema di movimento**.
-Il sottosistema di movimento è stato progettato per gestire lo spostamento della popolazione tra i `Nodes` in maniera modulare, testabile e coerente con la modellazione immutabile del `World`
-Per ogni tick di simulazione, il sistema determina quali individui si spostano, in che quantità e verso quali nodi, aggiornando lo stato del mondo in modo puro.
-Alla base di questo sistema vi sono due componenti ben distinti: `MovementStrategy` e `MovementLogic`.
-Il primo, MovementStrategy, è un trait sigillato che rappresenta le tipologie di comportamento possibili,
-come `Static`, `LocalPercentageMovement` e `GlobalLogicMovement`.
+## Componenti principali del movimento
+Mi sono occupato poi del sistema di movimento, progettato per gestire lo spostamento delle persone tra i Node in maniera modulare, 
+testabile e perfettamente aderente ai principi della programmazione funzionale.
+Il sistema è responsabile di determinare, a ogni tick di simulazione, quali individui si spostano,
+in che quantità, e verso quali destinazioni, aggiornando immutabilmente lo stato del World.
 
+Il cuore architetturale di questo sottosistema è costituito da tre componenti principali:
+
+1. **MovementStrategy** - Tipologie di comportamento
+
+È un **sealed trait** che rappresenta le diverse strategie di movimento disponibili, ovvero i comportamenti astratti che la popolazione può adottare.
 ```scala
 sealed trait MovementStrategy
 
@@ -109,12 +110,33 @@ case object LocalPercentageMovement extends MovementStrategy
 case object GlobalLogicMovement extends MovementStrategy
 ```
 
-Ogni MovementStrategy è associata, all'interno del World, a una percentuale della popolazione totale che può muoversi secondo quella logica.
+Il World conosce esclusivamente queste strategie come intenzioni astratte di comportamento: non ha alcuna visibilità sull’implementazione delle logiche che le realizzano.
+
+```scala
+  movements: Map[MovementStrategy, Percentage]
+```
+
+Questa rappresenta la dichiarazione delle intenzioni del sistema: 
+il World sa quali comportamenti seguire e in che proporzione, ma non conosce le implementazioni operative di questi comportamenti.
 
 
-Il secondo, `MovementLogic`, definisce invece l’algoritmo vero e proprio, cioè la modalità concreta con cui i movimenti vengono generati.
-Ogni logica implementa il metodo compute, che a partire dallo stato attuale del World e da un generatore casuale,
-restituisce una lista di PeopleMovement, ognuno rappresentante uno spostamento di una certa quantità di persone da un nodo a un altro.
+
+
+2. **MovementLogic** definisce la logica concreta di ogni strategia di movimento, tramite il metodo `compute`.
+Le classi concrete che lo implementano (`StaticLogic`, `LocalPercentageLogic`, `GlobalLogic`) 
+definiscono come una strategia genera effettivamente movimenti tra nodi.
+
+Sono queste classi che:
+- analizzano il mondo corrente
+- calcolano chi si muove, dove e quanti infetti viaggiano
+- restituiscono una lista di `PeopleMovement`
+
+**Importante**: il World non conosce queste logiche. Solo gli eventi e i moduli operativi (es. MovementComputation) ne sono a conoscenza e le invocano quando serve.
+
+Per ogni strategia di movemento viene passato come parametro al metodo compute il generatore casuale Random.
+Questo approccio, basato sull’iniezione delle dipendenze, consente di controllare esattamente il comportamento nei test, 
+ad esempio usando un generatore Random inizializzato con un seed noto (new Random(42)), oppure mockando nextDouble() per ottenere valori deterministici.
+In questo modo, ogni MovementLogic può essere testata in maniera riproducibile e priva di effetti collaterali.
 
 ```scala
 trait MovementLogic:
@@ -124,30 +146,94 @@ trait MovementLogic:
   rng: scala.util.Random
   ): Iterable[PeopleMovement]
 ```
-L’intero processo è orchestrato dal metodo MovementComputation.computeAllMovements, che:
+
+```scala
+ val fixedRandom: Random = new Random:
+   override def nextDouble(): Double = 0.1
+
+ val result: Seq[PeopleMovement] = GlobalLogic.compute(world, 1.0, fixedRandom).toList
+```
+
+
+
+3. **MovementStrategyDispatcher** - Collegamento tra strategia e logica
+Per mantenere disaccoppiamento e apertura all’estensione, ho introdotto un dispatcher centralizzato:
+
+   
+```scala
+object MovementStrategyDispatcher:
+  def logicFor(strategy: MovementStrategy): MovementLogic = strategy match
+    case LocalPercentageMovement => LocalPercentageLogic
+    case GlobalLogicMovement     => GlobalLogic
+    case Static                  => StaticLogic
+```
+
+A questo si affianca un modulo `MovementStrategyLogic`:
+```scala
+object MovementStrategyLogic:
+def compute(
+            world: World,
+            strategy: MovementStrategy,
+            percentage: Percentage,
+            rng: scala.util.Random
+          ): Iterable[PeopleMovement] =
+ 
+ MovementStrategyDispatcher.logicFor(strategy).compute(world, percentage, rng)
+```
+
+Questo permette al sistema di passare da una dichiarazione astratta di strategia a una logica concreta da eseguire.
+
+L’intero processo è orchestrato dal metodo `MovementComputation.computeAllMovements`, che:
 
 - itera su tutte le strategie definite nel World,
 - per ciascuna strategia richiama il relativo MovementLogic tramite MovementStrategyLogic,
 - accumula i movimenti proposti in una lista globale,
 - applica i movimenti aggiornando i Node coinvolti.
 
-Durante l’applicazione dei movimenti (applyMovements), viene utilizzata una distribuzione ipergeometrica per
-determinare quanti degli individui che si spostano sono infetti.
-In termini semplici, se da un nodo partono k persone e nel nodo ci sono N abitanti totali di cui I infetti,
-la distribuzione ipergeometrica consente di stimare quanti dei k siano infetti, simulando un’estrazione casuale
-senza rimpiazzo da un’urna con I palline rosse (infetti) e N−I bianche (sani).
-Questo introduce un realismo statistico nella simulazione, mantenendo la proporzione tra infetti e sani durante gli spostamenti.
+```scala
+  def computeAllMovements(world: World, rng: scala.util.Random): MovementResult =
+    world.movements.foldLeft(MovementResult(world.nodes, List.empty)) {
+      case (MovementResult(currentNodes, accMoves), (strategy, percent)) =>
+        val newMoves = MovementStrategyLogic.compute(world, strategy, percent, rng)
+        val updatedNodes = applyMovements(world.modifyNodes(currentNodes), newMoves).nodes
+        MovementResult(updatedNodes, accMoves ++ newMoves)
+    }
+
+```
+
+## Strategia vs Logica: separazione delle responsabilità
+Il `World` dichiara cosa deve accadere (strategie + percentuali), e solo gli eventi e i moduli operativi determinano come avviene il movimento.
+
+Questa scelta progettuale consente:
+- al World di essere dichiarativo, stabile e testabile, modellando solo l’intento del movimento
+- agli eventi di essere l’unico punto in cui le logiche vengono risolte ed eseguite,
+- una chiara separazione delle responsabilità e maggiore modularità.
+
+Per aggiungere una nuova strategia è sufficiente dichiarare la nuova `MovementStrategy`, fornire un’implementazione di `MovementLogic`, e registrarla nel `dispatcher`. Il World resta completamente isolato da questo processo.
+
+Durante l’applicazione dei movimenti (applyMovements), viene utilizzata una distribuzione ipergeometrica per stimare, in modo realistico, quanti degli individui in movimento siano infetti.
+Questo modello simula un’estrazione casuale senza rimpiazzo da una popolazione composta da individui sani e infetti, mantenendo la proporzione di partenza.
 
 **Nota**:  questa gestione basata sulla distribuzione ipergeometrica è stata realizzata in collaborazione con il collega Matteo Susca.
 
+```scala
+  private def sampleInfected(node: Node, amount: Int): Int =
+    val hgd = new HypergeometricDistribution(
+      node.population,
+      node.infected,
+      amount
+    )
+    hgd.sample()
+```
 
-Ogni PeopleMovement viene quindi applicato creando nuove istanze di Node,
+Ogni PeopleMovement viene quindi applicato creando nuove istanze di `Node`,
 con conteggi aggiornati per popolazione e infetti, senza mai modificare gli oggetti originali.
 Questo approccio garantisce un’elevata affidabilità e facilità di test, in linea con i principi di immutabilità e programmazione funzionale adottati nel progetto.
 
+## GlobalLogic
 
-
-
+Come detto in precedenza, sono state implementate due differenti strategie di movimento:
+`GlobalLogic` e `LocalPercentageLogic`.
 
 
 [Back to index](../../index.md) |
