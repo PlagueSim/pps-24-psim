@@ -23,3 +23,5 @@
 |Task     |PS-82  |first infection through list          |Alessandro Stefani|PS Sprint 6     |
 |Task     |PS-84  |fix bug on MovementEvent (total living population)|Andrea Zavatta|PS Sprint 6     |
 |Task     |PS-85  |Reaction Refactor                     |Matteo Susca|PS Sprint 6     |
+
+[Back to index](../index.md)

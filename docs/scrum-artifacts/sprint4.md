@@ -12,3 +12,5 @@
 |Task     |PS-41  |Cure Modifier (or generic) Identifier |Matteo Susca|PS Sprint 4     |
 |Task     |PS-42  |Disease Events                        |Alessandro Stefani|PS Sprint 4     |
 |Task     |PS-43  |update SimulationEngine with new Events and update view|Lorenzo Tosi|PS Sprint 4     |
+
+[Back to index](../index.md)
