@@ -68,6 +68,9 @@ object InfectionTypes:
       changeApplier = (node, infected) => node.increaseInfection(infected)
     )
 
+  /**
+   * SIR (Susceptible-Infected-Recovered) infection logic.
+   */
   val SIRLogic: PopulationEffect =
     PopulationEffectComposer.apply[(Int,Int)](
       canApply = STANDARD_CAN_APPLY,
