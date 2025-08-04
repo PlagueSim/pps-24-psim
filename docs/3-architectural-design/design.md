@@ -4,6 +4,10 @@ descrizione di pattern architetturali usati,
 eventuali componenti del sistema distribuito,
 scelte tecnologiche cruciali ai fini architetturali -- corredato da pochi ma efficaci diagrammi
 
+L'architettura (diagramma + spiegazione in prosa) deve spiegare quali sono i sotto-componenti del sistema
+(da 5 a 15, diciamo), ognuno cosa fa, chi interagisce con chi e scambiandosi quali dati -- i diagrammi aiutano,
+ma poi la prosa deve chiaramente indicare questi aspetti.
+
 //AGGIUNGERE UN DIAGRAMMA DELLE CLASSI GENERICO (stile quello che abbiamo fatto all'inizio inizio)
 DOVE DICIAMO DI VOLER CRAFTARE L'APP TRAMIT UN ENGINE CHE ESEGUE EVENTI PER I DIVERSI ELEMENTI DEL DOMINIO,
 ES. DISEASE, CURE, WORLD ECC..

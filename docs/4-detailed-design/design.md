@@ -3,6 +3,12 @@ Scelte rilevanti di design,
 pattern di progettazione,
 organizzazione del codice -- corredato da pochi ma efficaci diagrammi
 
+Il design di dettaglio "esplode" (dettaglia) l'architettura,
+ma viene concettualmente prima dell'implementazione, quindi non metteteci diagrammi
+ultra-dettagliati estratti dal codice, quelli vanno nella parte di implementazione eventualmente.
+
+<img src="package.drawio.png" alt="drawing" style="max-height:600px;"/>
+
 Nota: 
 - con cosa è stato realizzato (tecnologie, linguaggi, framework, librerie, ecc.)
 - diagramma delle classi
@@ -15,6 +21,7 @@ Il sistema è suddiviso in quattro moduli principali:
 - **Model**
 - **View**
 
+## 
 
 
 
