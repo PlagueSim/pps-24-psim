@@ -23,10 +23,81 @@ I file completamente sviluppati da me sono:
   - `TraitInfoPanel`
   - `TraitList`
 
-Mentre collaborato con Tosi ad `App` e con tutto il team a `MainView`
+Mentre collaborato con Tosi ad `App` e con tutto il team a `MainView`.
+Nei code snippets ho aggiunto "[...]" per segnalare il sorvolo su parti non rilevanti.
 
 ## Traits
-Viste le numerose sta
+Viste le numerose statistiche presenti in `TraitStats`, la costruzione di un `Trait` sarebbe risultata tediosa e fragile
+al cambiamento. Per evitare ciò ho costruito un builder e un piccolo dsl tramite extension methods di `TraitBuilder` che mi consente di specificare un `Trait` senza
+dover tener conto dell'ordine dei parametri o della loro mancata definizione visti i valori di default inseriti.
+```scala
+case class TraitStats (
+                       infectivity: Double = 0.0,
+                       severity: Double = 0.0,
+                       lethality: Double = 0.0,
+                       cost: Int = 0,
+                       mutationChance: Double = 0.0,
+                       cureSlowdown: Double = 0.0,
+                       cureReset: Double = 0.0,
+                       effectiveness: Map[Any, Double] = Map.empty
+                     )
+
+case class TraitBuilder(
+                               name: String,
+                               category: TraitCategory,
+                               stats: TraitStats = TraitStats(),
+                               prerequisites: Set[String] = Set.empty
+                       ):
+/**
+ * Builds the final [[Trait]] from this builder.
+ *
+ * @return A fully constructed Trait.
+ */
+def build(): Trait = Trait(name, category, stats, prerequisites)
+
+
+object TraitDsl:
+
+extension (tb: TraitBuilder)
+/**
+ * Sets the infectivity value.
+ */
+def infectivity(v: Double): TraitBuilder = tb.copy(stats = tb.stats.copy(infectivity = v))
+
+/**
+ * Sets the severity value.
+ */
+def severity(v: Double): TraitBuilder = tb.copy(stats = tb.stats.copy(severity = v))
+
+[...]
+
+/**
+ * Adds prerequisite trait names.
+ */
+def prerequisite(values: String*): TraitBuilder = tb.copy(prerequisites = tb.prerequisites ++ values)
+
+/**
+ * Starts building a new [[Trait]] with the given [[name]] and [[category]].
+ *
+ * @param name     Name of the [[Trait]].
+ * @param category Category of the [[Trait]].
+ * @return A new [[TraitBuilder]] instance.
+ */
+def define(name: String, category: TraitCategory): TraitBuilder =
+  TraitBuilder(name, category)
+```
+
+La creazione di un `Trait` risulta avere la seguente sintassi:
+```scala
+  final val coughing: Trait = define("Coughing", Symptom)
+    .infectivity(3.0)
+    .severity(1.0)
+    .effectiveness(Map(Urban -> 0.05))
+    .cost(4)
+    .cureReset(0.01)
+    .build()
+```
+
 
 ## EventBuffer
 È stato necessario implementare una tipologia di `Event` speciale per consentire di inserire dei nuovi eventi al `SimulaitonEngine`
