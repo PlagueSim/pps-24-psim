@@ -85,16 +85,19 @@ class GlobalCureResearchEventTest extends AnyFlatSpec with Matchers:
     result.modifiers.modifiers should contain key modAId
     result.modifiers.modifiers should contain key modBId
 
+    val nodeAContribution = (100.0/300) * (60.0 / 100) * (1 + (severity - 8) * 0.01) * 0.2
+    val nodeBContribution = (200.0/300) * (160.0 / 200) * (1 + (severity - 8) * 0.01) * 0.2
+
     // Check effect on calculations
-    result.effectiveSpeed shouldBe (0.1 + (60.0 / 300) + (160.0 / 300)) +- 0.001
+    result.effectiveSpeed shouldBe (0.1 + nodeAContribution + nodeBContribution) +- 0.001
 
   it should "correctly calculate contributions from nodes" in:
     val s = state(traits = highSeverityTraits, cure = Cure(baseSpeed = 0.0))
     val result = GlobalCureResearchEvent().modifyFunction(s)
-
-    // Check cumulative effect
-    // 60k/300k + 160k/300k = 0.2 + 0.5333 = 0.7333
-    result.effectiveSpeed shouldBe (0.7333 +- 0.001)
+    val severity = s.disease.severity
+    val nodeAContribution = (100.0 / 300) * (60.0 / 100) * (1 + (severity - 8) * 0.01) * 0.2
+    val nodeBContribution = (200.0 / 300) * (160.0 / 200) * (1 + (severity - 8) * 0.01) * 0.2
+    result.effectiveSpeed shouldBe (0.0 + nodeAContribution + nodeBContribution) +- 0.001
 
   it should "only add modifiers for nodes with infected population above threshold" in:
     val s = state(
@@ -171,9 +174,9 @@ class GlobalCureResearchEventTest extends AnyFlatSpec with Matchers:
     // Should have 2 modifiers: global + node A
     result.modifiers.modifiers should have size 2
 
-    // Check combined effect
-    // (baseSpeed + additive1 + additive2) = (0.0 + 0.1 + 0.7) = 0.8
-    result.effectiveSpeed shouldBe 0.8 +- 0.001
+    val nodeAContribution = (100.0 / 100) * (70.0 / 100) * (1 + (s.disease.severity - 8) * 0.01) * 0.2
+
+    result.effectiveSpeed shouldBe (0.1 + nodeAContribution) +- 0.001
 
   it should "calculate contribution relative to total population" in:
     val s = state(
@@ -187,6 +190,5 @@ class GlobalCureResearchEventTest extends AnyFlatSpec with Matchers:
 
     val result = GlobalCureResearchEvent().modifyFunction(s)
 
-    // Total population = 300, total infected = 70
-    // Only A contributes: 60/300 = 0.2
-    result.effectiveSpeed shouldBe (0.2 +- 0.001)
+    val nodeAContribution = (100.0 / 300) * (60.0 / 100) * (1 + (s.disease.severity - 8) * 0.01) * 0.2
+    result.effectiveSpeed shouldBe (0.0 + nodeAContribution) +- 0.001
