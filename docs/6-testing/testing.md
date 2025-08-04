@@ -1,8 +1,4 @@
 # Testing
-tecnologie usate, grado di copertura, metodologia usata, esempi rilevanti, altri elementi utili
-
-Cercate di dare una idea di quanto pensate che i vostri test automatizzati coprano
-il codice e dove: è importante per stimare il potenziale impatto di una modifica al software.
 
 Per testare il codice del progetto abbiamo sfruttato `ScalaTest` insieme a `AnyFlatSpec`
 e `Matchers` per definire dei test maggiormente chiari e leggibili. 
