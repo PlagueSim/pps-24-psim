@@ -42,13 +42,20 @@ object DSL:
       SimulationStateBuilderProxy(() => current, updated => current = updated)
     init
     sb.addSimulationState(stateBuilder.build())
-
-  /** Defines a condition that must be met for the simulation to continue.
+    
+  /** Defines a condition that must be met to win the game.
     */
-  def conditions(init: SetupBuilderAndRunner ?=> SimulationState => Boolean)(
+  def winCondition(init: SetupBuilderAndRunner ?=> SimulationState => Boolean)(
+    using sb: SetupBuilderAndRunner
+  ): Unit =
+    sb.addWinCondition(init)
+    
+  /** Defines a condition that must be met to lose the game.
+    */
+  def loseCondition(init: SetupBuilderAndRunner ?=> SimulationState => Boolean)(
       using sb: SetupBuilderAndRunner
   ): Unit =
-    sb.addConditions(init)
+    sb.addLoseCondition(init)
 
   /** Defines a scheduler for the simulation, which controls the timing of
     * events.

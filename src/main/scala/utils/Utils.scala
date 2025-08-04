@@ -21,7 +21,13 @@ object Utils:
   val MIN_HEIGHT: Double = 0.33
 
   /**
-   * Standard condition, cure progress must be less than 1.0, population must be greater than 0 and infected must be greater than 0.
+   * Standard win condition, the total population of all nodes must be 0.
    */
-  val STANDARD_CONDITION: SimulationState => Boolean = s =>
-    s.cure.progress < 1.0 && s.world.nodes.map(_._2.population).sum > 0 && s.world.nodes.map(_._2.infected).sum > 0
+  val WIN_CONDITION: SimulationState => Boolean = s =>
+    s.world.nodes.map(_._2.population).sum <= 0
+
+  /**
+   * Standard lose condition, the cure progress must be 1.0 or the total infected population must be 0.
+   */
+  val LOSE_CONDITION: SimulationState => Boolean = s =>
+    s.cure.progress >= 1.0 || s.world.nodes.map(_._2.infected).sum <= 0

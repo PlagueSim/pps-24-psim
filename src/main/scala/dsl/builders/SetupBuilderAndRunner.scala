@@ -12,8 +12,10 @@ import view.updatables.UpdatableView
   */
 class SetupBuilderAndRunner:
   private var _simulationState = SimulationState.createStandardSimulationState()
-  private var _canRunCondition: SimulationState => Boolean = s =>
-    s.time.day.value < 20
+  private var _winCondition: SimulationState => Boolean = s =>
+    s.world.nodes.map(_._2.population).sum <= 0
+  private var _loseCondition: SimulationState => Boolean = s =>
+    s.cure.progress >= 1.0
   private var _view: UpdatableView     = ConsoleSimulationView()
   private var _runMode: ExecutionMode  = TerminalMode
   private var _scheduleMode: Scheduler = FixedStandardRateScheduler
@@ -30,14 +32,22 @@ class SetupBuilderAndRunner:
     _scheduleMode = scheduler
     this
 
-  /** Adds a condition that must be met for the simulation to continue.
-    */
-  def addConditions(
-      conditions: SimulationState => Boolean
+  /** Adds a condition that must be met to win the game.
+   */
+  def addWinCondition(
+    winCondition: SimulationState => Boolean
   ): SetupBuilderAndRunner =
-    _canRunCondition = conditions
+    _winCondition = winCondition
     this
 
+  /** Adds a condition that must be met to lose the game.
+   */
+  def addLoseCondition(
+    loseCondition: SimulationState => Boolean
+  ): SetupBuilderAndRunner =
+    _loseCondition = loseCondition
+    this
+    
   /** Sets the view for the simulation.
     */
   def setView(bindings: UpdatableView): SetupBuilderAndRunner =
@@ -55,7 +65,8 @@ class SetupBuilderAndRunner:
   def buildAndRun(): Unit =
     Controller(
       _simulationState,
-      _canRunCondition,
+      _winCondition,
+      _loseCondition,
       _view,
       _runMode,
       _scheduleMode

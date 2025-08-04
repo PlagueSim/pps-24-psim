@@ -56,8 +56,10 @@ object App extends JFXApp3:
           DeathTypes.ProbabilisticDeath
         reactions:
           Reactions.StandardReactions
-      conditions: 
-        STANDARD_CONDITION
+      winCondition:
+        WIN_CONDITION
+      loseCondition:
+        LOSE_CONDITION
       scheduler:
         CustomScheduler(SCHEDULING_STEP)
       binding:

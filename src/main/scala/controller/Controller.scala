@@ -12,7 +12,8 @@ import scala.annotation.tailrec
   */
 class Controller(
     simulationState: SimulationState,
-    canRun: SimulationState => Boolean,
+    isWin: SimulationState => Boolean,
+    isLose: SimulationState => Boolean,
     view: UpdatableView,
     runMode: ExecutionMode,
     scheduleMode: Scheduler
@@ -36,8 +37,15 @@ class Controller(
     scheduleMode.waitForNextTick()
     val nextState = computeNextState(simState)
     computeViewUpdates(nextState, runLater)
-    if canRun(nextState) then loop(nextState, runLater)
-    else nextState
+    nextState match
+      case s if isWin(s) =>
+        println("You won!")
+        s
+      case s if isLose(s) =>
+        println("You lost!")
+        s
+      case _ => 
+        loop(nextState, runLater)
 
   private def computeNextState(simState: SimulationState): SimulationState =
     engine.runStandardSimulation(simState)
