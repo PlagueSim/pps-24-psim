@@ -22,10 +22,7 @@ ma poi la prosa deve chiaramente indicare questi aspetti.
 
 - `UpdatableView`
   - Definisce le componenti di `view` che necessitano di essere aggiornate in base
-  allo stato corrente della simulazione  
-  - /////////////`MainView`: Implementazione principale di `UpdateableView` passata al `Controller`
-  tramite `dsl` che, aggiornata a ogni ciclo, aggiorna anche le sue sottocomponenti che
-  estendono `UpdatableView` /////////// *design di dettaglio*
+  allo stato corrente della simulazione
 
 - `SimulationState`
   - Contiene gli elementi del dominio che possono essere modificati tramite `Event` come la malattia,
