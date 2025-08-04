@@ -1,4 +1,3 @@
-<!-- for github pages in jekyll -->
 Durante lo sviluppo del progetto, mi sono dedicato principalmente all'implementazione del sistema di cura e delle reazioni globali, due componenti fondamentali per la simulazione epidemiologica. Ho adottato un approccio funzionale puro sfruttando i principi avanzati di Scala, con particolare attenzione all'immutabilità, alla composizione e alla type safety.
 
 ## Sistema di ricerca della cura
