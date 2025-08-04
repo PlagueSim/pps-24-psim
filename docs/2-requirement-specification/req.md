@@ -23,9 +23,6 @@ Esistono tre diverse categorie di tratti:
 - **Sintomi**: possono aumentare infettività, letalità, gravità, probabilità di mutazione e ridurre il progresso della cura
 - **Abilità**: possono avere effetti diversi tra cui rallentare o ridurre il progresso della cura
 
-
-### Glossario
-
 ## Requisiti funzionali
 
 ### Utente
@@ -71,13 +68,13 @@ come prerequisito
 - La realizzazione di algoritmi e strutture dati efficienti per aspetti riguardanti la popolazione visti 
 i potenzialmente grandi numeri da utilizzare 
 
-### opzionale
+### Opzionale
 - Realizzare un dsl per impostare la simulazione in maniera rapida e semplice
   
 ## Requisiti di implementazione
 - Utilizzo di Scala 3.x
 - Utilizzo di JDK 17+
-### opzionale
+### Opzionale
 - Utilizzo di TuProlog
 
 [Back to index](../index.md) |
