@@ -2,7 +2,7 @@ package model.events.movementEvent
 
 import model.world.MovementComputation.PeopleMovement
 import model.world.{Edge, Node, World}
-
+import model.world.Types.*
 object LocalPercentageLogic extends MovementLogicWithEdgeCapacityAndPercentages:
 
   override def edgeMovementConfig: EdgeMovementConfig = EdgeConfigurationFactory().getDefaultEdgeConfiguration
@@ -16,7 +16,7 @@ object LocalPercentageLogic extends MovementLogicWithEdgeCapacityAndPercentages:
   * */
   override def compute(
                         world: World,
-                        percent: Double,
+                        percent: Percentage,
                         rng: scala.util.Random
                       ): List[PeopleMovement] =
     world.nodes
@@ -24,13 +24,13 @@ object LocalPercentageLogic extends MovementLogicWithEdgeCapacityAndPercentages:
       .flatMap((id, node) => generateMovement(id, world, percent, rng))
       .toList
 
-  private def canMove(id: String, node: Node, world: World): Boolean =
+  private def canMove(id: NodeId, node: Node, world: World): Boolean =
     node.population > 0 && world.neighbors(id).exists(world.isEdgeOpen(id, _))
 
   private def generateMovement(
-                                from: String,
+                                from: NodeId,
                                 world: World,
-                                percent: Double,
+                                percent: Percentage,
                                 rng: scala.util.Random
                               ): Option[PeopleMovement] =
 

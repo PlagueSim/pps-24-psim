@@ -4,7 +4,7 @@ import javafx.scene.shape.Line
 import model.world.Edge
 import model.world.EdgeExtensions.*
 import view.world.EdgeLayer.{updateLine, createEdgeLineSafe}
-
+import model.world.Types.*
 object EdgeUpdater:
 
   /**
@@ -16,10 +16,10 @@ object EdgeUpdater:
    * @return (updated edge map, new lines to add, old lines to remove)
    */
   def update(
-              currentEdges: Map[String, Line],
+              currentEdges: Map[EdgeId, Line],
               updatedEdges: Iterable[Edge],
-              nodePositions: Map[String, LivePosition]
-            ): (Map[String, Line], Set[Line], Set[Line]) =
+              nodePositions: Map[NodeId, LivePosition]
+            ): (Map[EdgeId, Line], Set[Line], Set[Line]) =
 
     val (updatedMap, toAdd, seenIds) = updatedEdges.foldLeft((Map.empty[String, Line], Set.empty[Line], Set.empty[String])) {
       case ((accMap, accAdd, accSeen), edge) =>
@@ -36,8 +36,8 @@ object EdgeUpdater:
 
   private def updateOrCreateLine(
                                   edge: Edge,
-                                  currentEdges: Map[String, Line],
-                                  nodePositions: Map[String, LivePosition]
+                                  currentEdges: Map[EdgeId, Line],
+                                  nodePositions: Map[NodeId, LivePosition]
                                 ): (Option[Line], Set[Line]) =
     currentEdges.get(edge.edgeId) match
       case Some(existing) =>

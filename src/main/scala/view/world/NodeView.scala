@@ -2,10 +2,10 @@ package view.world
 
 import scalafx.scene.text.Text
 import javafx.scene.Node as FxNode
-
+import model.world.Types.*
 case class NodeView(
                      visuals: Seq[FxNode],
-                     position: () => (Double, Double),
+                     position: () => (PosX, PosY),
                      labels: Map[String, Text],
                      var population: Int = 0,
                      var infected: Int = 0,
@@ -66,9 +66,9 @@ object NodeView:
    * @return a new NodeView instance
    */
   def apply(
-             id: String,
+             id: NodeId,
              visuals: Seq[FxNode],
-             position: () => (Double, Double),
+             position: () => (PosX, PosY),
              labelId: Text,
              labelPop: Text,
              labelInf: Text,

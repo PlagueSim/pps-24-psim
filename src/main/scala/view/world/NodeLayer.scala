@@ -3,10 +3,10 @@ package view.world
 import javafx.scene.Node as FxNode
 import model.world.Node
 import scalafx.scene.text.Text
-
+import model.world.Types.*
 case class NodeLayer(
-                      nodeViews: Map[String, NodeView],
-                      positions:  Map[String, LivePosition],
+                      nodeViews: Map[NodeId, NodeView],
+                      positions:  Map[NodeId, LivePosition],
                       allVisuals: Seq[FxNode]
                     ):
   /**
@@ -30,8 +30,8 @@ object NodeLayer:
    * @return A NodeLayer containing NodeViews for each node, their positions, and all visuals.
    * */
   def fromNodes(
-                 nodes: Map[String, Node],
-                 layout: String => (Double, Double),
+                 nodes: Map[NodeId, Node],
+                 layout: String => (PosX, PosY),
                  onMoved: () => Unit
                ): NodeLayer =
     val factory = new DefaultNodeViewFactory(onMoved)
@@ -59,9 +59,9 @@ object NodeLayer:
    * @return A NodeView instance representing the node.
    * */
   def createNode(
-                 id: String,
+                 id: NodeId,
                  data: Node,
-                 position: (Double, Double),
+                 position: (PosX, PosY),
                  onMoved: () => Unit
                ): NodeView =
     val factory = new DefaultNodeViewFactory(onMoved)

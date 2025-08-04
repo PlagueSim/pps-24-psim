@@ -3,6 +3,8 @@ package model.core
 import model.cure.Cure
 import model.infection.InfectionAndDeathPopulation.*
 import model.plague.Disease
+import model.plague.traits.Symptoms.pulmonaryEdema
+import model.reaction.Reactions
 import model.plague.db.Symptoms.pulmonaryEdema
 import model.reaction.ReactionAction.CloseEdges
 import model.reaction.{InfSeverityCondition, ReactionRule, Reactions}
