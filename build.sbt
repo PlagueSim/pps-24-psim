@@ -6,6 +6,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "pps-24-psim",
     mainClass := Some("App"),
+    assembly / assemblyJarName := "p-sim.jar",
     assembly / assemblyMergeStrategy := {
       case PathList("META-INF", _*) => MergeStrategy.discard
       case _                              => MergeStrategy.first
