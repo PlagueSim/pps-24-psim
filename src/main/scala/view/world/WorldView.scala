@@ -53,6 +53,8 @@ class WorldView extends Pane with UpdatableWorldView:
    *
    */
   private def update(world: World): Unit =
+    if nodeViews.isEmpty || edgeViews.isEmpty then
+      render(world)
     val totPopulation = world.nodes.values.map(_.population).sum
     edges = world.edges.values
     val nodesChanged = getNodesThatExistsAndChangedValues(world.nodes)
