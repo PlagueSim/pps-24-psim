@@ -48,6 +48,17 @@ Questa impostazione riflette un'architettura event-driven, dove ogni evento è u
 Inoltre, questo approccio assicura un’alta coesione interna e una bassa dipendenza da altre parti del progetto,
 facilitando manutenzione, testing e riutilizzo.
 
+### Mondo
+Il sottosistema **Mondo** rappresenta la rete globale su cui si muove la popolazione e si diffonde la malattia.
+È composto da tre elementi principali:
+1. **Nodi**: rappresentano le entità geografiche (città, regioni) con una popolazione, una quantità di infetti e morti.
+2. **Collegamenti**: Connessioni tra i nodi che definiscono la struttura del grafo. Ogni edge è non orientato e ha una **tipologia**.
+3. **Strategie di Movimento**: Definiscono come le persone si muovono tra i nodi, influenzando la diffusione della malattia.
+
+Quando si applica una strategia di movimento, viene determinato non solo quante persone si spostano,
+ma anche quanti tra questi sono infetti, così da mantenere una propagazione realistica dell’infezione durante i trasferimenti.
+
+
 ### Cura
 Il sottosistema di ricerca della cura modella gli sforzi scientifici globali per sviluppare un rimedion alla malattia. 
 È composto da due elementi chiave:
