@@ -1,18 +1,11 @@
-package model.events.cure
+package model.cure
 
 import model.core.SimulationState
-import model.cure.{
-  Cure,
-  CureModifier,
-  CureModifiers,
-  ModifierId,
-  ModifierKind,
-  ModifierSource,
-  NodeId
-}
+import model.cure.{Cure, CureModifier, CureModifiers, ModifierId, ModifierKind, ModifierSource, NodeId}
+import model.events.cure.GlobalCureResearchEvent
 import model.plague.traits.Symptoms
 import model.plague.{Disease, Trait}
-import model.world.{Node, LocalPercentageMovement, Static, World}
+import model.world.{LocalPercentageMovement, Node, Static, World}
 import model.time.TimeTypes.{Day, Year}
 import model.time.BasicYear
 import org.scalatest.flatspec.AnyFlatSpec
