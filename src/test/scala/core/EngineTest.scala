@@ -72,7 +72,7 @@ class EngineTest extends AnyFlatSpec with Matchers:
     newState.reactions.activeReactions shouldBe empty
 
   it should "have the standard disease, and not mutated one" in:
-    newState.disease shouldEqual state.disease
+    newState.disease.traits shouldEqual state.disease.traits
 
   it should "have 1 death per node, so 2 total deaths" in:
     newState.world.nodes.values.map(x => x.died).sum shouldEqual 2

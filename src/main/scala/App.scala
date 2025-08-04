@@ -20,7 +20,7 @@ object App extends JFXApp3:
     val X = Screen.primary.bounds.width
     val Y = Screen.primary.bounds.height
     val mainView = MainView()
-    val initialWorld = WorldFactory.createInitialWorld()
+    val initialWorld = WorldFactory.createLargeWorld()
     val preSelectionNodes = initialWorld.nodes
 
     val postSelectionNodes = showStartPopup(preSelectionNodes)
