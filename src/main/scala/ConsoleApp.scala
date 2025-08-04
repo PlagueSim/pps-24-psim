@@ -1,49 +1,56 @@
 import controller.ExecutionMode.TerminalMode
 import dsl.DSL.*
-import model.core.SimulationState
 import model.cure.CureModifiers
+import model.infection.{DeathTypes, InfectionTypes}
+import model.reaction.Reactions
 import model.scheduler.CustomScheduler
+import model.time.BasicYear
+import model.time.TimeTypes.{Day, Year}
+import model.world.WorldFactory
+import utils.Utils.*
 import view.ConsoleSimulationView
 
 @main def runConsole(): Unit =
-  val initialState = SimulationState.createStandardSimulationState()
-
+  
+  val initialWorld = WorldFactory.createInitialWorld()
+  
   setup:
     simulationState:
       world:
         worldNodes:
-          initialState.world.nodes
+          initialWorld.nodes
         worldEdges:
-          initialState.world.edges
+          initialWorld.edges
         worldMovements:
-          initialState.world.movements
+          initialWorld.movements
       disease:
         diseaseName:
           "Diesease X"
         diseaseTraits:
           Set.empty
         diseasePoints:
-          10
+          DISEASE_POINTS
       cure:
         cureProgress:
-          0.0
+          CURE_PROGRESS
         cureBaseSpeed:
-          1.0
+          CURE_BASE_SPEED
         cureModifiers:
           CureModifiers.empty
       time:
-        initialState.time
+        BasicYear(Day(DAY_ZERO), Year(YEAR_ZERO))
       infectionLogic:
-        initialState.infectionLogic
+        InfectionTypes.SIRLogic
       deathLogic:
-        initialState.deathLogic
+        DeathTypes.ProbabilisticDeath
       reactions:
-        initialState.reactions
-    conditions: (s: SimulationState) =>
-      s.time.day.value < 50
-    scheduler:
-      CustomScheduler(500)
+        Reactions.StandardReactions
+      conditions:
+        STANDARD_CONDITION
+      scheduler:
+        CustomScheduler(SCHEDULING_STEP)
     binding:
       ConsoleSimulationView()
     runMode:
       TerminalMode
+
