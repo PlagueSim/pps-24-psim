@@ -41,6 +41,20 @@ class WorldTest extends AnyFlatSpec with Matchers:
     )
     an[IllegalArgumentException] shouldBe thrownBy:
       World(nodes, edges, negativeMovements)
+
+  it should "not create a world if the total population exceeds Integer.MAX_VALUE" in:
+    val nodeA = Node.withPopulation(Integer.MAX_VALUE).build()
+    val nodeB = Node.withPopulation(1).build()
+
+    val nodes = Map(
+      "A" -> nodeA,
+      "B" -> nodeB
+    )
+    val edges = List(Edge("A", "B", EdgeType.Land)).getMapEdges
+    val movements: Map[MovementStrategy, Double] = Map(Static -> 1.0)
+
+    an[IllegalArgumentException] shouldBe thrownBy:
+      World(nodes, edges, movements)
   
 
   it should "create a valid World when all nodes, edges, and global movement percentages are correct" in:
