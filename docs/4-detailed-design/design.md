@@ -1,8 +1,5 @@
 # Design di dettaglio
 
-<img src="package.drawio.png" alt="drawing" style="max-height:600px;"/>
-
-<img src="detailedArc.drawio.png" alt="drawing"/>
 
 Il sistema è suddiviso in quattro moduli principali:
 - **Controller**
@@ -10,6 +7,8 @@ Il sistema è suddiviso in quattro moduli principali:
 - **Model**
 - **View**
 
+## Struttura dei package
+<img src="package.drawio.png" alt="drawing" style="max-height:600px;"/>
 
 ## Tecnologie utilizzate
 Le tecnologie utilizzate, oltre a quelle obbligatorie, sono:
@@ -20,6 +19,9 @@ Le tecnologie utilizzate, oltre a quelle obbligatorie, sono:
 - **Apache commons math**: libreria usata per la generazione di numeri casuali e per il calcolo di distribuzioni statistiche.
 
 ## Core del progetto
+
+<img src="detailedArc.drawio.png" alt="drawing"/>
+
 Il sistema é sviluppato come un sistema di simulazione a eventi dove ogni evento rappresenta un cambiamento dello stato della simulazione.
 É strutturato in diverse parti:
 - Engine
