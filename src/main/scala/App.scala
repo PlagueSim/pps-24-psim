@@ -53,13 +53,13 @@ object App extends JFXApp3:
         infectionLogic:
           InfectionTypes.SIRLogic
         deathLogic:
-          DeathTypes.StandardDeath
+          DeathTypes.ProbabilisticDeath
         reactions:
           Reactions.StandardReactions
       conditions: (s: SimulationState) =>
         s.cure.progress < 1.0 && s.world.nodes.map(_._2.population).sum > 0
       scheduler:
-        CustomScheduler(200)
+        CustomScheduler(500)
       binding:
         mainView
       runMode:
