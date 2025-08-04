@@ -160,6 +160,28 @@ Infine, il metodo pubblico `apply[A](...)` dell’oggetto `PopulationEffectCompo
 approccio elimina la necessità di definire numerose sottoclassi concrete favorendo uno stile **dichiarativo e
 configurabile**.
 
+Di seguito è mostrato un esempio di implementazione di un effetto di infezione e di morte:
+```scala
+  val StandardInfection: PopulationEffect =
+  PopulationEffectComposer.apply(
+    canApply = STANDARD_CAN_APPLY,
+    parameterExtractor = _.infectivity,
+    populationSelector = node => node.population - node.infected,
+    changeCalculator = (healthy, prob) => (healthy * prob.value).toInt,
+    changeApplier = (node, infected) => node.increaseInfection(infected)
+  )
+
+  val StandardDeath: PopulationEffect =
+    PopulationEffectComposer.apply(
+      canApply = STANDARD_CAN_APPLY,
+      parameterExtractor = _.lethality,
+      populationSelector = _.infected,
+      changeCalculator = (infected, prob) => (infected * prob.value).toInt,
+      changeApplier = (node, deaths) => node.updateDied(deaths)
+    )
+```
+Le uniche differenze tra le due implementazioni sono il parametro passato a `parameterExtractor`, il 
+`populationSelector` e il metodo del nodo chiamato nella `changeApplier`.
 ## DSL
 
 Mi sono occupato di implementare un DSL per poter definire il setup della simulazione in modo semplice e veloce. Le
@@ -191,9 +213,19 @@ Se non definite, il setup viene eseguito partendo da parametri standard preimpos
 
 L'intero modello è stato scritto in ottica immutabile, dove ogni modifica restituisce una copia aggiornata tramite
 `copy(…)`.
-Per i builder piu complessi, come il `SimulationStateBuilder`, è stato necessario introdurre dei proxy. Questo pattern
-ha consentito di modificare lo stato in modo immutabile e controllato e mantenendo la type-safety e la purezza dei
-builder. Questa filosofia è stata adottata anche nel `WorldBuilder`, `CureBuilder` e `DiseaseBuilder`.
+Per i builder piu complessi, come il `SimulationStateBuilder`, è stato necessario introdurre dei proxy.
+```scala
+class SimulationStateBuilderProxy(
+    get: () => SimulationStateBuilder,
+    set: SimulationStateBuilder => Unit
+) extends SimulationStateBuilder:
+  override def withWorld(world: World): SimulationStateBuilder =
+    val updated = get().withWorld(world)
+    set(updated)
+    updated
+```
+Questo pattern ha consentito di modificare lo stato in modo immutabile e controllato e mantenendo la type-safety
+e la purezza dei builder. Questa filosofia è stata adottata anche nel `WorldBuilder`, `CureBuilder` e `DiseaseBuilder`.
 
 [Back to index](../../index.md) |
 [Back to implementation](../../5-implementation/impl.md)
