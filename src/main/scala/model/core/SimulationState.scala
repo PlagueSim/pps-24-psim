@@ -5,10 +5,8 @@ import model.infection.InfectionAndDeathPopulation.*
 import model.plague.Disease
 import model.plague.traits.Symptoms.pulmonaryEdema
 import model.reaction.Reactions
-import model.plague.db.Symptoms.pulmonaryEdema
 import model.reaction.ReactionAction.CloseEdges
-import model.reaction.{InfSeverityCondition, ReactionRule, Reactions}
-import model.reaction.Reactions.StandardReactions
+import model.reaction.{InfSeverityCondition, ReactionRule}
 import model.time.TimeTypes.{Day, Year}
 import model.time.{BasicYear, Time}
 import model.world.*
