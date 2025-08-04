@@ -20,7 +20,9 @@ object App extends JFXApp3:
     val X = Screen.primary.bounds.width
     val Y = Screen.primary.bounds.height
     val mainView = MainView()
-    val preSelectionNodes = WorldFactory.createInitialWorld().nodes
+    val initialWorld = WorldFactory.createInitialWorld()
+    val preSelectionNodes = initialWorld.nodes
+
     val postSelectionNodes = showStartPopup(preSelectionNodes)
 
     setup:
@@ -29,9 +31,9 @@ object App extends JFXApp3:
           worldNodes:
             postSelectionNodes
           worldEdges:
-            WorldFactory.createInitialWorld().edges
+            initialWorld.edges
           worldMovements:
-            WorldFactory.createInitialWorld().movements
+            initialWorld.movements
         disease:
           diseaseName:
             "Diesease X"
