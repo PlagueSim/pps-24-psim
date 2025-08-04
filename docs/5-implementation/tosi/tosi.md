@@ -96,7 +96,7 @@ modificano lo stato demografico di un nodo (`Node`) in funzione delle caratteris
 particolare, **unifica la logica comune** tra gli effetti di **infezione** e **morte**, due logiche concettualmente
 simili ma differenziate solo dal tipo di popolazione coinvolta (*i sani* per l’infezione, *gli infetti* per la morte).
 
-E' stato sviluppato seguendo questa logica: determinare se l’effetto è applicabile, calcolare una probabilità a partire
+È stato sviluppato seguendo questa logica: determinare se l’effetto è applicabile, calcolare una probabilità a partire
 da un parametro della malattia, selezionare un sottoinsieme della popolazione, calcolare un cambiamento atteso, e infine
 applicarlo. L'implementazione basata su una sequenza di funzioni parametriche ha permesso di isolare la logica comune
 all'interno di una struttura unica, completamente configurabile attraverso le funzioni.
