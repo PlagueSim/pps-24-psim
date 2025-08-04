@@ -48,43 +48,43 @@ case class TraitBuilder(
                                stats: TraitStats = TraitStats(),
                                prerequisites: Set[String] = Set.empty
                        ):
-/**
- * Builds the final [[Trait]] from this builder.
- *
- * @return A fully constructed Trait.
- */
-def build(): Trait = Trait(name, category, stats, prerequisites)
+  /**
+   * Builds the final [[Trait]] from this builder.
+   *
+   * @return A fully constructed Trait.
+   */
+  def build(): Trait = Trait(name, category, stats, prerequisites)
 
 
 object TraitDsl:
 
-extension (tb: TraitBuilder)
-/**
- * Sets the infectivity value.
- */
-def infectivity(v: Double): TraitBuilder = tb.copy(stats = tb.stats.copy(infectivity = v))
-
-/**
- * Sets the severity value.
- */
-def severity(v: Double): TraitBuilder = tb.copy(stats = tb.stats.copy(severity = v))
-
-[...]
-
-/**
- * Adds prerequisite trait names.
- */
-def prerequisite(values: String*): TraitBuilder = tb.copy(prerequisites = tb.prerequisites ++ values)
-
-/**
- * Starts building a new [[Trait]] with the given [[name]] and [[category]].
- *
- * @param name     Name of the [[Trait]].
- * @param category Category of the [[Trait]].
- * @return A new [[TraitBuilder]] instance.
- */
-def define(name: String, category: TraitCategory): TraitBuilder =
-  TraitBuilder(name, category)
+  extension (tb: TraitBuilder)
+    /**
+     * Sets the infectivity value.
+     */
+    def infectivity(v: Double): TraitBuilder = tb.copy(stats = tb.stats.copy(infectivity = v))
+    
+    /**
+     * Sets the severity value.
+     */
+    def severity(v: Double): TraitBuilder = tb.copy(stats = tb.stats.copy(severity = v))
+    
+    [...]
+    
+    /**
+     * Adds prerequisite trait names.
+     */
+    def prerequisite(values: String*): TraitBuilder = tb.copy(prerequisites = tb.prerequisites ++ values)
+    
+  /**
+   * Starts building a new [[Trait]] with the given [[name]] and [[category]].
+   *
+   * @param name     Name of the [[Trait]].
+   * @param category Category of the [[Trait]].
+   * @return A new [[TraitBuilder]] instance.
+   */
+  def define(name: String, category: TraitCategory): TraitBuilder =
+    TraitBuilder(name, category)
 ```
 
 La creazione di un `Trait` risulta avere la seguente sintassi:
