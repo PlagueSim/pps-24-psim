@@ -38,30 +38,30 @@ case class World private (
                            edges: Map[EdgeId, Edge],
                            movements: Map[MovementStrategy, Percentage]
                          ):
-                         
- ```
+
+```
 
 Ho modellato il `World` come una private case class con costruttore privato e un metodo apply nel companion object per due ragioni principali:
 1. **Immutabilità e utilities automatiche**
-   - Come case class offre immutabilità, copy, equals e pattern matching “gratis”, semplificando la gestione dello stato e il testing.
+  - Come case class offre immutabilità, copy, equals e pattern matching “gratis”, semplificando la gestione dello stato e il testing.
 2. **Centralizzazione delle validazioni**
-   - Il costruttore è privato: non è possibile creare un’istanza invalida bypassando i controlli.
-   - Il companion apply(nodes, edges, movements) contentente le validazioni del mondo e la sua creazione tramite costruttore privato.
-   - In questo modo ogni nuovo World viene garantito “sano” fin dalla creazione, e la logica di validazione resta centralizzata in un solo punto.
+  - Il costruttore è privato: non è possibile creare un’istanza invalida bypassando i controlli.
+  - Il companion apply(nodes, edges, movements) contentente le validazioni del mondo e la sua creazione tramite costruttore privato.
+  - In questo modo ogni nuovo World viene garantito “sano” fin dalla creazione, e la logica di validazione resta centralizzata in un solo punto.
 
 Quindi per garantire un modello coerente ho introdotto `WorldValidator` che si occupa di validare la creazione del `World` nel metodo `apply` del companion object.
 Questo approccio consente di mantenere il codice pulito e facilmente testabile, poiché tutte le regole di validazione sono concentrate in un'unica classe.
 
 ```scala
 object World:
-  def apply(
-             nodes: Map[NodeId, Node],
-             edges: Map[EdgeId, Edge],
-             movements: Map[MovementStrategy, Percentage]
-           ): World =
-    WorldValidator.validateEdges(nodes, edges)
-    WorldValidator.validateMovements(movements)
-    new World(nodes, edges, movements)
+def apply(
+           nodes: Map[NodeId, Node],
+           edges: Map[EdgeId, Edge],
+           movements: Map[MovementStrategy, Percentage]
+         ): World =
+  WorldValidator.validateEdges(nodes, edges)
+WorldValidator.validateMovements(movements)
+new World(nodes, edges, movements)
   ```
 
 Gestire nodes, edges e movements nella World usando mappe (con ID come chiavi) offre diversi vantaggi, soprattutto in un'ottica di programmazione funzionale e gestione di stati immutabili:
@@ -76,21 +76,21 @@ Per quanto riguarda movements i vantaggi di gestirlo come mappa `Strategy` -> `P
 
 ```scala
   extension (edge: Edge)
-    def edgeId: EdgeId =
-      if edge.nodeA < edge.nodeB then s"${edge.nodeA}-${edge.nodeB}-${edge.typology}" else s"${edge.nodeB}-${edge.nodeA}-${edge.typology}"
+def edgeId: EdgeId =
+  if edge.nodeA < edge.nodeB then s"${edge.nodeA}-${edge.nodeB}-${edge.typology}" else s"${edge.nodeB}-${edge.nodeA}-${edge.typology}"
 ```
 
 ```scala
   extension (edges: Iterable[Edge])
-    def getMapEdges: Map[EdgeId, Edge] =
-      edges.map(edge => edge.edgeId -> edge).toMap
+def getMapEdges: Map[EdgeId, Edge] =
+  edges.map(edge => edge.edgeId -> edge).toMap
 ```
 
 Sono stati implementati questi due extension methods per aiutare l'utilizzatore di `World` a creare la mappa di `Edge` passando al costruttore di `World` la Lista di `Edge`
 delegando la computazione degli ID e la creazione della mappa a questi metodi.
 
 ## Componenti principali del movimento
-Mi sono occupato poi del sistema di movimento, progettato per gestire lo spostamento delle persone tra i Node in maniera modulare, 
+Mi sono occupato poi del sistema di movimento, progettato per gestire lo spostamento delle persone tra i Node in maniera modulare,
 testabile e perfettamente aderente ai principi della programmazione funzionale.
 Il sistema è responsabile di determinare, a ogni tick di simulazione, quali individui si spostano,
 in che quantità, e verso quali destinazioni, aggiornando immutabilmente lo stato del World.
@@ -116,15 +116,15 @@ Il World conosce esclusivamente queste strategie come intenzioni astratte di com
   movements: Map[MovementStrategy, Percentage]
 ```
 
-Questa rappresenta la dichiarazione delle intenzioni del sistema: 
+Questa rappresenta la dichiarazione delle intenzioni del sistema:
 il World sa quali comportamenti seguire e in che proporzione, ma non conosce le implementazioni operative di questi comportamenti.
 
 
 
 
 2. **MovementLogic** definisce la logica concreta di ogni strategia di movimento, tramite il metodo `compute`.
-Le classi concrete che lo implementano (`StaticLogic`, `LocalPercentageLogic`, `GlobalLogic`) 
-definiscono come una strategia genera effettivamente movimenti tra nodi.
+   Le classi concrete che lo implementano (`StaticLogic`, `LocalPercentageLogic`, `GlobalLogic`)
+   definiscono come una strategia genera effettivamente movimenti tra nodi.
 
 Sono queste classi che:
 - analizzano il mondo corrente
@@ -134,51 +134,51 @@ Sono queste classi che:
 **Importante**: il World non conosce queste logiche. Solo gli eventi e i moduli operativi (es. MovementComputation) ne sono a conoscenza e le invocano quando serve.
 
 Per ogni strategia di movemento viene passato come parametro al metodo compute il generatore casuale Random.
-Questo approccio, basato sull’iniezione delle dipendenze, consente di controllare esattamente il comportamento nei test, 
+Questo approccio, basato sull’iniezione delle dipendenze, consente di controllare esattamente il comportamento nei test,
 ad esempio usando un generatore Random inizializzato con un seed noto (new Random(42)), oppure mockando nextDouble() per ottenere valori deterministici.
 In questo modo, ogni MovementLogic può essere testata in maniera riproducibile e priva di effetti collaterali.
 
 ```scala
 trait MovementLogic:
-  def compute(
-  world: World,
-  percent: Percentage,
-  rng: scala.util.Random
-  ): Iterable[PeopleMovement]
+def compute(
+             world: World,
+             percent: Percentage,
+             rng: scala.util.Random
+           ): Iterable[PeopleMovement]
 ```
 
 ```scala
  val fixedRandom: Random = new Random:
-   override def nextDouble(): Double = 0.1
+override def nextDouble(): Double = 0.1
 
- val result: Seq[PeopleMovement] = GlobalLogic.compute(world, 1.0, fixedRandom).toList
+val result: Seq[PeopleMovement] = GlobalLogic.compute(world, 1.0, fixedRandom).toList
 ```
 
 
 
 3. **MovementStrategyDispatcher** - Collegamento tra strategia e logica
-Per mantenere disaccoppiamento e apertura all’estensione, ho introdotto un dispatcher centralizzato:
+   Per mantenere disaccoppiamento e apertura all’estensione, ho introdotto un dispatcher centralizzato:
 
-   
+
 ```scala
 object MovementStrategyDispatcher:
-  def logicFor(strategy: MovementStrategy): MovementLogic = strategy match
-    case LocalPercentageMovement => LocalPercentageLogic
-    case GlobalLogicMovement     => GlobalLogic
-    case Static                  => StaticLogic
+def logicFor(strategy: MovementStrategy): MovementLogic = strategy match
+case LocalPercentageMovement => LocalPercentageLogic
+case GlobalLogicMovement     => GlobalLogic
+case Static                  => StaticLogic
 ```
 
 A questo si affianca un modulo `MovementStrategyLogic`:
 ```scala
 object MovementStrategyLogic:
 def compute(
-            world: World,
-            strategy: MovementStrategy,
-            percentage: Percentage,
-            rng: scala.util.Random
-          ): Iterable[PeopleMovement] =
- 
- MovementStrategyDispatcher.logicFor(strategy).compute(world, percentage, rng)
+             world: World,
+             strategy: MovementStrategy,
+             percentage: Percentage,
+             rng: scala.util.Random
+           ): Iterable[PeopleMovement] =
+
+  MovementStrategyDispatcher.logicFor(strategy).compute(world, percentage, rng)
 ```
 
 Questo permette al sistema di passare da una dichiarazione astratta di strategia a una logica concreta da eseguire.
@@ -192,16 +192,16 @@ L’intero processo è orchestrato dal metodo `MovementComputation.computeAllMov
 
 ```scala
   def computeAllMovements(world: World, rng: scala.util.Random): MovementResult =
-    world.movements.foldLeft(MovementResult(world.nodes, List.empty)) {
-      case (MovementResult(currentNodes, accMoves), (strategy, percent)) =>
-        val newMoves = MovementStrategyLogic.compute(world, strategy, percent, rng)
-        val updatedNodes = applyMovements(world.modifyNodes(currentNodes), newMoves).nodes
-        MovementResult(updatedNodes, accMoves ++ newMoves)
-    }
+  world.movements.foldLeft(MovementResult(world.nodes, List.empty)) {
+    case (MovementResult(currentNodes, accMoves), (strategy, percent)) =>
+      val newMoves = MovementStrategyLogic.compute(world, strategy, percent, rng)
+      val updatedNodes = applyMovements(world.modifyNodes(currentNodes), newMoves).nodes
+      MovementResult(updatedNodes, accMoves ++ newMoves)
+  }
 
 ```
 
-## Strategia vs Logica: separazione delle responsabilità
+## Strategia vs Logica di movimento: separazione delle responsabilità
 Il `World` dichiara cosa deve accadere (strategie + percentuali), e solo gli eventi e i moduli operativi determinano come avviene il movimento.
 
 Questa scelta progettuale consente:
@@ -218,12 +218,12 @@ Questo modello simula un’estrazione casuale senza rimpiazzo da una popolazione
 
 ```scala
   private def sampleInfected(node: Node, amount: Int): Int =
-    val hgd = new HypergeometricDistribution(
-      node.population,
-      node.infected,
-      amount
-    )
-    hgd.sample()
+val hgd = new HypergeometricDistribution(
+  node.population,
+  node.infected,
+  amount
+)
+hgd.sample()
 ```
 
 Ogni PeopleMovement viene quindi applicato creando nuove istanze di `Node`,
@@ -234,6 +234,47 @@ Questo approccio garantisce un’elevata affidabilità e facilità di test, in l
 
 Come detto in precedenza, sono state implementate due differenti strategie di movimento:
 `GlobalLogic` e `LocalPercentageLogic`.
+
+Qui mi concentrerò sulla prima, che è quella più complessa e interessante.
+Questa logica considera l'intera struttura del World e la configurazione degli edge per determinare in modo intelligente e probabilistico dove e quanta popolazione spostare.
+
+Per ogni nodo con popolazione maggiore di zero, `GlobalLogic` esamina tutti gli edge aperti che lo connettono ad altri nodi.
+La quantità di persone da spostare viene calcolata come percentuale della popolazione del nodo, in base al parametro ricevuto.
+Tuttavia, non tutti i movimenti vengono generati indiscriminatamente: entra in gioco una logica di filtro basata su capacità e probabilità.
+
+Ogni edge può avere una capacità massima di transito e una probabilità base di movimento definite per tipologia (Air, Land, Sea). La decisione finale se spostare o meno le persone viene presa confrontando un valore casuale con una probabilità calcolata dinamicamente. Questa probabilità finale è ottenuta moltiplicando la probabilità base dell’edge per il rapporto tra il numero di persone da spostare e la popolazione media dei nodi nel mondo. In questo modo, i nodi con una popolazione sopra la media sono più propensi a generare movimento, mentre quelli più piccoli lo fanno meno frequentemente.
+
+```scala
+  private def getFinalProbability(
+                                   edgeTypology: EdgeType,
+                                   toMove: Int,
+                                   avgPopulation: Int
+                                 ): Double =
+  edgeMovementConfig.probability.getOrElse(
+    edgeTypology,
+    0.0
+  ) * (toMove.toDouble / avgPopulation)
+```
+
+```scala
+  private def shouldMove(
+                          edge: Edge,
+                          nodeId: NodeId,
+                          rng: scala.util.Random,
+                          avgPopulation: Int,
+                          toMove: Int
+                        ): Boolean =
+val finalProbability = getFinalProbability(
+  edge.typology,
+  toMove,
+  avgPopulation
+)
+edge.other(nodeId).isDefined && !edge.isClose && rng.nextDouble() < finalProbability
+```
+
+Questo comportamento rispecchia fenomeni reali: ad esempio, città densamente popolate generano più traffico di persone, mentre le aree isolate o scarsamente abitate rimangono più statiche.
+
+In sintesi, GlobalLogic rappresenta un compromesso ben bilanciato tra realismo simulativo, flessibilità configurabile e purezza funzionale, incarnando perfettamente i principi architetturali alla base del progetto.
 
 
 [Back to index](../../index.md) |
