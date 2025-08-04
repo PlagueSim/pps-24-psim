@@ -16,7 +16,7 @@ In aggiunta a tutto quanto già descritto, ho progettato e implementato l’inte
 i file di cui mi sono occupato sono:
 `Edge`, `EdgeExtensions`, `MovementComputation`, `MovementStrategy`, `Node`, `Types`, `World`, `WorldFactory`, `WorldValidator`, `WorldConnectivity`,
 `EdgeConfigurationFactory`, `EdgeMovementConfig`, `GlobalLogic`, `LocalPercentageLogic`, `MovementEvent`, `ChangeNodesInWorldEvent`, `MovementLogic`, `MovementLogicWithEdgeCapacityAndPercentage`,
-`MovementStrategyDispatcher`, `MovementStrategyLogic`, `StaticLogic`, `CircularLayout`, `DefaultNodeViewFactory`, `EdgeLayer`, `EdgeUpdater`, `GraphLayout`, `LivePosition`, 
+`MovementStrategyDispatcher`, `MovementStrategyLogic`, `StaticLogic`, `CircularLayout`, `DefaultNodeViewFactory`, `EdgeLayer`, `EdgeUpdater`, `GraphLayout`, `LivePosition`,
 `NodeLayer`, `NodeView`, `NodeViewFactory`, `UpdatableWorldView`, `WorldRenderer`, `WorldView`, `ConsoleSimulationView`
 
 Le parti più importanti del mio lavoro sono:
@@ -27,8 +27,8 @@ Le parti più importanti del mio lavoro sono:
 Ho definito le entità fondamentali:
 - `Node`: con builder e validazioni(popolazione, infetti, morti)
 - `Edge`: con ordinamento lessicografico (per consentire l'uguaglianza di edge unidirezionali) e tipologie (`Air`, `Land`, `Sea`)
-- `MovementStrategy`: un trait per definire le strategie di movimento. 
-`Edge` e `Node` sono corredate di comodi extension methods (infectedPercentage, increasePopulation, edgeId, getMapEdges, ecc.) per semplificare ogni operazione nel Mondo.
+- `MovementStrategy`: un trait per definire le strategie di movimento.
+  `Edge` e `Node` sono corredate di comodi extension methods (infectedPercentage, increasePopulation, edgeId, getMapEdges, ecc.) per semplificare ogni operazione nel Mondo.
 
 Il `World` è l'insieme di queste tre Entità:
 
@@ -42,7 +42,7 @@ case class World private (
  ```
 
 Ho modellato il `World` come una private case class con costruttore privato e un metodo apply nel companion object per due ragioni principali:
-1. **Immutabilità e utilities automatiche** 
+1. **Immutabilità e utilities automatiche**
    - Come case class offre immutabilità, copy, equals e pattern matching “gratis”, semplificando la gestione dello stato e il testing.
    - La copia immutabile con copy(nodes = .., edges = .., movements = ..) rende triviali aggiornamenti puntuali (ad es. modifyNodes, modifyEdges).
 2. **Centralizzazione delle validazioni**
@@ -96,8 +96,8 @@ Ho esteso il modello con un vero e proprio **sottosistema di movimento**.
 Il sottosistema di movimento è stato progettato per gestire lo spostamento della popolazione tra i `Nodes` in maniera modulare, testabile e coerente con la modellazione immutabile del `World`
 Per ogni tick di simulazione, il sistema determina quali individui si spostano, in che quantità e verso quali nodi, aggiornando lo stato del mondo in modo puro.
 Alla base di questo sistema vi sono due componenti ben distinti: `MovementStrategy` e `MovementLogic`.
-Il primo, MovementStrategy, è un trait sigillato che rappresenta le tipologie di comportamento possibili, 
-come `Static`, `LocalPercentageMovement` e `GlobalLogicMovement`. 
+Il primo, MovementStrategy, è un trait sigillato che rappresenta le tipologie di comportamento possibili,
+come `Static`, `LocalPercentageMovement` e `GlobalLogicMovement`.
 
 ```scala
 sealed trait MovementStrategy
@@ -113,7 +113,7 @@ Ogni MovementStrategy è associata, all'interno del World, a una percentuale del
 
 
 Il secondo, `MovementLogic`, definisce invece l’algoritmo vero e proprio, cioè la modalità concreta con cui i movimenti vengono generati.
-Ogni logica implementa il metodo compute, che a partire dallo stato attuale del World e da un generatore casuale, 
+Ogni logica implementa il metodo compute, che a partire dallo stato attuale del World e da un generatore casuale,
 restituisce una lista di PeopleMovement, ognuno rappresentante uno spostamento di una certa quantità di persone da un nodo a un altro.
 
 ```scala
@@ -131,16 +131,15 @@ L’intero processo è orchestrato dal metodo MovementComputation.computeAllMove
 - accumula i movimenti proposti in una lista globale,
 - applica i movimenti aggiornando i Node coinvolti.
 
-Durante l’applicazione dei movimenti (applyMovements), viene utilizzata una distribuzione ipergeometrica per 
-determinare quanti degli individui che si spostano sono infetti. 
-In termini semplici, se da un nodo partono k persone e nel nodo ci sono N abitanti totali di cui I infetti, 
-la distribuzione ipergeometrica consente di stimare quanti dei k siano infetti, simulando un’estrazione casuale 
-senza rimpiazzo da un’urna con I palline rosse (infetti) e N−I bianche (sani). 
+Durante l’applicazione dei movimenti (applyMovements), viene utilizzata una distribuzione ipergeometrica per
+determinare quanti degli individui che si spostano sono infetti.
+In termini semplici, se da un nodo partono k persone e nel nodo ci sono N abitanti totali di cui I infetti,
+la distribuzione ipergeometrica consente di stimare quanti dei k siano infetti, simulando un’estrazione casuale
+senza rimpiazzo da un’urna con I palline rosse (infetti) e N−I bianche (sani).
 Questo introduce un realismo statistico nella simulazione, mantenendo la proporzione tra infetti e sani durante gli spostamenti.
 
 **Nota**:  questa gestione basata sulla distribuzione ipergeometrica è stata realizzata in collaborazione con il collega Matteo Susca.
 
-Il processo per gestire lo spostamento degli infetti in questo modo 
 
 Ogni PeopleMovement viene quindi applicato creando nuove istanze di Node,
 con conteggi aggiornati per popolazione e infetti, senza mai modificare gli oggetti originali.
