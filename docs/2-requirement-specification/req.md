@@ -61,6 +61,12 @@ soglia di infetti
 come prerequisito
 - De-evolvere un tratto restituisce un po di punti dna
 
+### Opzionale
+  - Ogni nodo del mondo ha diverse caratteristiche come temperatura, ricchezza, densità di popolazione, che
+  alterano la diffusione della malattia:
+    - Un nodo troppo freddo o caldo, ricco, o a bassa densità di popolazione rallenta la diffusione della malattia
+    - Un nodo povero, densamente popolato o tiepido aumenta la diffusione della malattia
+
 ## Requisiti non funzionali
 - La realizzazione di algoritmi e strutture dati efficienti per aspetti riguardanti la popolazione visti 
 i potenzialmente grandi numeri da utilizzare 
