@@ -59,3 +59,16 @@ object WorldFactory:
       edgeSet.getMapEdges,
       Map(Static -> 0.3, GlobalLogicMovement -> 0.7)
     )
+
+  /**
+   * Creates a mock World instance with 15 nodes, where the last node is infected.
+   */
+  def createWorldWithInfected(): World =
+    val initialWorld = createInitialWorld()
+    val infectedNode = initialWorld.nodes.last
+    val updatedNodes: Map[Types.NodeId, Node] = initialWorld.nodes.map((id, node) => (id, node) match
+      case (id, node) if id == infectedNode._1 =>
+        id -> node.increaseInfection(1)
+      case other => other
+    )
+    initialWorld.modifyNodes(updatedNodes)
