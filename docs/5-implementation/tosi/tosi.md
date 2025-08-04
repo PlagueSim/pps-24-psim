@@ -111,13 +111,13 @@ La struttura interna prevede una classe privata `FunctionalPopulationEffect[A]`,
 
 ```scala
 private case class FunctionalPopulationEffect[A](
-                                                  canApply: (Node, Disease) => Boolean,
-                                                  extractParameter: Disease => Double,
-                                                  populationSelector: Node => A,
-                                                  adjustParameter: Double => Probability,
-                                                  calculateChange: (A, Probability) => Int,
-                                                  applyChange: (Node, Int) => Node
-                                                ) extends PopulationEffect
+              canApply: (Node, Disease) => Boolean,
+              extractParameter: Disease => Double,
+              populationSelector: Node => A,
+              adjustParameter: Double => Probability,
+              calculateChange: (A, Probability) => Int,
+              applyChange: (Node, Int) => Node
+            ) extends PopulationEffect
   ```
 
 Il parametro di tipo generico `A` permette di avere completa libertà nello scegliere tutte le informazioni relative alla
