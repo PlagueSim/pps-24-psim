@@ -48,6 +48,25 @@ Questa impostazione riflette un'architettura event-driven, dove ogni evento è u
 Inoltre, questo approccio assicura un’alta coesione interna e una bassa dipendenza da altre parti del progetto,
 facilitando manutenzione, testing e riutilizzo.
 
+### Cura
+Il sottosistema di ricerca della cura modella gli sforzi scientifici globali per sviluppare un rimedion alla malattia. 
+È composto da due elementi chiave:
+1. **Stato della ricerca**: Tiene traccia del progresso (0-100%) e della velocità base di avanzamento della cura
+2. **Modificatori della ricerca**: Rappresentano le azioni che possono influenzare la velocità e il progresso della ricerca
+
+Il sistema di cura interagisce con:
+- **Il Mondo**: ogni nodo del mondo può contribuire alla ricerca della cura, aumentando la velocità di avanzamento.
+- **La Malattia**: alcuni tratti della malattia possono influenzare la ricerca della cura, ad esempio rendendola più difficile.
+
+### Reazioni
+Il sottosistema delle reazioni modella le risposte del mondo di gioco alla malattia e/o alla cura. 
+Si basa su un meccanismo di regole condizionali associate ad azioni specifiche:
+1. **Regole di Attivazione**: Definiscono le condizioni che devono essere soddisfatte per attivare una reazione.
+2. **Azioni**: Le azioni che vengono eseguite quando le condizioni sono
+3. **Durata**: La durata per cui la reazione rimane attiva. Può essere temporanea o permanente.
+
+Le reazioni possono essere di vario tipo e comportano una modifica allo stato del mondo, come ad esempio la chiusura di 
+collegamenti tra nodi, impedendo la diffusione della malattia.
 
 ## Avvio della Simulazione
 La simulazione viene inizializzata e avviata tramite dsl con il comando `setup` fornendo i seguenti elementi:
