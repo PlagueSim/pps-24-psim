@@ -2,12 +2,12 @@
 
 Nel progetto mi sono occupato della costruzione del modello del `World` e tutte le componenti interne:
 `MovementStrategy`, `Edge` e `Node`, puntando su immutabilità, funzioni pure e testabilità.
-Per quanto riguarda la parte grafica mi sono occupato di tutta la parte di rendering del `World`, il rendering dei `Node`
-e del colore di questi ultimi in base agli infetti e ai morti, il drag and drop dei `Node`, il rendering degli edge e del colore in base
-alla tipologia di edge.
+Per quanto riguarda la parte grafica mi sono occupato di tutta la parte di rendering del `World`, che comprende il rendering dei `Node`
+e del colore di questi ultimi in base agli infetti e ai morti, il rendering degli `Edge` e del colore in base
+alla tipologia.
 
 Ho curato l'integrazione tra modello e interfaccia, assicurandomi che ogni aggiornamento dello stato di `World` si
-riflettesse con precisione e fluidità sul rendering della vista.
+riflettesse con precisione e fluidità sul rendering della view.
 Per ottimizzare il sistema di rendering, ho limitato il ridisegno dell'interfaccia ai soli elementi modificati, evitando ridisegni completi e migliorando le performance.
 
 
@@ -25,7 +25,7 @@ Le parti più importanti del mio lavoro sono:
 
 ## World
 Ho definito le entità fondamentali:
-- `Node`: con builder e validazioni(popolazione, infetti, morti)
+- `Node`: con builder e validazioni (popolazione, infetti, morti)
 - `Edge`: con ordinamento lessicografico (per consentire l'uguaglianza di edge unidirezionali) e tipologie (`Air`, `Land`, `Sea`)
 - `MovementStrategy`: un trait per definire le strategie di movimento.
   `Edge` e `Node` sono corredate di extension methods (infectedPercentage, increasePopulation, edgeId, getMapEdges, ecc.) per semplificare ogni operazione nel Mondo.
@@ -117,7 +117,7 @@ Il World conosce esclusivamente queste strategie come intenzioni astratte di com
 ```
 
 Questa rappresenta la dichiarazione delle intenzioni del sistema:
-il World sa quali comportamenti seguire e in che proporzione, ma non conosce le implementazioni operative di questi comportamenti.
+il World sa quali comportamenti usare e in che proporzione, ma non conosce le implementazioni operative di questi comportamenti.
 
 
 
@@ -146,9 +146,9 @@ def compute(
              rng: scala.util.Random
            ): Iterable[PeopleMovement]
 ```
-
+Esempio di test in cui ho mockato il generatore casuale per ottenere un comportamento prevedibile:
 ```scala
- val fixedRandom: Random = new Random:
+val fixedRandom: Random = new Random:
 override def nextDouble(): Double = 0.1
 
 val result: Seq[PeopleMovement] = GlobalLogic.compute(world, 1.0, fixedRandom).toList
@@ -202,22 +202,21 @@ L’intero processo è orchestrato dal metodo `MovementComputation.computeAllMov
 ```
 
 ## Strategia vs Logica di movimento: separazione delle responsabilità
-Il `World` dichiara cosa deve accadere (strategie + percentuali), e solo gli eventi e i moduli operativi determinano come avviene il movimento.
+Il `World` dichiara che movimento deve accadere (strategie + percentuali), e solo gli eventi e i moduli operativi determinano come avviene il movimento.
 
 Questa scelta progettuale consente:
-- al World di essere dichiarativo, stabile e testabile, modellando solo l’intento del movimento
-- agli eventi di essere l’unico punto in cui le logiche vengono risolte ed eseguite,
-- una chiara separazione delle responsabilità e maggiore modularità.
+- Al World di essere dichiarativo, stabile e testabile, modellando solo l’intento del movimento
+- Agli eventi di essere l’unico punto in cui le logiche vengono risolte ed eseguite,
+- Una chiara separazione delle responsabilità e maggiore modularità.
 
 Per aggiungere una nuova strategia è sufficiente dichiarare la nuova `MovementStrategy`, fornire un’implementazione di `MovementLogic`, e registrarla nel `dispatcher`. Il World resta completamente isolato da questo processo.
 
 Durante l’applicazione dei movimenti (applyMovements), viene utilizzata una distribuzione ipergeometrica per stimare, in modo realistico, quanti degli individui in movimento siano infetti.
 Questo modello simula un’estrazione casuale senza rimpiazzo da una popolazione composta da individui sani e infetti, mantenendo la proporzione di partenza.
 
-**Nota**:  questa gestione basata sulla distribuzione ipergeometrica è stata realizzata in collaborazione con il collega Matteo Susca.
 
 ```scala
-  private def sampleInfected(node: Node, amount: Int): Int =
+private def sampleInfected(node: Node, amount: Int): Int =
 val hgd = new HypergeometricDistribution(
   node.population,
   node.infected,
@@ -226,9 +225,7 @@ val hgd = new HypergeometricDistribution(
 hgd.sample()
 ```
 
-Ogni PeopleMovement viene quindi applicato creando nuove istanze di `Node`,
-con conteggi aggiornati per popolazione e infetti, senza mai modificare gli oggetti originali.
-Questo approccio garantisce un’elevata affidabilità e facilità di test, in linea con i principi di immutabilità e programmazione funzionale adottati nel progetto.
+**Nota**:  questa gestione basata sulla distribuzione ipergeometrica è stata realizzata in collaborazione con il collega Matteo Susca.
 
 ## GlobalLogic
 
@@ -274,7 +271,7 @@ edge.other(nodeId).isDefined && !edge.isClose && rng.nextDouble() < finalProbabi
 
 Questo comportamento rispecchia fenomeni reali: ad esempio, città densamente popolate generano più traffico di persone, mentre le aree isolate o scarsamente abitate rimangono più statiche.
 
-In sintesi, GlobalLogic rappresenta un compromesso ben bilanciato tra realismo simulativo, flessibilità configurabile e purezza funzionale, incarnando perfettamente i principi architetturali alla base del progetto.
+**Nota**:  Le logiche della GlobalLogic sono state realizzate in collaborazione con il collega Matteo Susca.
 
 
 [Back to index](../../index.md) |
