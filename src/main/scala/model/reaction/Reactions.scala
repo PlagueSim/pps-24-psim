@@ -12,7 +12,7 @@ import model.world.EdgeType
   *   Set of currently active reactions.
   */
 final case class Reactions(
-    rules: List[ReactionRule] = Nil,
+    rules: List[ReactionRule] = List.empty,
     activeReactions: Set[ActiveReaction] = Set.empty
 ):
   /** Unique key for identifying a reaction by rule and node. */
