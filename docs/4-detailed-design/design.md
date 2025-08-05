@@ -55,6 +55,10 @@ I `Trait` possono essere:
 - Tramite evoluzione casuale
   - Un `Event` determina casualmente se evolvere gratuitamente un nuovo `Trait` tra quelli i `Symptoms` evolvibili.
 
+Alcuni `Trait` più avanzati richiedono l'acquisto di altri `Trait` per essere evoluti. Per un
+`Symptom` basta che uno solo tra i suoi `prerequisites` sia stato acquistato dal giocatore, mentre
+per un `Symptom` o un `Transmission` tutti i `prerequisites` devono essere evoluti.
+
 #### Infezione e Morte
 Un `Event` è adibito al calcolo tramite `PopulationEffect` dei nuovi infetti e morti nei diversi `Node` in base alle statistiche 
 dei `Trait` presenti in `Disease`.
