@@ -1,5 +1,12 @@
 Durante lo sviluppo del progetto, mi sono dedicato principalmente all'implementazione del sistema di cura e delle reazioni globali, due componenti fondamentali per la simulazione epidemiologica. Ho adottato un approccio funzionale puro sfruttando i principi avanzati di Scala, con particolare attenzione all'immutabilità, alla composizione e alla type safety.
 
+Mi sono uccupato dei seguenti file:
+`Cure`, `CureModifier`, `ModifierId`, `CureEvents`, `GlobalCureResearchEvent`, `ActiveReaction`, `ReactionAction`, `ReactionCondition`, 
+`ReactionRule`, `Reactions`, `ApplyReactionEvent`, `RevertExpiredEvent`, `UpdateActiveReactionsEvent`, `CureProgressBar`
+
+Ho partecipato anche allo sviluppo di:
+`GlobalLogic`, `DnaPointsCalculator`, `InfectionTypes`, `DeathTypes`
+
 ## Sistema di ricerca della cura
 Il sistema di cura rappresenta lo stato della ricerca scientifica per contrastare il diffondersi della malattia. È progettato come un ADT (Abstract Data Type) immutabile con operazioni pure.
 
