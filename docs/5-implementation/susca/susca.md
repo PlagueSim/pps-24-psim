@@ -252,6 +252,25 @@ final case class ActiveReaction(
       case None => true
 ```
 
+## Ulteriori participazioni
+### InfectionType
+Ho sfruttato l'architettura messa a disposizione dal mio collega Lorenzo Tosi per implementare il modello epidemiologico 
+SIR (Susceptible-Infected-Recovered) permettendo di simulare la diffusione della malattia in modo realistico e 
+garantendo scalabilità anche con popolazioni molto grandi o molto piccole.
+$$
+\Delta I = \max\left(1,\; \beta \cdot \frac{I \cdot (N - I)}{N} \right)
+$$
+
+dove:
+
+- \( $\Delta I$ \): nuovi infetti nel tick corrente
+- \( $\beta$ \): valore di infettività (probabilità di trasmissione)
+- \( $I$ \): numero attuale di infetti
+- \( $N$ \): popolazione totale
+- \( $N - I$ \): persone sane
+
+Se \( $\beta \leq 0$ \), allora \( $\Delta I = 0$ \)
+
 
 [Back to index](../../index.md) |
 [Back to implementation](../../5-implementation/impl.md)
