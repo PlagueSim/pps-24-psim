@@ -39,4 +39,6 @@ final case class ActiveReaction(
     *   True if the reaction is still active, false otherwise.
     */
   def isActive(currentDay: Time): Boolean =
-    rule.duration.forall(duration => currentDay < startDay + duration)
+    rule.duration match
+      case Some(duration) => currentDay < startDay + duration
+      case None           => true 
