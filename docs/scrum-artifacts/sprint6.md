@@ -24,4 +24,6 @@
 |Task     |PS-84  |fix bug on MovementEvent (total living population)|Andrea Zavatta|PS Sprint 6     |
 |Task     |PS-85  |Reaction Refactor                     |Matteo Susca|PS Sprint 6     |
 
-[Back to index](../index.md)
+[Back to index](../index.md) |
+[Sprint 5](sprint5.md) |
+[Sprint 7](sprint7.md)

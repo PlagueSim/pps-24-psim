@@ -20,4 +20,5 @@ opzionali, il sistema presenta la configurazione tramite DSL e le logiche di inf
 Nel complesso, tenendo conto del tempo messo a disposizione, il team é soddisfatto del risultato ottenuto.
 
 [Back to index](../index.md) |
-[Previous Chapter](../6-testing/testing.md)
+[Previous Chapter](../6-testing/testing.md) |
+[Scrum Artifacts](../scrum-artifacts/tables.md)

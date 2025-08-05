@@ -10,4 +10,6 @@
 |Task     |PS-31  |refactor the World GUI to avoid dependencies on scalaFX|Andrea Zavatta|PS Sprint 3     |
 |Task     |PS-32  |Fix pipeline                          |Lorenzo Tosi|PS Sprint 3     |
 
-[Back to index](../index.md)
+[Back to index](../index.md) |
+[Sprint 2](sprint2.md) |
+[Sprint 4](sprint4.md)
