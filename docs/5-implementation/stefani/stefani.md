@@ -42,6 +42,15 @@ case class TraitStats (
                        effectiveness: Map[Any, Double] = Map.empty
                      )
 
+case class Trait private (
+                                 name: String,
+                                 category: TraitCategory,
+                                 stats: TraitStats,
+                                 prerequisites: Set[String]
+                         ):
+  [...]
+
+
 case class TraitBuilder(
                                name: String,
                                category: TraitCategory,
