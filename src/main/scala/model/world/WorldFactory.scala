@@ -2,8 +2,7 @@ package model.world
 import model.world.EdgeExtensions.*
 object WorldFactory:
 
-  /*
-   * Creates a mock World instance with 15 nodes and predefined edges.
+  /** Creates a mock World instance with 15 nodes and predefined edges.
    * Some nodes are initialized with infection and death values.
    * A mix of edge types (Land, Sea, Air) is used for connections.
    */
@@ -16,12 +15,11 @@ object WorldFactory:
     )
     world
 
-  /*
-  * Creates an initial World instance with 15 nodes and a predefined set of edges.
+  /** Creates an initial World instance with 15 nodes and a predefined set of edges.
    * Each node has a population of 100,000,000 plus its index, with no initial infections or deaths.
    * The edges connect the nodes in a specific pattern, including various types (Land, Sea, Air).
    * Movement strategies are defined with specific probabilities for static and global logic movements.
-  * */
+   */
   def createInitialWorld(): World =
     val nodes =
       (1 to 15).map { i =>
@@ -60,6 +58,10 @@ object WorldFactory:
       Map(Static -> 0.3, GlobalLogicMovement -> 0.7)
     )
 
+	/** Creates a small World instance with 6 nodes and a limited set of edges.
+	 * The nodes represent various locations with populations, and the edges represent different types of connections.
+	 * The connections include land, air, and sea routes.
+	 */
   def createSmallWorld(): World =
 
     val nodes = Map(
@@ -93,6 +95,10 @@ object WorldFactory:
       Map(Static -> 0.3, GlobalLogicMovement -> 0.7)
     )
 
+	/** Creates a large World instance with 15 nodes and a complex network of edges.
+	 * The nodes represent countries with varying populations, and the edges represent different types of connections.
+	 * The connections include land borders, air routes, and sea trade routes.
+	 */
   def createLargeWorld(): World =
 
     val nodes = Map(
