@@ -23,4 +23,6 @@
 |Task     |PS-107 |Add type and remove magic numbers     |Andrea Zavatta|PS Sprint 7     |
 |Task     |PS-108 |Move applyMovement from Move into MoveComputation|Andrea Zavatta|PS Sprint 7     |
 
-[Back to index](../index.md)
+[Back to index](../index.md) |
+[Sprint 6](sprint6.md) |
+[Tables](tables.md)

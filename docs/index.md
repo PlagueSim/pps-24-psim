@@ -14,4 +14,4 @@ durante il corso della partita spendendo dei punti guadagnati durante il gioco.
 - [Implementazione](5-implementation/impl.md)
 - [Testing](6-testing/testing.md)
 - [Retrospettiva](7-conclusion/end.md)
-- [Artefatti del processo di sviluppo](scrum-artifacts/tabels.md)
+- [Artefatti del processo di sviluppo](scrum-artifacts/tables.md)

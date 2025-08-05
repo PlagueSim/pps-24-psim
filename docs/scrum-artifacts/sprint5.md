@@ -19,4 +19,6 @@
 |Task     |PS-57  |remove unused cureeffectiveness field in node|Andrea Zavatta|PS Sprint 5     |
 |Task     |PS-58  |Reaction event                        |Matteo Susca|PS Sprint 5     |
 
-[Back to index](../index.md)
+[Back to index](../index.md) |
+[Sprint 4](sprint4.md) |
+[Sprint 6](sprint6.md)

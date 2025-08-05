@@ -9,4 +9,6 @@
 |Task     |PS-19  |update github actions for develop branch|Lorenzo Tosi|PS Sprint 2     |
 |Task     |PS-20  |new strict structure for events creation|Lorenzo Tosi|PS Sprint 2     |
 
-[Back to index](../index.md)
+[Back to index](../index.md) |
+[Sprint 1](sprint1.md) |
+[Sprint 3](sprint3.md)
