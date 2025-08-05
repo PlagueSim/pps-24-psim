@@ -159,6 +159,99 @@ def addModifier(mod: CureModifier): Cure =
     case _ => this // Duplicati ignorati
 ```
 
+### Evento di ricerca della cura
+
+
+## Sistema di Reazioni Globali
+Ho progettato il sistema di reazioni globali per modellare le contromisure che i paesi attuano in risposta alla diffusione della malattia. L'architettura si basa su quattro componenti principali:
+- ReactionCondition
+- ReactionAction
+- ReactionRule
+- ActiveReaction
+
+### ReactionCondition
+Le condizioni determinano quando una reazione deve attivarsi. Ho implementato un sistema flessibile che supporta operatori logici per la composizione di condizioni complesse.
+
+```scala
+trait ReactionCondition:
+  def isSatisfied(state: SimulationState, nodeId: String): Boolean
+
+object ReactionCondition:
+  implicit class ConditionOps(condition: ReactionCondition):
+    def and(other: ReactionCondition): ReactionCondition
+    def or(other: ReactionCondition): ReactionCondition
+    def unary_! : ReactionCondition
+	
+// Esempio di condizione
+case class InfectedCondition(threshold: Double) extends ReactionCondition:
+  def isSatisfied(state: SimulationState, nodeId: String): Boolean =
+    state.world.nodes
+      .get(nodeId)
+      .exists(node =>
+        node.population > 0 && node.infected.toDouble / node.population >= threshold
+      )
+```
+
+### ReactionAction
+Le azioni definiscono cosa accade quando una reazione viene attivata.
+```scala
+trait ReactionAction:
+  def apply: World => World
+  def reverse: World => World
+
+// Esempio: Chiusura confini
+case class CloseEdges(edgeType: EdgeType, nodeId: String) 
+  extends ReactionAction:
+
+  def apply: World => World = 
+    world => updateEdges(world, _.close)
+  
+  def reverse: World => World = 
+    world => updateEdges(world, _.open)
+```
+- Azioni reversibili (per gestire la scadenza delle reazioni)
+- Composizione tramite CompositeAction per azioni complesse
+
+### Reactions
+la classe `Reactions` funge da contenitore centrale per gestire lo stato delle reazioni:
+```scala
+final case class Reactions(
+    rules: List[ReactionRule] = List.empty,
+    activeReactions: Set[ActiveReaction] = Set.empty
+):
+  // Aggiunta nuove reazioni attive
+  def addActive(newReactions: Set[ActiveReaction]): Reactions
+  
+  // Rimozione reazioni scadute
+  def removeExpired(currentDay: Time): Reactions
+```
+#### ReactionRule
+Le regole collegano condizioni ad azioni:
+```scala
+final case class ReactionRule(
+    condition: ReactionCondition,
+    actionFactory: String => ReactionAction,
+    duration: Option[Int] = None
+):
+  // Verifica se la regola deve attivarsi per un nodo
+  def shouldTrigger(state: SimulationState, nodeId: String): Boolean = 
+    condition.isSatisfied(state, nodeId)
+```
+### ActiveReaction
+Rappresentano un'istanza attiva di un regola:
+```scala
+final case class ActiveReaction(
+    rule: ReactionRule,
+    nodeId: String,
+    startDay: Time
+):
+  // Verifica se la reazione è ancora attiva
+  def isActive(currentDay: Time): Boolean = 
+    rule.duration match
+      case Some(dur) => currentDay < startDay + dur
+      case None => true
+```
+
 
 [Back to index](../../index.md) |
 [Back to implementation](../../5-implementation/impl.md)
