@@ -55,9 +55,7 @@ case class GlobalCureResearchEvent() extends Event[Cure]:
     val capacityFactor = totalNodePopulation(node) / totalPopulation(world)
     val infectionFactor = node.infected.toDouble / totalNodePopulation(node)
     val severityFactor = 1 + (severity - SEVERITY_THRESHOLD) * 0.01
-    val rawContribution = (capacityFactor * infectionFactor * severityFactor * 0.2).min(1.0).max(0.0)
-    println(s"Node $nodeId contributes ${rawContribution * 100}% to the cure.")
-    rawContribution
+    (capacityFactor * infectionFactor * severityFactor * 0.2).min(1.0).max(0.0)
   }
 
   /** Returns the total population of the world. population + deaths */

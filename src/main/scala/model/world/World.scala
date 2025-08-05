@@ -52,6 +52,7 @@ object World:
            ): World =
     WorldValidator.validateEdges(nodes, edges)
     WorldValidator.validateMovements(movements)
+    WorldValidator.validateMaxPopulation(nodes)
     new World(nodes, edges, movements)
 
 

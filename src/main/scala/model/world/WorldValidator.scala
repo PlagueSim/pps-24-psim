@@ -30,6 +30,16 @@ object WorldValidator:
     allPercentagesNonNegative(movements)
     percentagesSumToOne(movements)
 
+
+  /**
+   * Validates the total population of the world.
+   * @param nodes Map of node IDs to Node objects
+   *
+   * @throws IllegalArgumentException if the total population exceeds Integer.MAX_VALUE
+   */
+  def validateMaxPopulation(nodes: Map[NodeId, Node]): Unit =
+    checkMaxPopulation(nodes)
+
   private def edgesMustConnectExistingNodes(nodes: Map[NodeId, Node], edges: Map[EdgeId, Edge]): Unit =
     require(
       edges.values.forall(e => nodes.contains(e.nodeA) && nodes.contains(e.nodeB)),
@@ -57,5 +67,11 @@ object WorldValidator:
     require(
       total >= 0.999 && total <= 1.001,
       f"Movement percentages must sum to 1.0 (got $total%.3f)"
+    )
+
+  private def checkMaxPopulation(nodes: Map[NodeId, Node]): Unit =
+    require(
+      nodes.map(_._2.population.toLong).sum <= Integer.MAX_VALUE,
+      "Total population exceeds Integer.MAX_VALUE"
     )
 

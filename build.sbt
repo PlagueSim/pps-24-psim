@@ -29,12 +29,6 @@ libraryDependencies ++= {
     .map(m => "org.openjfx" % s"javafx-$m" % "22" classifier osName)
 }
 
-//enablePlugins(WartRemover)
-//wartremoverWarnings ++= Warts.unsafe
-coverageEnabled := true
-
-coverageExcludedPackages := "dsl.*;controller.*;prolog.*;view.*;<empty>;model.scheduler.*;"
-
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % Test
 libraryDependencies += "org.typelevel" %% "cats-core" % "2.13.0"
 libraryDependencies += "org.typelevel" %% "cats-effect" % "3.6.1"

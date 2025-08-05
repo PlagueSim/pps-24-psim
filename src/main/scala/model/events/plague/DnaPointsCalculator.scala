@@ -9,7 +9,8 @@ object DnaPointsCalculator:
   private type World = Map[String, Node]
 
   private val NewNodeDnaMul = 5
-  private val AffectedPopDnaRatio = 10
+  private val AffectedPopDnaRatio = 5
+  private val Factor = 10000
 
   /**
    * Computes the difference in infected and deceased populations between two snapshots of the world.
@@ -51,15 +52,18 @@ object DnaPointsCalculator:
    * Computes the total DNA points to assign based on the changes in the world state.
    *
    * @param infected the amount of newly infected population
-   * @param deceased the amount of newly infected population
+   * @param deceased the amount of newly deceased population
    * @param redBubbles the number of newly infected nodes
+   * @param currentWorld the current world state
    * @return the total DNA points to assign
    */
-  private def assignDnaPoints(infected: Infected, deceased: Deceased, redBubbles: Int): Int =
-    //todo: refine the calculation
-    redBubbles * NewNodeDnaMul +
-      floor(sqrt(infected)).toInt / AffectedPopDnaRatio +
-      floor(sqrt(deceased)).toInt / AffectedPopDnaRatio
+  private def assignDnaPoints(infected: Infected, deceased: Deceased, redBubbles: Int, currentWorld: World): Int =
+    val totalPopulation = currentWorld.values.map(n => n.population + n.died).sum
+    if totalPopulation == 0 then 0
+    else
+      val infectedScore = floor(sqrt((infected.toDouble / totalPopulation) * Factor)).toInt / AffectedPopDnaRatio
+      val deceasedScore = floor(sqrt((deceased.toDouble / totalPopulation) * Factor)).toInt / AffectedPopDnaRatio
+      redBubbles * NewNodeDnaMul + infectedScore + deceasedScore
 
   /**
    * Calculates the amount of DNA points to be awarded based on the difference
@@ -76,4 +80,4 @@ object DnaPointsCalculator:
     val (newInfectedPop, newDeceasedPop) = extractDiff(prevNodes, currentNodes)
     val redBubbles = newInfectedNodes(prevNodes, currentNodes)
 
-    assignDnaPoints(newInfectedPop, newDeceasedPop, redBubbles)
+    assignDnaPoints(newInfectedPop, newDeceasedPop, redBubbles, currentNodes)
