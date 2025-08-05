@@ -9,3 +9,5 @@
 |Task     |PS-30  |basic view fix                        |Alessandro Stefani|PS Sprint 3     |
 |Task     |PS-31  |refactor the World GUI to avoid dependencies on scalaFX|Andrea Zavatta|PS Sprint 3     |
 |Task     |PS-32  |Fix pipeline                          |Lorenzo Tosi|PS Sprint 3     |
+
+[Back to index](../index.md)

@@ -1,8 +1,4 @@
 # Processo di sviluppo
-Modalità di divisione in itinere dei task,
-meeting/interazioni pianificate,
-modalità di revisione in itinere dei task,
-scelta degli strumenti di test/build/continuous integration
 
 ## SCRUM
 Abbiamo seguito uno stile SCRUM inspired come consigliato nel punto P8 delle regole d’esame.

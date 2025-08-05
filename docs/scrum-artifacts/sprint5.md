@@ -18,3 +18,5 @@
 |Task     |PS-56  |make draggable compatible also for other components|Andrea Zavatta|PS Sprint 5     |
 |Task     |PS-57  |remove unused cureeffectiveness field in node|Andrea Zavatta|PS Sprint 5     |
 |Task     |PS-58  |Reaction event                        |Matteo Susca|PS Sprint 5     |
+
+[Back to index](../index.md)
