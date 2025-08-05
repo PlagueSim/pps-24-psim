@@ -1,85 +1,73 @@
 package dsl.builders
 
+import controller.Controller
 import controller.ExecutionMode.{ExecutionMode, TerminalMode}
-import model.core.{SimulationEngine, SimulationState}
+import model.core.SimulationState
 import model.scheduler.{FixedStandardRateScheduler, Scheduler}
 import view.ConsoleSimulationView
 import view.updatables.UpdatableView
 
-import scala.annotation.tailrec
-
-/**
- * A builder class for setting up and running a simulation.
- * It collects all the necessary parts and then starts the simulation.
- */
+/** A builder class for setting up and running a simulation. It collects all the
+  * necessary parts and then starts the simulation.
+  */
 class SetupBuilderAndRunner:
   private var _simulationState = SimulationState.createStandardSimulationState()
-  private var _conditionsBuilder: SimulationState => Boolean = s => s.time.day.value < 20
-  private var _view: UpdatableView = ConsoleSimulationView()
-  private var _runMode: ExecutionMode = TerminalMode
+  private var _winCondition: SimulationState => Boolean = s =>
+    s.world.nodes.map(_._2.population).sum <= 0
+  private var _loseCondition: SimulationState => Boolean = s =>
+    s.cure.progress >= 1.0
+  private var _view: UpdatableView     = ConsoleSimulationView()
+  private var _runMode: ExecutionMode  = TerminalMode
   private var _scheduleMode: Scheduler = FixedStandardRateScheduler
-  private val _engine = SimulationEngine
 
-  /**
-   * Adds a simulation state to the builder.
-   */
+  /** Adds a simulation state to the builder.
+    */
   def addSimulationState(state: SimulationState): SetupBuilderAndRunner =
     _simulationState = state
     this
 
-  /**
-   * Adds a scheduler to the simulation.
-   */
+  /** Adds a scheduler to the simulation.
+    */
   def addScheduler(scheduler: Scheduler): SetupBuilderAndRunner =
     _scheduleMode = scheduler
     this
 
-  /**
-   * Adds a condition that must be met for the simulation to continue.
+  /** Adds a condition that must be met to win the game.
    */
-  def addConditions(conditions: SimulationState => Boolean): SetupBuilderAndRunner =
-    _conditionsBuilder = conditions
+  def addWinCondition(
+    winCondition: SimulationState => Boolean
+  ): SetupBuilderAndRunner =
+    _winCondition = winCondition
     this
 
-  /**
-   * Sets the view for the simulation.
+  /** Adds a condition that must be met to lose the game.
    */
+  def addLoseCondition(
+    loseCondition: SimulationState => Boolean
+  ): SetupBuilderAndRunner =
+    _loseCondition = loseCondition
+    this
+    
+  /** Sets the view for the simulation.
+    */
   def setView(bindings: UpdatableView): SetupBuilderAndRunner =
     _view = bindings
     this
 
-  /**
-   * Sets the execution mode for the simulation.
-   */
+  /** Sets the execution mode for the simulation.
+    */
   def addRun(run: ExecutionMode): SetupBuilderAndRunner =
     _runMode = run
     this
 
-  /**
-   * Runs the simulation with the configured settings.
-   */
-  def run(): Unit =
-    _runMode.execute {
-      _runMode.runLater(() => _view.update(_simulationState))
-      loop(_simulationState, _runMode.runLater)
-    }
-
-  @tailrec
-  private def loop(
-                    simState: SimulationState,
-                    runLater: Runnable => Unit
-                  ): SimulationState =
-    _scheduleMode.waitForNextTick()
-    val nextState = computeNextState(simState)
-    computeViewUpdates(nextState, runLater)
-    if _conditionsBuilder(nextState) then loop(nextState, runLater)
-    else nextState
-
-  private def computeNextState(simState: SimulationState): SimulationState =
-    _engine.runStandardSimulation(simState)
-
-  private def computeViewUpdates(
-                                  simState: SimulationState,
-                                  runLater: Runnable => Unit
-                                ): Unit =
-    runLater(() => _view.update(simState))
+  /** Runs the simulation with the configured settings.
+    */
+  def buildAndRun(): Unit =
+    Controller(
+      _simulationState,
+      _winCondition,
+      _loseCondition,
+      _view,
+      _runMode,
+      _scheduleMode
+    ).run()

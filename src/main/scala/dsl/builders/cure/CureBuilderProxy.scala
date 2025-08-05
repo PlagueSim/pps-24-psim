@@ -31,8 +31,7 @@ class CureBuilderProxy(get: () => CureBuilder, set: CureBuilder => Unit)
     set(updated)
     updated
 
-  /** Builds and returns a [[Cure]] instance using the underlying
-    * builder.
+  /** Builds and returns a [[Cure]] instance using the underlying builder.
     */
   override def build(): Cure =
     get().build()

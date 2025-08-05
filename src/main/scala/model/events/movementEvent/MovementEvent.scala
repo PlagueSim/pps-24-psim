@@ -1,31 +1,16 @@
 package model.events.movementEvent
 
-import model.world.{Edge, GlobalRandomMovement, LocalPercentageMovement, MovementStrategy, Node, Static, World}
+import model.world.{Edge, LocalPercentageMovement, MovementStrategy, Node, Static, World}
 import model.core.SimulationState
 import model.events.Event
-
-case class MovementEvent() extends Event[Map[String, Node]]:
-
+import model.world.MovementComputation
+import model.world.Types.*
+case class MovementEvent() extends Event[Map[NodeId, Node]]:
+  /*
+  * MovementEvent is responsible for computing the movement of people in the world.
+  * It uses the MovementComputation to determine how nodes should move based on their movement strategy.
+  * It generates a new state of the world with updated nodes after applying the movements.
+  * */
   override def modifyFunction(s: SimulationState): Map[String, Node] =
     val rng = new scala.util.Random()
-    val nodes = s.world.nodes
-    val movements = s.world.movements
-    val neighbors = s.world.neighbors
-    val isEdgeOpen = s.world.isEdgeOpen
-
-    computeAllMovements(rng, s.world)._1
-
-
-
-  private def computeAllMovements(
-                                   rng: scala.util.Random,
-                                   world: World
-                                 ): (Map[String, Node], List[(String, String, Int)]) = {
-
-    world.movements.toList.foldLeft((world.nodes, List.empty[(String, String, Int)])) {
-      case ((currentNodes, collectedMoves), (strategy, percent)) =>
-        val moves = MovementStrategyLogic.compute(world, strategy,percent, rng)
-        val updatedNodes = World.applyMovements(world.modifyNodes(currentNodes), moves).nodes
-        (updatedNodes, collectedMoves ++ moves)
-    }
-  }
+    MovementComputation.computeAllMovements(s.world, rng).updatedNodes

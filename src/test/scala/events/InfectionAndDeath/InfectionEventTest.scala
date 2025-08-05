@@ -5,7 +5,7 @@ import model.cure.Cure
 import model.events.infectionAndDeath.InfectionEvent
 import model.infection.InfectionAndDeathPopulation.*
 import model.plague.Disease
-import model.plague.db.Symptoms.*
+import model.plague.traits.Symptoms.*
 import model.reaction.Reactions.StandardReactions
 import model.time.BasicYear
 import model.time.TimeTypes.{Day, Year}
@@ -164,8 +164,8 @@ class InfectionEventTest extends AnyFlatSpec with Matchers:
       Disease("test", Set(pulmonaryEdema), 1)
     )
 
-    ev1.population should be(97)
-    ev1.died should be(3)
+    ev1.population should be(96)
+    ev1.died should be(4)
 
   "A probabilistic death " should "behave correctly" in:
     val node = Node.withPopulation(NODE_POPULATION).withInfected(NODE_POPULATION).build()

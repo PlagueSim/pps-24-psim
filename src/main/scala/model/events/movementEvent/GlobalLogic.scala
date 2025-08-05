@@ -2,53 +2,53 @@ package model.events.movementEvent
 
 import model.world.{Edge, EdgeType, Node, World}
 import model.world.EdgeExtensions.connects
+import model.world.MovementComputation.PeopleMovement
 import java.util.concurrent.ThreadLocalRandom
+import model.world.Types.*
 
 object GlobalLogic extends MovementLogicWithEdgeCapacityAndPercentages:
 
-  extension (world: World)
-    def getAvgPopulationPerNode: Int =
-      if world.nodes.isEmpty then 0
-      else world.nodes.values.map(_.population).sum / world.nodes.size
 
-  override val edgeProbabilityMap: Map[EdgeType, Double] = Map(
-    EdgeType.Land -> 0.3,
-    EdgeType.Sea  -> 0.2,
-    EdgeType.Air  -> 0.15
-  )
-  override val edgeTypeCapacityMap: Map[EdgeType, Int] = Map(
-    EdgeType.Land -> 500,
-    EdgeType.Sea  -> 200,
-    EdgeType.Air  -> 100
-  )
+  override def edgeMovementConfig: EdgeMovementConfig = EdgeConfigurationFactory().getDefaultEdgeConfiguration
+
+  /*
+  * This logic computes the movement of people across edges in a global context.
+  * It considers the average population per node and the capacity of edges.
+  * The movement is determined by the percentage of the population that should move,
+  * the edge's typology, and a random factor.
+
+  * It generates a collection of `PeopleMovement` instances representing the movements.
+  * Each movement is only created if the edge is open, the node has a population,
+  * and the random factor meets the probability criteria defined in the edge movement configuration.
+  * */
   override def compute(
-      world: World,
-      percent: Double,
-      rng: scala.util.Random
-  ): List[(String, String, Int)] = {
+                        world: World,
+                        percent: Percentage,
+                        rng: scala.util.Random
+                      ): Iterable[PeopleMovement] =
     val avgPopulation = world.getAvgPopulationPerNode
-    world.nodes.filter(_._2.population > 0).toList.flatMap { case (id, node) =>
-      world.edges.filter(_.connects(id)).flatMap { case (_, edge) =>
-        val toMove = (node.population * percent).floor.toInt
-        generateMovementTuple(id, node, edge, rng, avgPopulation, toMove)
-      }
-    }
-  }
+
+    for {
+      (id, node) <- world.nodes.filter((_, n) => (n.population * percent).floor.toInt > 0)
+      (_, edge) <- world.edges.filter((_, e) => e.connects(id)).filterNot((_, e) => e.isClose)
+      toMove = (node.population * percent).floor.toInt
+      move <- generateMovementTuple(id, edge, rng, avgPopulation, toMove)
+    } yield move
+
 
   private def getFinalProbability(
     edgeTypology: EdgeType,
     toMove: Int,
     avgPopulation: Int
-  ): Double = {
-    edgeProbabilityMap.getOrElse(
+  ): Double =
+    edgeMovementConfig.probability.getOrElse(
       edgeTypology,
       0.0
     ) * (toMove.toDouble / avgPopulation)
-  }
 
   private def shouldMove(
       edge: Edge,
-      nodeId: String,
+      nodeId: NodeId,
       rng: scala.util.Random,
       avgPopulation: Int,
       toMove: Int
@@ -63,20 +63,17 @@ object GlobalLogic extends MovementLogicWithEdgeCapacityAndPercentages:
   }
 
   private def generateMovementTuple(
-      id: String,
-      node: Node,
+      from: NodeId,
       edge: Edge,
       rng: scala.util.Random,
       avgPopulation: Int,
       toMove: Int
-  ): Option[(String, String, Int)] = {
-    if shouldMove(edge, id, rng, avgPopulation, toMove) then
-      Some(
-        (
-          id,
-          edge.other(id).get,
-          edgeTypeCapacityMap.getOrElse(edge.typology, 0).min(toMove)
-        )
-      )
+  ): Option[PeopleMovement] =
+    val finalAmount = edgeMovementConfig.capacity.getOrElse(edge.typology, 0).min(toMove)
+    if finalAmount <= 0 then return None
+    if shouldMove(edge, from, rng, avgPopulation, toMove) then
+      Some(PeopleMovement(
+          from,
+          edge.other(from).get,
+          finalAmount))
     else None
-  }

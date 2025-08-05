@@ -3,9 +3,10 @@ package model.core
 import model.cure.Cure
 import model.infection.InfectionAndDeathPopulation.*
 import model.plague.Disease
-import model.plague.db.Symptoms.pulmonaryEdema
+import model.plague.traits.Symptoms.pulmonaryEdema
 import model.reaction.Reactions
-import model.reaction.Reactions.StandardReactions
+import model.reaction.ReactionAction.CloseEdges
+import model.reaction.{InfSeverityCondition, ReactionRule}
 import model.time.TimeTypes.{Day, Year}
 import model.time.{BasicYear, Time}
 import model.world.*
@@ -62,7 +63,8 @@ object SimulationState:
 
     val world = World(
       Map("A" -> node, "B" -> node),
-      Map("A-B" -> Edge("A", "B", EdgeType.Land)),
+      Map("A-B-L" -> Edge("A", "B", EdgeType.Land),
+          "A-B-S" -> Edge("A", "B", EdgeType.Sea)),
       Map(GlobalLogicMovement -> 1.0)
     )
 
@@ -73,7 +75,17 @@ object SimulationState:
       world,
       StandardInfection,
       StandardDeath,
-      StandardReactions
+      Reactions(
+        rules = List(
+          ReactionRule(
+            condition = InfSeverityCondition(
+              infectedThreshold = 0.3,
+              severityThreshold = 3
+            ),
+            actionFactory = nodeId => CloseEdges(EdgeType.Land, nodeId)
+          )
+        )
+      )
     )
 
   extension (state: SimulationState)
